@@ -69,6 +69,73 @@ private:
 		return client.getFirstName() + delimiter + client.getLastName() + delimiter + client.getEmail() + delimiter + client.getPhoneNumber() + delimiter + client.m_accountNumber + delimiter + client.m_pinCode + delimiter + std::to_string(client.m_balance);
 	}
 
+
+	static std::string NumberToText(int Number)
+	{
+
+		if (Number == 0)
+		{
+			return "";
+		}
+
+		if (Number >= 1 && Number <= 19)
+		{
+			std::string arr[] = { "", "One","Two","Three","Four","Five","Six","Seven",
+		"Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen",
+		  "Fifteen","Sixteen","Seventeen","Eighteen","Nineteen" };
+
+			return  arr[Number] + " ";
+
+		}
+
+		if (Number >= 20 && Number <= 99)
+		{
+			std::string arr[] = { "","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety" };
+			return  arr[Number / 10] + " " + NumberToText(Number % 10);
+		}
+
+		if (Number >= 100 && Number <= 199)
+		{
+			return  "One Hundred " + NumberToText(Number % 100);
+		}
+
+		if (Number >= 200 && Number <= 999)
+		{
+			return   NumberToText(Number / 100) + "Hundreds " + NumberToText(Number % 100);
+		}
+
+		if (Number >= 1000 && Number <= 1999)
+		{
+			return  "One Thousand " + NumberToText(Number % 1000);
+		}
+
+		if (Number >= 2000 && Number <= 999999)
+		{
+			return   NumberToText(Number / 1000) + "Thousands " + NumberToText(Number % 1000);
+		}
+
+		if (Number >= 1000000 && Number <= 1999999)
+		{
+			return  "One Million " + NumberToText(Number % 1000000);
+		}
+
+		if (Number >= 2000000 && Number <= 999999999)
+		{
+			return   NumberToText(Number / 1000000) + "Millions " + NumberToText(Number % 1000000);
+		}
+
+		if (Number >= 1000000000 && Number <= 1999999999)
+		{
+			return  "One Billion " + NumberToText(Number % 1000000000);
+		}
+		else
+		{
+			return   NumberToText(Number / 1000000000) + "Billions " + NumberToText(Number % 1000000000);
+		}
+
+
+	}
+
 	static std::vector<Client> _loadFile() {
 		std::fstream file;
 		std::vector<Client> Clients;
@@ -87,6 +154,20 @@ private:
 
 		return Clients;
 	}
+	static long long getTotalBalance() {
+
+		long long total = 0;
+		std::vector<Client> allClients = _loadFile();
+
+		for (const Client& client : allClients) 
+		{
+			total += client.m_balance;
+		}
+
+		return total;
+
+	}
+
 	 void _saveFile(const std::vector<Client>& Clients) {
 
 		std::fstream File;
@@ -103,7 +184,6 @@ private:
 
 
 	}
-	
 	 void _saveFile(const Client & client) {
 
 		 std::fstream File;
@@ -262,7 +342,7 @@ public:
 		m_balance = newBalance;
 	}
 
-	static Client search(const std::string& accountNumber, const std::string pinCode) {
+	static Client search(const std::string& accountNumber, const std::string &pinCode) {
 		return _find(accountNumber,&pinCode);
 	}
 	static Client search(const std::string& accountNumber) {
@@ -274,7 +354,16 @@ public:
 
 		return (!client.isEmpty());
 	}
-	
+	static bool isClientExists(const std::string& accountNumber) {
+		Client client = search(accountNumber);
+
+		return (!client.isEmpty());
+	}
+
+	static std::vector<Client> getClientList() {
+		return _loadFile();
+	}
+
 	static saveStates AddClient(const std::string& accountNumber, const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newPinCode, double newBalance)
 	{
 		if (isClientExists(accountNumber)) 
