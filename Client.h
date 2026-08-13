@@ -1,209 +1,44 @@
 #pragma once
-#include "Person.h"
 #include <iostream>
 #include<vector>
 #include<fstream>
+#include "Person.h"
+#include "FileHandler.h";
+#include "Parser.h";
+
 class Client : public Person {
 
+protected :
+	enum  mode { EmptyMode = 1, UpdateMode = 2, newMode = 3, DeleteMode = 4 };
+	enum  saveStates { Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3 };
+	void setMode(const Client &client,const mode& Mode) {
+		m_mode = Mode;
+	}
+	
+
 private:
+	
 
-	enum mode {EmptyMode = 1, UpdateMode = 2, newMode = 3, DeleteMode = 4};
-	enum saveStates {Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3};
-
-	std::string m_accountNumber = ""; //read only
+	std::string m_accountNumber = "";
 	std::string m_pinCode = "";
 	double m_balance = 0;
 	mode m_mode = mode::EmptyMode;
 
-	bool _isNotToBeSaved() const noexcept {
-		return	m_mode == mode::EmptyMode || m_mode == mode::DeleteMode;
-	}
-	static std::vector<std::string> _splitTokensToVec(std::string line, const std::string& delimiter = "#//#")
-	{
-		std::string Word = "";
-		size_t pos = 0;
-		std::vector<std::string> vTokens;
-		vTokens.reserve(7);
+	
 
-		while ( ( pos = line.find(delimiter) ) != std::string::npos )
-		{
-			Word = line.substr(0, pos);
-
-			if (Word != "")
-				vTokens.push_back(std::move(Word));
-
-
-			line.erase ( 0, pos + delimiter.length() );
-		}
-
-		if (line != "")
-			vTokens.push_back(std::move(line));
-
-
-		return vTokens;
-
-	}
-
-	static Client _getLineToObject(const std::string& line) {
-
-		std::vector<std::string> Tokens;
-		Tokens.reserve(7);
-		Tokens = _splitTokensToVec(line);
-
-		if (Tokens.size() != 7)
-			throw std::runtime_error("Malformed line: expected 7 fields, got " + std::to_string(Tokens.size()));
-
-
-		return Client(Tokens[0], Tokens[1], Tokens[2], Tokens[3], Tokens[4], Tokens[5], stod(Tokens[6]), mode::UpdateMode);
-		
-	}
-
-	static Client _getEmptyObject() noexcept {
-		return Client("", "", "", "", "", "", 0, mode::EmptyMode);
-	}
+	
+	
 	static Client _getNewObject(const std::string &accountNumber) noexcept {
 		return  Client("", "", "", "", accountNumber, "", 0, mode::newMode);
 	}
-   
-	std::string _getObjectToLine(const Client& client,const std::string& delimiter = "#//#") const {
-		return client.getFirstName() + delimiter + client.getLastName() + delimiter + client.getEmail() + delimiter + client.getPhoneNumber() + delimiter + client.m_accountNumber + delimiter + client.m_pinCode + delimiter + std::to_string(client.m_balance);
+	static Client _getEmptyObject()  noexcept {
+		return Client("", "", "", "", "", "", 0, mode::EmptyMode);
 	}
-
-
-	static std::string NumberToText(int Number)
-	{
-
-		if (Number == 0)
-		{
-			return "";
-		}
-
-		if (Number >= 1 && Number <= 19)
-		{
-			std::string arr[] = { "", "One","Two","Three","Four","Five","Six","Seven",
-		"Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen",
-		  "Fifteen","Sixteen","Seventeen","Eighteen","Nineteen" };
-
-			return  arr[Number] + " ";
-
-		}
-
-		if (Number >= 20 && Number <= 99)
-		{
-			std::string arr[] = { "","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety" };
-			return  arr[Number / 10] + " " + NumberToText(Number % 10);
-		}
-
-		if (Number >= 100 && Number <= 199)
-		{
-			return  "One Hundred " + NumberToText(Number % 100);
-		}
-
-		if (Number >= 200 && Number <= 999)
-		{
-			return   NumberToText(Number / 100) + "Hundreds " + NumberToText(Number % 100);
-		}
-
-		if (Number >= 1000 && Number <= 1999)
-		{
-			return  "One Thousand " + NumberToText(Number % 1000);
-		}
-
-		if (Number >= 2000 && Number <= 999999)
-		{
-			return   NumberToText(Number / 1000) + "Thousands " + NumberToText(Number % 1000);
-		}
-
-		if (Number >= 1000000 && Number <= 1999999)
-		{
-			return  "One Million " + NumberToText(Number % 1000000);
-		}
-
-		if (Number >= 2000000 && Number <= 999999999)
-		{
-			return   NumberToText(Number / 1000000) + "Millions " + NumberToText(Number % 1000000);
-		}
-
-		if (Number >= 1000000000 && Number <= 1999999999)
-		{
-			return  "One Billion " + NumberToText(Number % 1000000000);
-		}
-		else
-		{
-			return   NumberToText(Number / 1000000000) + "Billions " + NumberToText(Number % 1000000000);
-		}
-
-
-	}
-
-	static std::vector<Client> _loadFile() {
-		std::fstream file;
-		std::vector<Client> Clients;
-		file.open("Clients.txt", std::ios::in);
-
-		if (file.is_open()) 
-		{
-			std::string dataline;
-			
-			while ( !(std::getline(file, dataline).fail())) 
-			{
-				Clients.emplace_back(_getLineToObject(dataline));
-			}
-			file.close();
-		}
-
-		return Clients;
-	}
-	static long long getTotalBalance() {
-
-		long long total = 0;
-		std::vector<Client> allClients = _loadFile();
-
-		for (const Client& client : allClients) 
-		{
-			total += client.m_balance;
-		}
-
-		return total;
-
-	}
-
-	 void _saveFile(const std::vector<Client>& Clients) {
-
-		std::fstream File;
-		File.open("Clients.txt", std::ios::out);
-		if (File.is_open()) {
-			for (const Client& client : Clients)
-			{
-				if ( ! client._isNotToBeSaved() )
-					File << _getObjectToLine(client) << '\n';
-			}
-
-			File.close();
-		}
-
-
-	}
-	 void _saveFile(const Client & client) {
-
-		 std::fstream File;
-		 File.open("Clients.txt", std::ios::out | std::ios::app);
-
-		 if (File.is_open()) 
-		 {
-		      File << _getObjectToLine(client) << '\n';
-		 }
-		 File.close();
-			
-     }
-	 void _UpdateVector(std::vector<Client>& Clients) {
-		 Clients.clear();
-		 Clients = _loadFile();
-	 }
-	 
+	
+	
 	void _SaveExistingObject() {
-		// use this after .update()
-		std::vector<Client> Clients = _loadFile();
+		
+		std::vector<Client> Clients = FileHandler::LoadFile();
 
 		for (Client& client : Clients) 
 		{
@@ -216,14 +51,14 @@ private:
 
 		}
 
-		_saveFile(Clients);
+		FileHandler::SaveFile(Clients);
 		
 	}
 
 	void _SaveNewObject() {
 		
        m_mode = mode::UpdateMode;
-	   _saveFile(*this);
+	   FileHandler::SaveFile(*this);
 		
 
     }
@@ -237,6 +72,8 @@ private:
 		setPinCode(newPinCode);
 		setBalance(newBalance);
 	}
+
+	
 	void _MarkDelete (const std::string& accountNumber,std::vector<Client>& Clients) {
 
 		for (Client& client : Clients) 
@@ -251,23 +88,24 @@ private:
 		}
 
 	}
+
 	void _MakeEmpty() {
 	   *this = _getEmptyObject(); 
 	}
 
-	
-
+	// in repository
 	void _DeleteObject(const std::string& accountNumber) {
-		std::vector<Client> clients = _loadFile();
+		std::vector<Client> clients = FileHandler::LoadFile();
 
 		_MarkDelete(accountNumber,clients);
-		_saveFile(clients); //delete in file
+		FileHandler::SaveFile(clients); //delete in file
 		_MakeEmpty();       // null it out in memory
 		
 		
 		
 	}
 
+	// in repository
 	static Client _find(const std::string& accountNumber, const std::string *pinCodeParameter = nullptr) {
 
 
@@ -285,7 +123,8 @@ private:
 			while (!(std::getline(file, line).fail()))
 			{
 
-				Client client = _getLineToObject(line);
+				Client client = Parser::LineToObject(line);
+
 				bool accountNumberMatch = (client.m_accountNumber == accountNumber);
 				bool pinCodeMatch = (pinCodeParameter == nullptr) ? true : client.m_pinCode == *pinCodeParameter;
 
@@ -304,9 +143,12 @@ private:
 		}
 
 		return _getEmptyObject();
-	}
+	}  
+
+	
 
 public:
+	
 	
 	Client(const std::string& firstName, const std::string& lastName, const std::string& email, const std::string& phoneNumber, const std::string& accountNumber, const std::string& pinCode, double balance, const mode& clientMode) : Person(firstName, lastName, email, phoneNumber), m_accountNumber(accountNumber), m_pinCode(pinCode), m_balance(balance), m_mode(clientMode) {};
 
@@ -330,39 +172,41 @@ public:
 	double getBalance() const noexcept {
 		return m_balance;
 	}
-
+	const mode& getMode() const noexcept {
+		return m_mode;
+	}
 	void setPinCode(const std::string& newPinCode) {
-		
-		
 			m_pinCode = newPinCode; 
-		
 	}
 
 	void setBalance(double newBalance) {
 		m_balance = newBalance;
 	}
+	
 
+	// in repository
 	static Client search(const std::string& accountNumber, const std::string &pinCode) {
 		return _find(accountNumber,&pinCode);
 	}
+	// in repository
 	static Client search(const std::string& accountNumber) {
 		return _find(accountNumber);
 	}
 
+	// in repository
 	static bool isClientExists(const std::string& accountNumber, const std::string & pinCode) {
 		Client client = search(accountNumber,pinCode);
 
 		return (!client.isEmpty());
 	}
+	// in repository
 	static bool isClientExists(const std::string& accountNumber) {
 		Client client = search(accountNumber);
 
 		return (!client.isEmpty());
 	}
 
-	static std::vector<Client> getClientList() {
-		return _loadFile();
-	}
+
 
 	static saveStates AddClient(const std::string& accountNumber, const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newPinCode, double newBalance)
 	{
@@ -373,7 +217,7 @@ public:
 	   
 		Client client = _getNewObject(accountNumber);
 		client._SetObject(newFirstName, newLastName, newEmail, newPhoneNumber, newPinCode, newBalance);
-		client.save();
+		client.Save();
 
 	
 		
@@ -421,7 +265,7 @@ public:
 		
 	}
 
-	void save() {
+	void Save() {
 		 // for any future save state if the object is not empty 
 		switch (m_mode)
 		{
@@ -440,6 +284,8 @@ public:
 			break;
 
 		}
+		default :
+			return;
 			
 		}
 	
@@ -447,8 +293,7 @@ public:
 
 	}
 
-	void print()
-	{
+	void Print() {
 		std::cout << "\nClient Card:";
 		std::cout << "\n___________________";
 		std::cout << "\nFirstName   : " << getFirstName();
@@ -462,5 +307,7 @@ public:
 		std::cout << "\n___________________\n";
 
 	}
+
+
 
 };

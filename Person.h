@@ -15,6 +15,7 @@ public:
 
 	};
 	
+	
 	void setFirstName(const std::string & NewFirstName)  {
 		m_firstName = NewFirstName;
 	}
