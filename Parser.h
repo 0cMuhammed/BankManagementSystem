@@ -2,9 +2,10 @@
 #include <iostream>
 #include<vector>
 #include<fstream>
-#include "Client.h"
 
-class Parser : protected Client 
+class Client;
+
+class Parser  
 {
 
 public :
@@ -34,22 +35,11 @@ public :
 		return vTokens;
 
 	}
-	static std::string ObjectToLine(const Client& client, const std::string& delimiter = "#//#") {
-		return client.getFirstName() + delimiter + client.getLastName() + delimiter + client.getEmail() + delimiter + client.getPhoneNumber() + delimiter + client.getAccountNumber() + delimiter + client.getPinCode() + delimiter + std::to_string(client.getBalance());
-	}
-	static Client LineToObject(const std::string& line) {
 
-		std::vector<std::string> Tokens;
-		Tokens.reserve(7);
-		Tokens = TokensToVec(line);
+	static std::string ObjectToLine(const Client& client, const std::string& delimiter = "#//#");
+	static  Client LineToObject(const std::string& line);
 
-		if (Tokens.size() != 7)
-			throw std::runtime_error("Malformed line: expected 7 fields, got " + std::to_string(Tokens.size()));
-
-
-		return Client(Tokens[0], Tokens[1], Tokens[2], Tokens[3], Tokens[4], Tokens[5], stod(Tokens[6]), Client::mode::UpdateMode);
-
-	}
+	// to UI
 	static std::string BalanceToText(int Number)
 	{
 
@@ -117,4 +107,23 @@ public :
 	}
 
 };
+
+#include "Client.h"
+inline std::string Parser::ObjectToLine(const Client& client, const std::string& delimiter) {
+	return client.getFirstName() + delimiter + client.getLastName() + delimiter + client.getEmail() + delimiter + client.getPhoneNumber() + delimiter + client.getAccountNumber() + delimiter + client.getPinCode() + delimiter + std::to_string(client.getBalance());
+}
+inline  Client Parser::LineToObject(const std::string& line) {
+
+	std::vector<std::string> Tokens;
+	Tokens.reserve(7);
+	Tokens = Parser::TokensToVec(line);
+
+	if (Tokens.size() != 7)
+		throw std::runtime_error("Malformed line: expected 7 fields, got " + std::to_string(Tokens.size()));
+
+
+	return Client(Tokens[0], Tokens[1], Tokens[2], Tokens[3], Tokens[4], Tokens[5], stod(Tokens[6]), Client::ObjectMode::UpdateMode);
+
+}
+
 
