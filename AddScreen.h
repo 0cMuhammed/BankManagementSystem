@@ -65,7 +65,7 @@ private :
     
    
 
-    void _PrintHeader(const std::string* ScreenName = nullptr, const std::string* SubTitle = nullptr) override {
+    void PrintHeader(const std::string* ScreenName = nullptr, const std::string* SubTitle = nullptr) override {
 
        
         std::cout << "\t\t\t\t\t______________________________________";
@@ -81,7 +81,7 @@ private :
     void _PerformAdding() {
 
         _ClearScreen();
-        _PrintHeader();
+        PrintHeader();
 
         Client New = _ReadClient();
 
@@ -119,7 +119,7 @@ private :
 
         }
     }
-    void _PerformMenu(const std::string* Message = nullptr) override {
+    void PerformMenu(const std::string* Message = nullptr) override {
      
         bool IsContinueOperation = true;
 
@@ -130,11 +130,12 @@ private :
         } while (IsContinueOperation);
 
     }
+
     public :
         AddScreen(Repository& Repo) : m_RepositoryReference(Repo) {};
 
     void Show() override {
-        _PerformMenu();
+        PerformMenu();
     }
  	
 

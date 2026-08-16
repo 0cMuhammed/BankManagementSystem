@@ -4,7 +4,7 @@
 #include "Client.h"
 #include "Repository.h"
 #include<iomanip>
-
+#include <limits>
 #include "UI.h"
 
 class ListScreen : public UI 
@@ -14,7 +14,7 @@ private:
    const Repository& m_RepositoryReference;  // read only on repository dependency injection
 
 
-    void _PrintHeader(const std::string* ScreenName = nullptr, const std::string* SubTitle = nullptr) override {
+    void PrintHeader(const std::string* ScreenName = nullptr, const std::string* SubTitle = nullptr) override {
         system("cls");
         std::cout << "\t\t\t\t\t______________________________________";
 
@@ -25,8 +25,8 @@ private:
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
     }
-    void _PerformMenu(const std::string* Message = nullptr) override {
-        std::cout << "\n" + ( ((Message != nullptr) ? "Press Enter to go back to Main Menu" : *Message) )  + "....." + "\n";
+    void PerformMenu(const std::string* Message = nullptr) override {
+        std::cout << "\n" + ( ( (Message != nullptr) ? *Message : "Press Enter to go back to Main Menu") )  + "....." + "\n";
 
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -84,7 +84,7 @@ public :
 
         const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.GetClientList().size()) + ") Client(s).";
 
-        _PrintHeader(nullptr,&SubTitle);
+        PrintHeader(nullptr,&SubTitle);
         _PrintLayout();
         _PrintAll(m_RepositoryReference.GetClientList());
 
@@ -94,7 +94,7 @@ public :
        {
                std::cout << "\t\t\t\tNo Clients Available In the System!";
        }
-       _PerformMenu();
+       PerformMenu();
 
     }
     

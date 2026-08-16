@@ -31,19 +31,42 @@ private :
 	static bool _IsModifiable(const std::string &accountNumber, const Client& client) {
 		return client.getAccountNumber() == accountNumber && client.getMode() == Client::ObjectMode::ExistingMode;
 	}
+	static bool _IsModifiable(const Client& client) {
+		return client.getMode() == Client::ObjectMode::ExistingMode;
+	}
 
 	bool _DeleteObject(const std::string& accountNumber) {
+		
+		
+			for (Client& client : m_ClientList)
+			{
+				if (_IsModifiable(accountNumber, client))
+				{
+					client.setMode(Client::ObjectMode::DeleteMode);
+					_MakeEmpty(client);
+					return true;
+				}
+
+			}
+		
+
+		return false;
+
+	}
+	bool _DeleteObject(Client &client) {
+
 
 		for (Client& client : m_ClientList)
 		{
-			if (_IsModifiable(accountNumber,client))
-			{   
+			if (_IsModifiable(client))
+			{
 				client.setMode(Client::ObjectMode::DeleteMode);
 				_MakeEmpty(client);
 				return true;
 			}
 
 		}
+
 
 		return false;
 
@@ -65,7 +88,7 @@ private :
 
 	}
 
-	const Client & _FindObject(const std::string& accountNumber, const std::string* pinCodeParameter = nullptr) const  {
+	 Client  _FindObject(const std::string& accountNumber, const std::string* pinCodeParameter = nullptr) const  {
 
 	
 
@@ -80,12 +103,11 @@ private :
 
 			}
 		}
-		const Client Empty = std::move(_GetEmptyObject());
+		
 
-		return Empty;
+		return _GetEmptyObject();
 	}
-
-
+	
 	void _UpdateVector() {
 		m_ClientList.clear();
 		m_ClientList = FileHandler::LoadFile();
@@ -96,7 +118,7 @@ private :
 
 public :
 	
-	enum  OperationStates { Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3, AccountNumberNotFound = 4};
+	enum  OperationStates {NotConfirmed = 0, Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3, AccountNumberNotFound = 4, };
 
 
 
@@ -123,7 +145,7 @@ public :
 	 }
 	
 
-	    const Client &Find(const std::string& accountNumber, const std::string* pinCode = nullptr) const {
+	     Client Find(const std::string& accountNumber, const std::string* pinCode = nullptr) const {
 		     return _FindObject(accountNumber, pinCode);
 	    }
 	
@@ -160,11 +182,12 @@ public :
 			 return OperationStates::AccountNumberNotFound;
 		 }
 
-		 if ( ! _DeleteObject(accountNumber) ) 
+		 if ( ! _DeleteObject(accountNumber)  ) 
 		 {
 			 return OperationStates::Failed;
 
 		 }
+		 
 		
 
 		 FileHandler::SaveFile(m_ClientList);
@@ -173,6 +196,23 @@ public :
 		 return OperationStates::Successful;
 
 	 }
+	   OperationStates DeleteClient( Client &ExistingObject ) {
+
+
+		   if (!_DeleteObject(ExistingObject))
+		   {
+			   return OperationStates::Failed;
+
+		   }
+
+
+
+		   FileHandler::SaveFile(m_ClientList);
+		   _UpdateVector();
+
+		   return OperationStates::Successful;
+
+	   }
 
 	   OperationStates UpdateClient(const std::string& accountNumber, const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newPinCode, double newBalance) {
         
