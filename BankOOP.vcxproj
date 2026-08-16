@@ -143,7 +143,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
+    <ClInclude Include="ListScreen.h" />
+    <ClInclude Include="Date.h" />
     <ClInclude Include="FileHandler.h" />
+    <ClInclude Include="Validator.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Person.h" />
     <ClInclude Include="Repository.h" />

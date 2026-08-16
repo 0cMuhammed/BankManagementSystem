@@ -104,20 +104,6 @@ public:
 
 	}
 
-	void Print() {
-		std::cout << "\nClient Card:";
-		std::cout << "\n___________________";
-		std::cout << "\nFirstName   : " << getFirstName();
-		std::cout << "\nLastName    : " << getLastName();
-		std::cout << "\nFull Name   : " << getFullName();
-		std::cout << "\nEmail       : " << getEmail();
-		std::cout << "\nPhone       : " << getPhoneNumber();
-		std::cout << "\nAcc. Number : " << m_accountNumber;
-		std::cout << "\nPassword    : " << m_pinCode;
-		std::cout << "\nBalance     : " << m_balance;
-		std::cout << "\n___________________\n";
-
-	}
 	
 };
 

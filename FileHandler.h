@@ -16,7 +16,11 @@ public :
 	static std::vector<Client> LoadFile();
 	static void SaveFile(const Client& client);
 	static void SaveFile(const std::vector<Client>& Clients);
+
 };
+
+
+
 
 #include "Client.h"
 inline  bool FileHandler::_isNotToBeSaved(const Client& client) noexcept {

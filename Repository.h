@@ -115,7 +115,7 @@ public :
 	 }
 	
 
-	   Client Find(const std::string& accountNumber, const std::string* pinCode = nullptr) {
+	    Client Find(const std::string& accountNumber, const std::string* pinCode = nullptr) {
 		     return _FindObject(accountNumber, pinCode);
 	    }
 	
@@ -125,7 +125,6 @@ public :
 		   return (!client.isEmpty());
 	  }
 
-	   
 	   
 	   OperationStates AddClient(const std::string& accountNumber, const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newPinCode, double newBalance)
 	 {
