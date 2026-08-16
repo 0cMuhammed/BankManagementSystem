@@ -122,7 +122,7 @@ inline  Client Parser::LineToObject(const std::string& line) {
 		throw std::runtime_error("Malformed line: expected 7 fields, got " + std::to_string(Tokens.size()));
 
 
-	return Client(Tokens[0], Tokens[1], Tokens[2], Tokens[3], Tokens[4], Tokens[5], stod(Tokens[6]), Client::ObjectMode::UpdateMode);
+	return Client(Tokens[0], Tokens[1], Tokens[2], Tokens[3], Tokens[4], Tokens[5], stod(Tokens[6]), Client::ObjectMode::ExistingMode);
 
 }
 

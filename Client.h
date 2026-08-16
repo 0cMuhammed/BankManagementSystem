@@ -10,7 +10,7 @@ class Client : public Person {
 public :
 
 
-	enum  ObjectMode { EmptyMode = 1, UpdateMode = 2, newMode = 3, DeleteMode = 4 };
+	enum  ObjectMode { EmptyMode = 1, ExistingMode = 2, newMode = 3, DeleteMode = 4 };
 
 private:
 	
@@ -84,7 +84,7 @@ public:
 		{		
 			return;
 		}
-		case ObjectMode::UpdateMode:
+		case ObjectMode::ExistingMode:
 		{
 			_SaveExistingObject();
 			break;
@@ -125,7 +125,7 @@ inline void Client::_SaveExistingObject() {
 	FileHandler::SaveFile(Clients);
 }
 inline void Client::_SaveNewObject() {
-	m_mode = ObjectMode::UpdateMode;
+	m_mode = ObjectMode::ExistingMode;
 	FileHandler::SaveFile(*this);
 }
 

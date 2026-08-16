@@ -3,6 +3,7 @@
 #include<vector>
 #include<fstream>
 #include "Client.h"
+#include "FileHandler.h"
 
 class Repository {
 
@@ -14,7 +15,8 @@ private :
 	static Client _GetEmptyObject()  noexcept {
 		return Client("", "", "", "", "", "", 0, Client::ObjectMode::EmptyMode);
 	}
-	static Client _GetNewObject(const std::string& accountNumber) noexcept {
+
+	static Client  _GetNewObject(const std::string& accountNumber) noexcept {
 		return  Client("", "", "", "", accountNumber, "", 0, Client::ObjectMode::newMode);
 	}
 	
@@ -25,9 +27,11 @@ private :
 	    }
 		
 	}
+
 	static bool _IsModifiable(const std::string &accountNumber, const Client& client) {
-		return client.getAccountNumber() == accountNumber && client.getMode() == Client::ObjectMode::UpdateMode;
+		return client.getAccountNumber() == accountNumber && client.getMode() == Client::ObjectMode::ExistingMode;
 	}
+
 	bool _DeleteObject(const std::string& accountNumber) {
 
 		for (Client& client : m_ClientList)
@@ -61,7 +65,7 @@ private :
 
 	}
 
-	Client _FindObject(const std::string& accountNumber, const std::string* pinCodeParameter = nullptr) {
+	const Client & _FindObject(const std::string& accountNumber, const std::string* pinCodeParameter = nullptr) const  {
 
 	
 
@@ -96,9 +100,9 @@ public :
 	                                                              //rule of zero std::vector manages itself
 	 }
 	
-	  long long GetTotalBalance() {
+	  double GetTotalBalance() {
 
-		long long total = 0;
+		double total = 0;
 		
 
 		for (const Client& client : m_ClientList)
@@ -110,38 +114,40 @@ public :
 
 	}
 
-	  std::vector<Client> GetClientList() {
+	  const std::vector<Client> &GetClientList() const  {
 		 return m_ClientList;
 	 }
 	
 
-	    Client Find(const std::string& accountNumber, const std::string* pinCode = nullptr) {
+	   const Client &Find(const std::string& accountNumber, const std::string* pinCode = nullptr) const {
 		     return _FindObject(accountNumber, pinCode);
 	    }
 	
-	   bool IsExists(const std::string &accountNumber, const std::string* pinCode = nullptr) {
+	   bool IsExists(const std::string &accountNumber, const std::string* pinCode = nullptr) const {
 		 
-		   Client client = _FindObject(accountNumber, pinCode);;
+		   Client client = _FindObject(accountNumber, pinCode);
 		   return (!client.isEmpty());
 	  }
 
-	   
-	   OperationStates AddClient(const std::string& accountNumber, const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newPinCode, double newBalance)
-	 {
-		 if ( IsExists(accountNumber) )
-		 {
-			 return OperationStates::AccountNumberAlreadyExists;
-		 }
-
-		 Client client = _GetNewObject(accountNumber);
-		 client.SetObject(newFirstName, newLastName, newEmail, newPhoneNumber, newPinCode, newBalance);
-		 client.Save();
 
 
+	   OperationStates AddClient(Client &FilledObject)
+	   {
+		   if (IsExists(FilledObject.getAccountNumber()))
+		   {
+			   return OperationStates::AccountNumberAlreadyExists;
+		   }
 
-		 return OperationStates::Successful;
+		  
+		   FilledObject.setMode(Client::ObjectMode::newMode);
+		   FilledObject.Save();
+		   m_ClientList.push_back(FilledObject);
+			   
 
-	 }
+
+		   return OperationStates::Successful;
+
+	   }
 
 	   OperationStates DeleteClient(const std::string& accountNumber) {
 		 
