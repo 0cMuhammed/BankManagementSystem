@@ -11,20 +11,22 @@ class ListScreen : public UI
 { 
 
 private:
-    Repository& m_RepositoryReference; // a reference to any Repository object u pass in a constructor for better seperation of concerns
+   const Repository& m_RepositoryReference;  // read only on repository dependency injection
+
 
     void _PrintHeader(const std::string* ScreenName = nullptr, const std::string* SubTitle = nullptr) override {
+        system("cls");
         std::cout << "\t\t\t\t\t______________________________________";
 
-         std::cout << "\n\n\t\t\t\t\t  " << (ScreenName == nullptr) ? "Client List" : *ScreenName;
+        std::cout << "\n\n\t\t\t\t\t  " << ( ( (ScreenName != nullptr) ? *ScreenName : "Client List") );
 
-         std::cout << "\n\t\t\t\t\t  " << (SubTitle == nullptr)  ? "" : *SubTitle;
+        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << *SubTitle; }
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
     }
     void _PerformMenu(const std::string* Message = nullptr) override {
-        std::cout <<  (Message == nullptr) ? "\nPress Enter to go back to Main Menu.....\n" : "\n" + *Message + "....." + "\n";
+        std::cout << "\n" + ( ((Message != nullptr) ? "Press Enter to go back to Main Menu" : *Message) )  + "....." + "\n";
 
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

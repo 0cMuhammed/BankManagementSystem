@@ -142,6 +142,7 @@
     <ClCompile Include="BankOOP.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddScreen.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ListScreen.h" />
     <ClInclude Include="Date.h" />

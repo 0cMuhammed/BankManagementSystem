@@ -2,7 +2,4 @@
 C:\Users\Muhammed\source\repos\BankOOP\BankOOP\FileHandler.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
   (compiling source file 'BankOOP.cpp')
   
-C:\Users\Muhammed\source\repos\BankOOP\BankOOP\Repository.h(106,30): warning C4244: '+=': conversion from 'double' to '__int64', possible loss of data
-  (compiling source file 'BankOOP.cpp')
-  
   BankOOP.vcxproj -> C:\Users\Muhammed\source\repos\BankOOP\x64\Debug\BankOOP.exe

@@ -80,14 +80,18 @@ private :
 
 			}
 		}
+		const Client Empty = std::move(_GetEmptyObject());
 
-		return _GetEmptyObject();
+		return Empty;
 	}
 
 
 	void _UpdateVector() {
 		m_ClientList.clear();
 		m_ClientList = FileHandler::LoadFile();
+	}
+	void _AddInVector(const Client & client) {
+		m_ClientList.push_back(client);
 	}
 
 public :
@@ -119,7 +123,7 @@ public :
 	 }
 	
 
-	   const Client &Find(const std::string& accountNumber, const std::string* pinCode = nullptr) const {
+	    const Client &Find(const std::string& accountNumber, const std::string* pinCode = nullptr) const {
 		     return _FindObject(accountNumber, pinCode);
 	    }
 	
@@ -141,7 +145,7 @@ public :
 		  
 		   FilledObject.setMode(Client::ObjectMode::newMode);
 		   FilledObject.Save();
-		   m_ClientList.push_back(FilledObject);
+		   _AddInVector(FilledObject);
 			   
 
 

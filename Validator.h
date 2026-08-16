@@ -12,20 +12,39 @@
 			return (Number >= from && Number <= to);
 		}
 
-		static double returnValidatedNumber(const std::string& message, const std::string& invalidMessage = "Invalid Number", double from = 0, double to = 0)
+		static double returnValidatedNumber(const std::string& invalidMessage = "Invalid Number", double from = 0, double to = 0)
 		{
 
 			double number = 0;
 			bool hasRange = !(from == 0 && to == 0);
 
-			std::cout << message << "\n";
+		
 			std::cin >> number;
 
 			while (std::cin.fail() || (hasRange && !isNumberBetween(number, from, to)))
 			{
 				std::cin.clear();
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cout << "\n" << invalidMessage << "\n" << message << "\n";
+				std::cout << "\n" << invalidMessage << "\n";
+				std::cin >> number;
+
+			}
+
+			return number;
+
+		}
+		static double returnNumber(const std::string& invalidMessage = "Invalid Number")
+		{
+
+			double number = 0;
+		
+			std::cin >> number;
+
+			while (std::cin.fail() || number < 0 )
+			{
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				std::cout << "\n" << invalidMessage << "\n";
 				std::cin >> number;
 
 			}
@@ -78,7 +97,9 @@
 			return S1;
 		}
 
-
+		static bool GetConfirmation(const std::string& msg) {
+			return (toupper(returnValidatedChar(msg + " y / n : ", "YyNn")) == 'Y');
+		}
 
 	};
 
