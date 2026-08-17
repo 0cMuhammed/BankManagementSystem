@@ -75,9 +75,8 @@ private :
         }
     }
 
-    void _PerformDelete(const std::string& AccountNumber) {
+    void _Delete(const std::string& AccountNumber) {
 
-      
         Client client = m_RepositoryReference.Find(AccountNumber);
          
 
@@ -92,27 +91,25 @@ private :
         }
 
     }
-    void _PerformDeletion(const std::string *Message = nullptr) {
-
+    void _PerformDelete() {
         _ClearScreen();
         PrintHeader();
 
         _Message("Please enter your account number");
         std::string AccountNumber = Validator::ReadString();
 
-       
-
-
+        _Delete(AccountNumber);
+            
     }
-
 	void PerformMenu(const std::string* Message = nullptr) override {
 
 		bool IsContinueOperation = true;
 
 		do 
-        { 
+        {
+            
 			
-            _PerformDeletion();
+            _PerformDelete();
 
             IsContinueOperation = Validator::GetConfirmation("\n" + (((Message != nullptr) ? *Message : "Do you want to continue this operation?")));
 
@@ -122,7 +119,8 @@ private :
 
 
     public :
-        DeleteScreen(Repository& Repo) : m_RepositoryReference(Repo) {};
+
+         DeleteScreen(Repository& Repo) : m_RepositoryReference(Repo) {};
 
         void Show() override {
             PerformMenu();

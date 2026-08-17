@@ -50,5 +50,11 @@
     <ClInclude Include="AddScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DeleteScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

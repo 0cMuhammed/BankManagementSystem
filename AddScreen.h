@@ -16,7 +16,7 @@ private :
     
     static void _ClearScreen() {
         system("cls");
-   }
+    }
    static void _Message(const std::string& Message) {
         std::cout << "\n" + Message + ": ";
     }
@@ -77,27 +77,21 @@ private :
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
     }
     
-
-    void _PerformAdding() {
-
-        _ClearScreen();
-        PrintHeader();
-
-        Client New = _ReadClient();
-
+    void _Add(Client& New) {
         switch (m_RepositoryReference.AddClient(New))
         {
 
         case Repository::Successful:
         {
-            std::cout << "Account Saved Successfuly!\n";
             _PrintClient(New);
+            std::cout << "Account is saved successfuly!\n";
+
             break;
 
         }
         case Repository::AccountNumberAlreadyExists:
         {
-            std::cout << "Account Number is Already Used, Choose another one.\n";
+            std::cout << "Account Number is Already Used.\n";
             break;
 
         }
@@ -113,12 +107,17 @@ private :
             break;
 
         }
-
-
-
-
         }
     }
+    void _PerformAdding() {
+
+        _ClearScreen();
+        PrintHeader();
+
+        Client New = _ReadClient();
+        _Add(New);
+    }
+
     void PerformMenu(const std::string* Message = nullptr) override {
      
         bool IsContinueOperation = true;

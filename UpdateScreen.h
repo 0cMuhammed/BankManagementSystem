@@ -32,7 +32,29 @@ private:
 
 
     }
+    static Client _ReadClient(const std::string &ExistingAccountNumber)
+    {
+        
+        _Message("Enter first name");
+        std::string FirstName = Validator::ReadString();
 
+        _Message("Enter last name");
+        std::string LastName = Validator::ReadString();
+
+        _Message("Enter Email");
+        std::string Email = Validator::ReadString();
+
+        _Message("Enter Phone");
+        std::string Phone = Validator::ReadString();
+
+        _Message("Enter PinCode");
+        std::string PinCode = Validator::ReadString();
+
+        _Message("Enter Account Balance");
+        double Balance = Validator::returnNumber("Invalid Number, Enter again");
+
+        return Client(FirstName, LastName, Email, Phone, ExistingAccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
+    }
     void PrintHeader(const std::string* ScreenName = nullptr, const std::string* SubTitle = nullptr) override {
         std::cout << "\t\t\t\t\t______________________________________";
 
@@ -53,7 +75,9 @@ private:
         return isConfirm;
     }
 
-    void _PrintUpdateStatus(Client& client) {
+    void _PrintUpdateStatus(Client& client, const std::string &ExistingAccountNumber) {
+
+        client = _ReadClient(ExistingAccountNumber);
 
         switch (m_RepositoryReference.UpdateClient(client))
         {
@@ -78,6 +102,7 @@ private:
         }
 
         }
+
     }
 
     void _Update(const std::string& AccountNumber) {
@@ -92,11 +117,14 @@ private:
         }
         else
         {
-            (_PerformConfirmation(client)) ? _PrintUpdateStatus(client) : _Message("Operation is cancelled");
+            (_PerformConfirmation(client)) ? _PrintUpdateStatus(client,AccountNumber) : _Message("Operation is cancelled.");
         }
 
     }
-    void _PerformDelete() {
+
+
+
+    void _PerformUpdate() {
         _ClearScreen();
         PrintHeader();
 
@@ -114,7 +142,7 @@ private:
         {
 
 
-            _PerformDelete();
+            _PerformUpdate();
 
             IsContinueOperation = Validator::GetConfirmation("\n" + (((Message != nullptr) ? *Message : "Do you want to continue this operation?")));
 

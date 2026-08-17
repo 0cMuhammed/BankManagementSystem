@@ -28,19 +28,17 @@ private :
 		
 	}
 
-	static bool _IsModifiable(const std::string &accountNumber, const Client& client) {
+	static bool _IsModifiable(const Client& client, const std::string& accountNumber) {
 		return client.getAccountNumber() == accountNumber && client.getMode() == Client::ObjectMode::ExistingMode;
 	}
-	static bool _IsModifiable(const Client& client) {
-		return client.getMode() == Client::ObjectMode::ExistingMode;
-	}
+	
 
 	bool _DeleteObject(const std::string& accountNumber) {
 		
 		
 			for (Client& client : m_ClientList)
 			{
-				if (_IsModifiable(accountNumber, client))
+				if ( _IsModifiable(client, accountNumber) )
 				{
 					client.setMode(Client::ObjectMode::DeleteMode);
 					_MakeEmpty(client);
@@ -53,15 +51,15 @@ private :
 		return false;
 
 	}
-	bool _DeleteObject(Client &client) {
+	bool _DeleteObject(const Client &client) {
 
 
-		for (Client& client : m_ClientList)
+		for (Client& c : m_ClientList)
 		{
-			if (_IsModifiable(client))
+			if (_IsModifiable(c, client.getAccountNumber()))
 			{
-				client.setMode(Client::ObjectMode::DeleteMode);
-				_MakeEmpty(client);
+				c.setMode(Client::ObjectMode::DeleteMode);
+				_MakeEmpty(c);
 				return true;
 			}
 
@@ -73,12 +71,28 @@ private :
 	}
 	bool _UpdateObject(const std::string& accountNumber, const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newPinCode, double newBalance) {
 
-		for (Client& client : m_ClientList)
+		for (Client& c: m_ClientList)
 		{
-			if (_IsModifiable(accountNumber, client)) // a client has to be in update mode which is an the mode of an object when its already there when its not empty or new
+			if (_IsModifiable(c, accountNumber)) // a client has to be in update mode which is an the mode of an object when its already there when its not empty or new
 			{
-				client.SetObject(newFirstName, newLastName, newEmail, newPhoneNumber, newPinCode, newBalance);
-				client.Save();
+				c.SetObject(newFirstName, newLastName, newEmail, newPhoneNumber, newPinCode, newBalance);
+				c.Save();
+				return true;
+			}
+
+		}
+
+		return false;
+
+	}
+	bool _UpdateObject(Client &client) {
+
+		for (Client& c : m_ClientList)
+		{
+			if (_IsModifiable(c, client.getAccountNumber())) 
+			{
+				c = std::move(client);
+				c.Save();
 				return true;
 			}
 
@@ -88,7 +102,7 @@ private :
 
 	}
 
-	 Client  _FindObject(const std::string& accountNumber, const std::string* pinCodeParameter = nullptr) const  {
+	Client  _FindObject(const std::string& accountNumber, const std::string* pinCodeParameter = nullptr) const  {
 
 	
 
@@ -140,20 +154,22 @@ public :
 
 	}
 
+	  bool IsExists(const std::string& accountNumber, const std::string* pinCode = nullptr) const {
+
+		  Client client = _FindObject(accountNumber, pinCode);
+		  return (!client.isEmpty());
+	  }
+
 	  const std::vector<Client> &GetClientList() const  {
 		 return m_ClientList;
 	 }
 	
 
-	     Client Find(const std::string& accountNumber, const std::string* pinCode = nullptr) const {
+	  Client Find(const std::string& accountNumber, const std::string* pinCode = nullptr) const {
 		     return _FindObject(accountNumber, pinCode);
 	    }
 	
-	   bool IsExists(const std::string &accountNumber, const std::string* pinCode = nullptr) const {
-		 
-		   Client client = _FindObject(accountNumber, pinCode);
-		   return (!client.isEmpty());
-	  }
+	  
 
 
 
@@ -196,24 +212,6 @@ public :
 		 return OperationStates::Successful;
 
 	 }
-	   OperationStates DeleteClient( Client &ExistingObject ) {
-
-
-		   if (!_DeleteObject(ExistingObject))
-		   {
-			   return OperationStates::Failed;
-
-		   }
-
-
-
-		   FileHandler::SaveFile(m_ClientList);
-		   _UpdateVector();
-
-		   return OperationStates::Successful;
-
-	   }
-
 	   OperationStates UpdateClient(const std::string& accountNumber, const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newPinCode, double newBalance) {
         
 		   if (!IsExists(accountNumber))
@@ -232,7 +230,40 @@ public :
 		   return OperationStates::Successful;
 
 	   }
-	
+
+
+	   OperationStates UpdateClient(Client& ExistingObject) {
+
+		 
+
+		   if (!_UpdateObject(ExistingObject))
+		   {
+			   return OperationStates::Failed;
+
+		   }
+
+		   FileHandler::SaveFile(m_ClientList);
+
+		   return OperationStates::Successful;
+
+	   }
+	   OperationStates DeleteClient(const Client& ExistingObject) {
+
+
+		   if (!_DeleteObject(ExistingObject))
+		   {
+			   return OperationStates::Failed;
+
+		   }
+
+
+
+		   FileHandler::SaveFile(m_ClientList);
+		   _UpdateVector();
+
+		   return OperationStates::Successful;
+
+	   }
 
 	
 };
