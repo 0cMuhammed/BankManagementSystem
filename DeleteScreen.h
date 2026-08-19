@@ -7,7 +7,7 @@
 #include "Repository.h"
 #include "Validator.h"
 #include "UI.h"
-#include "MainMenuScreen.h"
+
 
 class DeleteScreen : public MainMenuScreen
 {
@@ -64,6 +64,7 @@ private :
         return isConfirm;
     }
     void _PrintDeleteStatus(Client& client) {
+ 
         switch (m_RepositoryReference.m_Operations.DeleteClient(client))
         {
 

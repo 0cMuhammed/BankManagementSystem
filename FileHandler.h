@@ -66,7 +66,7 @@ inline  void FileHandler::SaveFile(const std::vector<Client> &Clients) {
 		{
 			if (!_isNotToBeSaved(c))
 			{
-				File << Parser::ObjectToLine( std::move(c) ) << '\n'; // i decided to pass by value (a copy) and then in the loop parsing and making the strings with also copying it woulde be expensive. with std::move u get only one copy and them moving the objects and printing the strings directly instead of copying
+				File << Parser::ObjectToLine( c ) << '\n'; 
 			}
 
 		}

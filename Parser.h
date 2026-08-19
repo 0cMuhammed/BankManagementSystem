@@ -109,7 +109,7 @@ public :
 };
 
 #include "Client.h"
-inline std::string Parser::ObjectToLine(const Client &client, const std::string& delimiter = "#//#") {
+inline std::string ObjectToLine(const Client& client, const std::string& delimiter = "#//#") {
 	return client.getFirstName() + delimiter + client.getLastName() + delimiter + client.getEmail() + delimiter + client.getPhoneNumber() + delimiter + client.getAccountNumber() + delimiter + client.getPinCode() + delimiter + std::to_string(client.getBalance());
 }
 inline  Client Parser::LineToObject(std::string line) {

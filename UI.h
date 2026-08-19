@@ -8,6 +8,8 @@ public :
 	virtual void PerformMenu(const char *Message = nullptr) = 0;
 	virtual void Show() = 0;
 
+	
+
 	virtual ~UI() = default;
 
 };

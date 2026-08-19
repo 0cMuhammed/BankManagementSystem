@@ -4,17 +4,19 @@
 #include<fstream>
 #include "Client.h"
 #include "Validator.h"
+#include "BankOperations.h"
 
 class Operations
 { 
 
 public : 
 
-	 enum  OperationStates { NotConfirmed = 0, Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3, AccountNumberNotFound = 4 };
-
+	 enum  OperationStates { NotConfirmed = 0, Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3, AccountNumberNotFound = 4, InsufficentBalance = 5};
+	 
 private :
 	
 	std::vector<Client>& m_List; // dependency injection for the m_ClientList in Repository.h
+	
 
 	void _UpdateVector() {
 		m_List.clear();
@@ -118,6 +120,7 @@ private :
 
 	}
 
+
 	 Client  _FindObject(const std::string& accountNumber, const char* pinCodeParameter = nullptr) const  {
 
 
@@ -139,9 +142,9 @@ private :
 	}
 
 	public : 
+	 	 BankOperations m_BankOperations;
 
-		 Operations( std::vector<Client> &List) : m_List(List) {};
-
+		 Operations(std::vector<Client>& List) : m_List(List), m_BankOperations(*this) {};
 
 
 		 bool IsExists(const std::string& accountNumber, const char* pinCode = nullptr)  {
@@ -216,7 +219,7 @@ private :
 			 return Client(FirstName, LastName, Email, Phone, ExistingAccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
 		 }
 
-		 Client Find(const std::string& accountNumber, const char* pinCode = nullptr)  {
+		Client Find(const std::string& accountNumber, const char* pinCode = nullptr)  {
 			return _FindObject(accountNumber, pinCode);
 		}
 		 OperationStates AddClient(Client& FilledObject)

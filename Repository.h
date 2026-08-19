@@ -143,7 +143,7 @@ public :
 	};
 
 	
-
+	
 	 const std::vector<Client>& GetClientList() const {
 		return m_ClientList;
 	}
