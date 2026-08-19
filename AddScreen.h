@@ -63,7 +63,7 @@ private :
 
   
     void _Add(Client& New) {
-        switch (m_RepositoryReference.operations.AddClient(New))
+        switch (m_RepositoryReference.m_Operations.AddClient(New))
         {
 
         case Operations::Successful:

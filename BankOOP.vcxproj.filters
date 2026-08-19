@@ -62,5 +62,11 @@
     <ClInclude Include="MainMenuScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Operations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BankOperations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

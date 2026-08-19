@@ -4,14 +4,17 @@
 #include<fstream>
 #include "Client.h"
 #include "FileHandler.h"
+#include "Operations.h"
 
 class Repository {
 
 private :
 
 	
-	 std::vector<Client> m_ClientList;
-
+	std::vector<Client> m_ClientList;
+	
+	
+	/*/
 	static Client _GetEmptyObject()  noexcept {
 		return Client("", "", "", "", "", "", 0, Client::ObjectMode::EmptyMode);
 	}
@@ -102,14 +105,14 @@ private :
 
 	}
 
-	Client  _FindObject(const std::string& accountNumber, const std::string* pinCodeParameter = nullptr) const  {
+	Client  _FindObject(const std::string& accountNumber, const char* pinCodeParameter = nullptr) const  {
 
 	
 
 		for (const Client& client : m_ClientList) 
 		{
 			bool accountNumberMatch = (client.getAccountNumber() == accountNumber);
-			bool pinCodeMatch = (pinCodeParameter == nullptr) ? true : client.getPinCode() == *pinCodeParameter;
+			bool pinCodeMatch = (pinCodeParameter == nullptr) ? true : (client.getPinCode().c_str()) == pinCodeParameter;
 
 			if (accountNumberMatch && pinCodeMatch)
 			{
@@ -129,18 +132,23 @@ private :
 	void _AddInVector(const Client & client) {
 		m_ClientList.push_back(client);
 	}
+	/*/
 
 public :
 	
-	enum  OperationStates {NotConfirmed = 0, Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3, AccountNumberNotFound = 4, };
+	 Operations m_Operations;
 
+	 Repository() : m_ClientList(FileHandler::LoadFile()), m_Operations(m_ClientList) {
 
+	};
 
-	 Repository() : m_ClientList( FileHandler::LoadFile() ) {
-	                                                              //rule of zero std::vector manages itself
-	 }
 	
-	  double GetTotalBalance() {
+
+	 const std::vector<Client>& GetClientList() const {
+		return m_ClientList;
+	}
+
+	 double GetTotalBalance() const {
 
 		double total = 0;
 		
@@ -154,25 +162,23 @@ public :
 
 	}
 
-	  bool IsExists(const std::string& accountNumber, const std::string* pinCode = nullptr) const {
+	  
+	  /*
+	  
+	   bool IsExists(const std::string& accountNumber, const char* pinCode = nullptr) const {
 
 		  Client client = _FindObject(accountNumber, pinCode);
 		  return (!client.isEmpty());
 	  }
 
-	  const std::vector<Client> &GetClientList() const  {
-		 return m_ClientList;
-	 }
-	
-
-	  Client Find(const std::string& accountNumber, const std::string* pinCode = nullptr) const {
-		     return _FindObject(accountNumber, pinCode);
-	    }
-	
-	  
 
 
 
+	  Client Find(const std::string& accountNumber, const char* pinCode = nullptr) const {
+			 return _FindObject(accountNumber, pinCode);
+		}
+
+	  enum  OperationStates { NotConfirmed = 0, Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3, AccountNumberNotFound = 4 };
 	   OperationStates AddClient(Client &FilledObject)
 	   {
 		   if (IsExists(FilledObject.getAccountNumber()))
@@ -180,40 +186,39 @@ public :
 			   return OperationStates::AccountNumberAlreadyExists;
 		   }
 
-		  
+
 		   FilledObject.setMode(Client::ObjectMode::newMode);
 		   FilledObject.Save();
 		   _AddInVector(FilledObject);
-			   
+
 
 
 		   return OperationStates::Successful;
 
 	   }
-
 	   OperationStates DeleteClient(const std::string& accountNumber) {
-		 
+
 		 if ( ! IsExists(accountNumber) )
 		 {
 			 return OperationStates::AccountNumberNotFound;
 		 }
 
-		 if ( ! _DeleteObject(accountNumber)  ) 
+		 if ( ! _DeleteObject(accountNumber)  )
 		 {
 			 return OperationStates::Failed;
 
 		 }
-		 
-		
+
+
 
 		 FileHandler::SaveFile(m_ClientList);
 		 _UpdateVector();
-		 
+
 		 return OperationStates::Successful;
 
 	 }
 	   OperationStates UpdateClient(const std::string& accountNumber, const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newPinCode, double newBalance) {
-        
+
 		   if (!IsExists(accountNumber))
 		   {
 			   return OperationStates::AccountNumberNotFound;
@@ -230,11 +235,9 @@ public :
 		   return OperationStates::Successful;
 
 	   }
-
-
 	   OperationStates UpdateClient(Client& ExistingObject) {
 
-		 
+
 
 		   if (!_UpdateObject(ExistingObject))
 		   {
@@ -264,6 +267,10 @@ public :
 		   return OperationStates::Successful;
 
 	   }
+
+	  */
+	  
+	   
 
 	
 };

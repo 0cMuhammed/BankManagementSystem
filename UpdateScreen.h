@@ -67,7 +67,7 @@ private:
 
         client = Operations::ReadClient(ExistingAccountNumber);
 
-        switch (m_RepositoryReference.operations.UpdateClient(client))
+        switch (m_RepositoryReference.m_Operations.UpdateClient(client))
         {
 
         case Operations::Failed: // for some reason....
@@ -94,7 +94,7 @@ private:
     }
     void _Update(const std::string& AccountNumber) {
 
-        Client client = m_RepositoryReference.operations.Find(AccountNumber);
+        Client client = m_RepositoryReference.m_Operations.Find(AccountNumber);
 
 
         if (client.isEmpty())

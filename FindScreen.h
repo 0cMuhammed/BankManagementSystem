@@ -58,7 +58,7 @@ private :
 	 void _PerformFind(const char* NotFoundMessage = nullptr) {
 
 		std::string AccountNumber = Validator::ReadString();
-		Client c  = m_RepositoryReference.operations.Find(AccountNumber);
+		Client c  = m_RepositoryReference.m_Operations.Find(AccountNumber);
 		
 		(!c.isEmpty()) ? Operations::PrintClient(c) : _Message( ( (NotFoundMessage != nullptr) ? NotFoundMessage : "Account is not found.") );
 

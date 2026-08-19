@@ -64,7 +64,7 @@ private :
         return isConfirm;
     }
     void _PrintDeleteStatus(Client& client) {
-        switch (m_RepositoryReference.operations.DeleteClient(client))
+        switch (m_RepositoryReference.m_Operations.DeleteClient(client))
         {
 
         case Operations::Failed : // for some reason....
@@ -90,7 +90,7 @@ private :
     }
     void _Delete(const std::string& AccountNumber) {
 
-        Client client = m_RepositoryReference.operations.Find(AccountNumber);
+        Client client = m_RepositoryReference.m_Operations.Find(AccountNumber);
          
 
         if (client.isEmpty())
