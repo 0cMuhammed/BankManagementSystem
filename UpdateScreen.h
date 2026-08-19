@@ -7,15 +7,55 @@
 #include "Repository.h"
 #include "Validator.h"
 #include "UI.h"
+#include "MainMenuScreen.h"
 
-class UpdateScreen : public UI
+class UpdateScreen : public MainMenuScreen
 {
 private:
     Repository& m_RepositoryReference;
 
-    static void _ClearScreen() {
+    //universial
+    void _ClearScreen() override {
         system("cls");
     }
+    void _Message(const char* Message) override {
+        std::cout << '\n' + Message;
+    }
+    void _GetBackToMenu(const char* Message = nullptr) override {
+        std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
+
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin.get();
+    }
+
+    void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+        std::cout << "\t\t\t\t\t______________________________________";
+
+        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Delete Client Screen"));
+
+        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
+
+        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+    }
+    void PerformMenu(const char* Message = nullptr) override {
+
+        bool IsContinueOperation = true;
+
+        do
+        {
+
+
+            _PerformUpdate();
+
+            IsContinueOperation = Validator::GetConfirmation('\n' + ( (Message != nullptr) ? Message : "Do you want to continue this operation?") );
+
+        } while (IsContinueOperation);
+
+    }
+   
+
+    //exclusive to Operations Class to be added later
     static void _PrintClient(const Client& client) {
 
         std::cout << "\nClient Card:";
@@ -32,7 +72,7 @@ private:
 
 
     }
-    static Client _ReadClient(const std::string &ExistingAccountNumber)
+    Client _ReadClient(const std::string &ExistingAccountNumber)
     {
         
         _Message("Enter first name");
@@ -55,26 +95,13 @@ private:
 
         return Client(FirstName, LastName, Email, Phone, ExistingAccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
     }
-    void PrintHeader(const std::string* ScreenName = nullptr, const std::string* SubTitle = nullptr) override {
-        std::cout << "\t\t\t\t\t______________________________________";
 
-        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? *ScreenName : "Delete Client Screen"));
-
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << *SubTitle; }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-    }
-
-    static void _Message(const std::string& Message) {
-        std::cout << "\n" + Message;
-    }
-
-    static bool _PerformConfirmation(const Client& client, const std::string* Message = nullptr) {
+    //exclusive
+    static bool _PerformConfirmation(const Client& client, const char* Message = nullptr) {
         _PrintClient(client);
-        bool isConfirm = Validator::GetConfirmation("\n" + (((Message != nullptr) ? *Message : "Are you sure you want to update this client?")));
+        bool isConfirm = Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Are you sure you want to update this client?")));
         return isConfirm;
     }
-
     void _PrintUpdateStatus(Client& client, const std::string &ExistingAccountNumber) {
 
         client = _ReadClient(ExistingAccountNumber);
@@ -104,7 +131,6 @@ private:
         }
 
     }
-
     void _Update(const std::string& AccountNumber) {
 
         Client client = m_RepositoryReference.Find(AccountNumber);
@@ -121,9 +147,6 @@ private:
         }
 
     }
-
-
-
     void _PerformUpdate() {
         _ClearScreen();
         PrintHeader();
@@ -134,29 +157,16 @@ private:
         _Update(AccountNumber);
 
     }
-    void PerformMenu(const std::string* Message = nullptr) override {
-
-        bool IsContinueOperation = true;
-
-        do
-        {
-
-
-            _PerformUpdate();
-
-            IsContinueOperation = Validator::GetConfirmation("\n" + (((Message != nullptr) ? *Message : "Do you want to continue this operation?")));
-
-        } while (IsContinueOperation);
-
-    }
+   
 
 
 public:
 
-     UpdateScreen(Repository& Repo) : m_RepositoryReference(Repo) {};
+    UpdateScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
 
     void Show() override {
         PerformMenu();
+        _GetBackToMenu();
     }
 };
 

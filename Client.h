@@ -29,7 +29,7 @@ private:
 public:
 
 	
-	Client(const std::string& firstName, const std::string& lastName, const std::string& email, const std::string& phoneNumber, const std::string& accountNumber, const std::string& pinCode, double balance, const ObjectMode &Mode) : Person(firstName, lastName, email, phoneNumber), m_accountNumber(accountNumber), m_pinCode(pinCode) , m_balance(balance), m_mode(Mode){};
+	Client(std::string firstName, std::string lastName, std::string email, std::string phoneNumber, std::string accountNumber, std::string pinCode, double balance, ObjectMode Mode) : Person(std::move(firstName), std::move(lastName),std::move( email), std::move(phoneNumber)), m_accountNumber(std::move(accountNumber)), m_pinCode(std::move(pinCode)), m_balance(balance), m_mode(Mode) {};
 	
 
 	bool operator==(const Client& client) const {

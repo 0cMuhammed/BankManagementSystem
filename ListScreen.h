@@ -5,35 +5,63 @@
 #include "Repository.h"
 #include<iomanip>
 #include <limits>
+
+#include "MainMenuScreen.h"
 #include "UI.h"
 
-class ListScreen : public UI 
+class ListScreen : public MainMenuScreen 
 { 
 
 private:
    const Repository& m_RepositoryReference;  // read only on repository dependency injection
 
+    //universal
+   void _ClearScreen() override {
+       system("cls");
+    }
+   void _GetBackToMenu(const char* Message = nullptr) override {
+       std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
 
-    void PrintHeader(const std::string* ScreenName = nullptr, const std::string* SubTitle = nullptr) override {
-        system("cls");
+       std::cin.clear();
+       std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+       std::cin.get();
+   }
+   void _Message(const char *Message = nullptr) override {
+       std::cout << '\n' + Message;
+   }
+   
+   void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+       
         std::cout << "\t\t\t\t\t______________________________________";
 
-        std::cout << "\n\n\t\t\t\t\t  " << ( ( (ScreenName != nullptr) ? *ScreenName : "Client List") );
+        std::cout << "\n\n\t\t\t\t\t  " << ( ( (ScreenName != nullptr) ? ScreenName : "Client List") );
 
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << *SubTitle; }
+        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
     }
-    void PerformMenu(const std::string* Message = nullptr) override {
-        std::cout << "\n" + ( ( (Message != nullptr) ? *Message : "Press Enter to go back to Main Menu") )  + "....." + "\n";
+   void PerformMenu(const char* Message = nullptr) override {
+       if (m_RepositoryReference.GetClientList().size() == 0)
+       {
 
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cin.get();
-    }
+           _Message("\t\t\t\tNo Clients Available In the System!");
+           
 
-    static void _PrintClient(const Client &client)
+       }
+       else
+       {
+           const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.GetClientList().size()) + ") Client(s).";
+
+           PrintHeader(nullptr, SubTitle.c_str());
+           _PrintLayout();
+           _PrintAll(m_RepositoryReference.GetClientList());
+
+       }
+   }
+
+    //exclusive
+    static void _PrintFormattedClient(const Client &client)
     {
 
         std::cout << std::setw(8) << std::left << "" << "| " << std::setw(15) << std::left << client.getAccountNumber();
@@ -44,6 +72,7 @@ private:
         std::cout << "| " << std::setw(12) << std::left << client.getBalance();
 
     }
+
     static void _PrintLine() {
         std::cout << std::setw(8) << std::left << "" << "\n\t_______________________________________________________";
         std::cout << "_________________________________________\n" << std::endl;
@@ -65,36 +94,23 @@ private:
         for (const Client& client : AllClients)
         {
 
-            _PrintClient(client);
+            _PrintFormattedClient(client);
             std::cout << std::endl;
         }
         _PrintLine();
         
     }
 
+    
 public :
-    ListScreen(Repository& Repo) : m_RepositoryReference(Repo) {};
+    ListScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
 
     void Show() override {
 
       
 
-       if (m_RepositoryReference.GetClientList().size() != 0) 
-       {
-
-        const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.GetClientList().size()) + ") Client(s).";
-
-        PrintHeader(nullptr,&SubTitle);
-        _PrintLayout();
-        _PrintAll(m_RepositoryReference.GetClientList());
-
-
-       }
-       else 
-       {
-               std::cout << "\t\t\t\tNo Clients Available In the System!";
-       }
-       PerformMenu();
+        PerformMenu();
+       _GetBackToMenu();
 
     }
     

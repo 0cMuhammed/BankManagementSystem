@@ -15,7 +15,7 @@ public :
 
 	static std::vector<Client> LoadFile();
 	static void SaveFile(const Client& client);
-	static void SaveFile(const std::vector<Client>& Clients);
+	static void SaveFile(const std::vector<Client> &Clients);
 
 };
 
@@ -34,11 +34,11 @@ inline std::vector<Client>  FileHandler::LoadFile() {
 
 	if (file.is_open())
 	{
-		std::string dataline;
+		std::string dataline = "";
 
-		while (!(std::getline(file, dataline).fail()))
+		while (!(std::getline(file, dataline).fail()) && (!dataline.empty()))
 		{
-			Clients.emplace_back(Parser::LineToObject(dataline));
+			Clients.emplace_back( Parser::LineToObject( std::move(dataline) ) ); // internally std::move(dataline) to to Tokens() if passed rvalue, if a lvalue is passed a copy would happen
 		}
 		file.close();
 	}
@@ -57,16 +57,16 @@ inline  void FileHandler::SaveFile(const Client& client) {
 	File.close();
 
 } // for one client
-inline  void FileHandler::SaveFile(const std::vector<Client>& Clients) {
+inline  void FileHandler::SaveFile(const std::vector<Client> &Clients) {
 
 	std::fstream File;
 	File.open("Clients.txt", std::ios::out);
 	if (File.is_open()) {
-		for (const Client& client : Clients)
+		for (const Client  &c : Clients)
 		{
-			if (!_isNotToBeSaved(client))
+			if (!_isNotToBeSaved(c))
 			{
-				File << Parser::ObjectToLine(client) << '\n';
+				File << Parser::ObjectToLine( std::move(c) ) << '\n'; // i decided to pass by value (a copy) and then in the loop parsing and making the strings with also copying it woulde be expensive. with std::move u get only one copy and them moving the objects and printing the strings directly instead of copying
 			}
 
 		}

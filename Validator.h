@@ -12,7 +12,7 @@
 			return (Number >= from && Number <= to);
 		}
 
-		static double returnValidatedNumber(const std::string& invalidMessage = "Invalid Number", double from = 0, double to = 0)
+		static double returnValidatedNumber(double from = 0, double to = 0, const std::string& invalidMessage = "Invalid Number")
 		{
 
 			double number = 0;

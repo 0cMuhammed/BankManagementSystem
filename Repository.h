@@ -36,12 +36,12 @@ private :
 	bool _DeleteObject(const std::string& accountNumber) {
 		
 		
-			for (Client& client : m_ClientList)
+			for (Client& c : m_ClientList)
 			{
-				if ( _IsModifiable(client, accountNumber) )
+				if ( _IsModifiable(c, accountNumber) )
 				{
-					client.setMode(Client::ObjectMode::DeleteMode);
-					_MakeEmpty(client);
+					c.setMode(Client::ObjectMode::DeleteMode);
+					_MakeEmpty(c);
 					return true;
 				}
 
@@ -73,7 +73,7 @@ private :
 
 		for (Client& c: m_ClientList)
 		{
-			if (_IsModifiable(c, accountNumber)) // a client has to be in update mode which is an the mode of an object when its already there when its not empty or new
+			if (_IsModifiable(c, accountNumber)) 
 			{
 				c.SetObject(newFirstName, newLastName, newEmail, newPhoneNumber, newPinCode, newBalance);
 				c.Save();

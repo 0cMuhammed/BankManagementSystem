@@ -145,9 +145,11 @@
     <ClInclude Include="AddScreen.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="DeleteScreen.h" />
+    <ClInclude Include="FindScreen.h" />
     <ClInclude Include="ListScreen.h" />
     <ClInclude Include="Date.h" />
     <ClInclude Include="FileHandler.h" />
+    <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="UpdateScreen.h" />
     <ClInclude Include="Validator.h" />
     <ClInclude Include="UI.h" />

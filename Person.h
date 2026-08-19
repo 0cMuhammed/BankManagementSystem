@@ -10,8 +10,8 @@ private:
 
 public:
 
-	
-	Person(const std::string& FirstName, const std::string& LastName, const std::string& Email, const std::string& PhoneNumber) : m_firstName(FirstName), m_lastName(LastName), m_email(Email), m_phoneNumber(PhoneNumber) 
+
+	Person(std::string FirstName, std::string LastName, std::string Email, std::string PhoneNumber) : m_firstName(std::move(FirstName)), m_lastName(std::move(LastName)), m_email(std::move(Email)), m_phoneNumber(std::move(PhoneNumber))
 	{
 
 	};
