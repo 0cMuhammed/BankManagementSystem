@@ -10,15 +10,15 @@
 #include "ListScreen.h"
 #include "AddScreen.h"
 #include "DeleteScreen.h"
-#include "UpdateScreen.h"
-#include"FindScreen.h"
+#include "UpdateScreen.h"`
+#include"FindScreen.h"`
 
 #include "UI.h"
 
 class MainMenuScreen : public UI 
 {
 public :
-    // abstarct functions for classes under MainMenu
+    // abstarct functions for classes under MainMenuScreen
     virtual void _GetBackToMenu(const char* Message = nullptr) = 0;
     virtual void _ClearScreen() = 0;
     virtual void _Message(const char *Message = nullptr) = 0;
@@ -37,6 +37,9 @@ private :
         
         isInMainMenu = false;
         
+    }
+    static void _MainMenuMessage(const char*Message) {
+        std::cout << '\n' + Message;
     }
      void _MainMenuLayout()
     {
@@ -60,6 +63,8 @@ private :
     }
 	MainMenuComponents _NavigateUser(double from = 1, double to = 8)
 	{
+         _MainMenuMessage("Choose What do you want to do ? [1 to 8] : ");
+
 		return  (MainMenuComponents) Validator::returnValidatedNumber(from, to);
 	}
     
@@ -71,19 +76,19 @@ private :
 			std::cout << "\t\t\t\t\t______________________________________";
 
 			std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Main Menu"));
+            
+                if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
-			if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
+            std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
-			std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-		
-	}
+    }
     void PerformMenu(const char* Message = nullptr) override {
-       
-        bool isInMainMenu = true;
-        do 
-        { 
-            _MainMenuLayout();
 
+        bool isInMainMenu = true;
+        do
+        {
+            _MainMenuLayout();
+            
             switch (_NavigateUser())
             {
             case MainMenuComponents::List: 
@@ -146,6 +151,8 @@ private :
 public : 
 
     MainMenuScreen(Repository& Repo) : m_RepositoryReference(Repo) {};
+
+
     void Show() override {
         PerformMenu();
     }
