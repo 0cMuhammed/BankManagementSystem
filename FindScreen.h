@@ -12,7 +12,7 @@
 class FindScreen : public MainMenuScreen
 {
 private :
-	const Repository& m_RepositoryReference; // read only dependency injection
+	Repository& m_RepositoryReference; 
 	
 	//universal 
 	 void _Message(const char* Message) override {
@@ -53,30 +53,14 @@ private :
 	}
 	
 
-	//exclusive to Opeartions Class
-	void _PrintClient(const Client& client) {
-		_Message("Client Found!");
-		std::cout << "\nClient Card:";
-		std::cout << "\n___________________";
-		std::cout << "\nFirstName   : " << client.getFirstName();
-		std::cout << "\nLastName    : " << client.getLastName();
-		std::cout << "\nFull Name   : " << client.getFullName();
-		std::cout << "\nEmail       : " << client.getEmail();
-		std::cout << "\nPhone       : " << client.getPhoneNumber();
-		std::cout << "\nAcc. Number : " << client.getAccountNumber();
-		std::cout << "\nPassword    : " << client.getPinCode();
-		std::cout << "\nBalance     : " << client.getBalance();
-		std::cout << "\n___________________\n";
-
-
-	}
+	
 
 	 void _PerformFind(const char* NotFoundMessage = nullptr) {
 
 		std::string AccountNumber = Validator::ReadString();
-		Client c  = m_RepositoryReference.Find(AccountNumber);
+		Client c  = m_RepositoryReference.operations.Find(AccountNumber);
 		
-		(!c.isEmpty()) ? _PrintClient(c) : _Message( ( (NotFoundMessage != nullptr) ? NotFoundMessage : "Account is not found.") );
+		(!c.isEmpty()) ? Operations::PrintClient(c) : _Message( ( (NotFoundMessage != nullptr) ? NotFoundMessage : "Account is not found.") );
 
 	}
 

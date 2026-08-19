@@ -55,41 +55,25 @@ private :
     }
    
 
-    //exclusive to the Operations class
-    static void _PrintClient(const Client& client) {
 
-        std::cout << "\nClient Card:";
-        std::cout << "\n___________________";
-        std::cout << "\nFirstName   : " << client.getFirstName();
-        std::cout << "\nLastName    : " << client.getLastName();
-        std::cout << "\nFull Name   : " << client.getFullName();
-        std::cout << "\nEmail       : " << client.getEmail();
-        std::cout << "\nPhone       : " << client.getPhoneNumber();
-        std::cout << "\nAcc. Number : " << client.getAccountNumber();
-        std::cout << "\nPassword    : " << client.getPinCode();
-        std::cout << "\nBalance     : " << client.getBalance();
-        std::cout << "\n___________________\n";
-
-
-    }
 
    
     static bool _PerformConfirmation(const Client &client, const char* Message = nullptr) {
-        _PrintClient(client);
+        Operations::PrintClient(client);
         bool isConfirm =  Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Are you sure you want to delete this client?")));
         return isConfirm;
     }
     void _PrintDeleteStatus(Client& client) {
-        switch (m_RepositoryReference.DeleteClient(client))
+        switch (m_RepositoryReference.operations.DeleteClient(client))
         {
 
-        case Repository::Failed: // for some reason....
+        case Operations::Failed : // for some reason....
         {
             std::cout << "Operation Failed, Try again Later...\n";
             break;
 
         }
-        case Repository::Successful:
+        case Operations::Successful:
         {
             std::cout << "Account is deleted Successfully!\n";
             break;
@@ -106,7 +90,7 @@ private :
     }
     void _Delete(const std::string& AccountNumber) {
 
-        Client client = m_RepositoryReference.Find(AccountNumber);
+        Client client = m_RepositoryReference.operations.Find(AccountNumber);
          
 
         if (client.isEmpty())
