@@ -4,8 +4,8 @@
 #include<iomanip>
 
 #include "Client.h"
-#include "Repository.h"
 #include "Validator.h"
+#include "Operations.h"
 #include "UI.h"
 
 
@@ -67,7 +67,7 @@ private:
 
         client = Operations::ReadClient(ExistingAccountNumber);
 
-        switch (m_RepositoryReference.m_Operations.UpdateClient(client))
+        switch (m_RepositoryReference.OperationsSection.UpdateClient(client))
         {
 
         case Operations::Failed: // for some reason....
@@ -94,7 +94,7 @@ private:
     }
     void _Update(const std::string& AccountNumber) {
 
-        Client client = m_RepositoryReference.m_Operations.Find(AccountNumber);
+        Client client = m_RepositoryReference.OperationsSection.Find(AccountNumber);
 
 
         if (client.isEmpty())
@@ -125,7 +125,7 @@ public:
 
     UpdateScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
 
-    void Show() override {
+    void Start() override {
         PerformMenu();
         _GetBackToMenu();
     }

@@ -25,9 +25,7 @@ public:
 
 	BankOperations(Operations& Repo) : m_OpearationsReference(Repo) {};
 	
-	Operations& AccsessOperations() const {
-		return m_OpearationsReference;
-	}
+	
 
 	Operations::OperationStates Withdraw(const std::string& AccountNumber, double amount) {
 

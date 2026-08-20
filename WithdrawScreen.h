@@ -4,24 +4,25 @@
 #include<fstream>
 #include "Client.h"
 #include "Validator.h"
-#include "BankOperations.h"
-#include "UI.h"
-#include "Operations.h"
 
-class WithdrawScreen : public UI
+
+#include "UI.h"
+
+
+class WithdrawScreen : public TransactionsScreen
 {
 private:
 
-	BankOperations& m_BankOperationsReference;
+	Repository& m_RepositoryReference;
 
-	void _ClearScreen() {
+	void _ClearScreen() override {
 		system("cls");
 	}
-	void _Message(const char* Message) {
+	void _Message(const char* Message) override {
 		std::cout << '\n' + Message;
 
 	}
-	void _GetBackToMenu(const char* Message = nullptr) {
+	void _GetBackToMenu(const char* Message = nullptr) override {
 		std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Transactions Menu")); std::cout << ".....\n";
 
 		std::cin.clear();
@@ -33,7 +34,7 @@ private:
 		_Message("Your balance is :");
 		std::cout << client.getBalance() << "\n";
 	}
-	void _PrintWithdrawAmount(double amount ) {
+	void _PrintWithdrawAmount(double amount) {
 		_Message("Amount to withdraw :");
 		std::cout << amount << "\n";
 	}
@@ -53,7 +54,7 @@ private:
 
 	void _PrintWithdrawStatus(Client& ExistingClient, double amount) {
 
-		switch (m_BankOperationsReference.Withdraw(ExistingClient, amount))
+		switch (m_RepositoryReference.OperationsSection.BankOperationsSection.Withdraw(ExistingClient, amount))
 		{
 
 		case Operations::OperationStates::AccountNumberNotFound:
@@ -93,7 +94,7 @@ private:
 	void _Withdraw(const std::string& AccountNumber) {
 
 
-		Client client = m_BankOperationsReference.AccsessOperations().Find(AccountNumber);
+		Client client = m_RepositoryReference.OperationsSection.Find(AccountNumber);
 
 		if (!client.isEmpty())
 		{
@@ -154,9 +155,9 @@ private:
 
 public:
 
-	WithdrawScreen(BankOperations& Bank) : m_BankOperationsReference(Bank) {};
+	WithdrawScreen(Repository& Repo) :  TransactionsScreen(Repo), m_RepositoryReference(Repo) {};
 
-	void Show() override {
+	void Start() override {
 		PerformMenu();
 		_GetBackToMenu();
 	}

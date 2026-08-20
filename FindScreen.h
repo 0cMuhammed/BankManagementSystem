@@ -58,7 +58,7 @@ private :
 	 void _PerformFind(const char* NotFoundMessage = nullptr) {
 
 		std::string AccountNumber = Validator::ReadString();
-		Client c  = m_RepositoryReference.m_Operations.Find(AccountNumber);
+		Client c  = m_RepositoryReference.OperationsSection.Find(AccountNumber);
 		
 		(!c.isEmpty()) ? Operations::PrintClient(c) : _Message( ( (NotFoundMessage != nullptr) ? NotFoundMessage : "Account is not found.") );
 
@@ -69,7 +69,7 @@ public:
 	FindScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
 	
 	//well obviously
-	void Show() override {
+	void Start() override {
 		PerformMenu();
 		_GetBackToMenu();
 	}

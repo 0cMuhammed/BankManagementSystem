@@ -16,9 +16,9 @@ private :
 
 public :
 	
-	 Operations m_Operations;
+	 Operations OperationsSection;
 
-	 Repository() : m_ClientList(FileHandler::LoadFile()), m_Operations(m_ClientList) {
+	 Repository() : m_ClientList(FileHandler::LoadFile()), OperationsSection(m_ClientList) {
 
 	};
 

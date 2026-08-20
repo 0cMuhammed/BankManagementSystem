@@ -4,24 +4,23 @@
 #include<fstream>
 #include "Client.h"
 #include "Validator.h"
-#include "BankOperations.h"
-#include "UI.h"
-#include "Operations.h"
 
-class DepositScreen : public UI
+
+
+class DepositScreen : public TransactionsScreen
 {
 private :
 	   
-	   BankOperations& m_BankOperationsReference;
+	    Repository& m_RepositoryReference;
 
-	    void _ClearScreen() {
+	    void _ClearScreen() override {
 		   system("cls");
 	   }
-		void _Message(const char* Message) {
+		void _Message(const char* Message) override {
 			std::cout << '\n' + Message;
 
 		}
-		void _GetBackToMenu(const char* Message = nullptr)  {
+		void _GetBackToMenu(const char* Message = nullptr) override {
 			std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Transactions Menu")); std::cout << ".....\n";
 
 			std::cin.clear();
@@ -44,7 +43,7 @@ private :
 
 		void _PrintDepositStatus(Client &ExistingClient, double amount) {
 
-			switch (m_BankOperationsReference.Deposit(ExistingClient,amount))
+			switch (m_RepositoryReference.OperationsSection.BankOperationsSection.Deposit(ExistingClient,amount))
 			{
 
 			case Operations::OperationStates::AccountNumberNotFound:
@@ -78,7 +77,7 @@ private :
 		void _Deposit(const std::string &AccountNumber) {
 
 			
-			Client client = m_BankOperationsReference.AccsessOperations().Find(AccountNumber);
+			Client client = m_RepositoryReference.OperationsSection.Find(AccountNumber);
 			
 			if (!client.isEmpty()) 
 			{
@@ -139,9 +138,9 @@ private :
 
 		public :
 
-			DepositScreen(BankOperations& Bank) : m_BankOperationsReference(Bank) {};
+			DepositScreen(Repository& Repo) : TransactionsScreen(Repo), m_RepositoryReference(Repo) {};
 
-			void Show() override {
+			void Start() override {
 				PerformMenu();
 				_GetBackToMenu();
 			}

@@ -4,10 +4,10 @@
 #include<iomanip>
 
 #include "Client.h"
-#include "Repository.h"
-#include "Validator.h"
-#include "UI.h"
 
+#include "UI.h"
+#include "Validator.h"
+#include "Operations.h"
 
 class AddScreen : public MainMenuScreen 
 {
@@ -63,7 +63,7 @@ private :
 
   
     void _Add(Client& New) {
-        switch (m_RepositoryReference.m_Operations.AddClient(New))
+        switch (m_RepositoryReference.OperationsSection.AddClient(New))
         {
 
         case Operations::Successful:
@@ -108,7 +108,7 @@ private :
     public :
         AddScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
 
-    void Show() override {
+    void Start() override {
         PerformMenu();
         _GetBackToMenu();
     }

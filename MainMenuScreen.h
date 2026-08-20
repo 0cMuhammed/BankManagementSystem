@@ -12,6 +12,7 @@
 #include "DeleteScreen.h"
 #include "UpdateScreen.h"`
 #include"FindScreen.h"`
+#include "TransactionsScreen.h"
 
 #include "UI.h"
 
@@ -41,6 +42,7 @@ private :
     static void _MainMenuMessage(const char*Message) {
         std::cout << '\n' + Message;
     }
+
      void _MainMenuLayout()
     {
 
@@ -94,44 +96,51 @@ private :
             case MainMenuComponents::List: 
             {
                 ListScreen List(m_RepositoryReference);
-                List.Show();
+                List.Start();
                 break;
               
             }
             case MainMenuComponents::Add: 
             {
                 AddScreen Add(m_RepositoryReference);
-                Add.Show();
+                Add.Start();
                 break;
             }
             case MainMenuComponents::Delete: 
             {
                 DeleteScreen Delete(m_RepositoryReference);
-                Delete.Show();
+                Delete.Start();
                 break;
 
             }
             case MainMenuComponents::Update: 
             {
                 UpdateScreen Update(m_RepositoryReference);
-                Update.Show();
+                Update.Start();
                 break;
 
             }
             case MainMenuComponents::Find: 
             {
                 FindScreen Find(m_RepositoryReference);
-                Find.Show();
+                Find.Start();
                 break;
 
             } 
+            case MainMenuComponents::Transactions:
+            {
+                TransactionsScreen Transactions(m_RepositoryReference);
+                Transactions.Start();
+                break;
+
+            }
             case MainMenuComponents::Logout: 
             {
                 _ExitMenu(isInMainMenu);
                 break;
 
             }
-            default: //for later enuchoice
+            default: //for later enum choices
             {
                 break;
 
@@ -153,7 +162,7 @@ public :
     MainMenuScreen(Repository& Repo) : m_RepositoryReference(Repo) {};
 
 
-    void Show() override {
+    void Start() override {
         PerformMenu();
     }
 

@@ -77,5 +77,8 @@
     <ClInclude Include="TotalBalanceScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TransactionsScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

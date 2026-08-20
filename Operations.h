@@ -143,9 +143,9 @@ private :
 
 	public : 
 
-	 	 BankOperations m_BankOperations;
+	 	 BankOperations BankOperationsSection;
 
-		 Operations(std::vector<Client>& List) : m_List(List), m_BankOperations(*this) {};
+		 Operations(std::vector<Client>& List) : m_List(List), BankOperationsSection(*this) {};
 
 		 const std::vector<Client>& GetList() const {
 			 return m_List;

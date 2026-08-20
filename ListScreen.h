@@ -42,7 +42,7 @@ private:
 
     }
    void PerformMenu(const char* Message = nullptr) override {
-       if (m_RepositoryReference.m_Operations.GetList().size() == 0)
+       if (m_RepositoryReference.OperationsSection.GetList().size() == 0)
        {
 
            _Message("\t\t\t\tNo Clients Available In the System!");
@@ -51,11 +51,11 @@ private:
        }
        else
        {
-           const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.m_Operations.GetList().size()) + ") Client(s).";
+           const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.OperationsSection.GetList().size()) + ") Client(s).";
 
            PrintHeader(nullptr, SubTitle.c_str());
            _PrintLayout();
-           _PrintAll(m_RepositoryReference.m_Operations.GetList());
+           _PrintAll(m_RepositoryReference.OperationsSection.GetList());
 
        }
    }
@@ -105,7 +105,7 @@ private:
 public :
     ListScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
 
-    void Show() override {
+    void Start() override {
 
       
 

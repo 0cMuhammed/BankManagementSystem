@@ -154,6 +154,7 @@
     <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="Operations.h" />
     <ClInclude Include="TotalBalanceScreen.h" />
+    <ClInclude Include="TransactionsScreen.h" />
     <ClInclude Include="UpdateScreen.h" />
     <ClInclude Include="Validator.h" />
     <ClInclude Include="UI.h" />

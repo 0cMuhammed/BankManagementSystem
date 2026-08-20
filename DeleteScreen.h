@@ -6,6 +6,8 @@
 #include "Client.h"
 #include "Repository.h"
 #include "Validator.h"
+#include "Operations.h"
+
 #include "UI.h"
 
 
@@ -65,7 +67,7 @@ private :
     }
     void _PrintDeleteStatus(Client& client) {
  
-        switch (m_RepositoryReference.m_Operations.DeleteClient(client))
+        switch (m_RepositoryReference.OperationsSection.DeleteClient(client))
         {
 
         case Operations::Failed : // for some reason....
@@ -91,7 +93,7 @@ private :
     }
     void _Delete(const std::string& AccountNumber) {
 
-        Client client = m_RepositoryReference.m_Operations.Find(AccountNumber);
+        Client client = m_RepositoryReference.OperationsSection.Find(AccountNumber);
          
 
         if (client.isEmpty())
@@ -123,7 +125,7 @@ private :
 
          DeleteScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
 
-        void Show() override {
+        void Start() override {
             PerformMenu();
             _GetBackToMenu();
         }

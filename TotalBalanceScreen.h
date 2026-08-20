@@ -3,25 +3,27 @@
 #include<vector>
 #include<fstream>
 #include "Client.h"
-#include "Validator.h"
-#include "BankOperations.h"
-#include "UI.h"
-#include "Operations.h"
 #include "Parser.h"
+
 #include<iomanip>
 
-class TotalBalanceScreen : public UI
-{
-	BankOperations& m_BankOperationsReference;
+#include "UI.h"
 
-	void _ClearScreen() {
+
+
+class TotalBalanceScreen : public TransactionsScreen
+{
+private :
+	const Repository& m_RepositoryReference; // read only dependency injection
+
+	void _ClearScreen() override {
 		system("cls");
 	}
-	void _Message(const char* Message) {
+	void _Message(const char* Message) override {
 		std::cout << '\n' + Message;
 
 	}
-	void _GetBackToMenu(const char* Message = nullptr) {
+	void _GetBackToMenu(const char* Message = nullptr) override {
 		std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Transactions Menu")); std::cout << ".....\n";
 
 		std::cin.clear();
@@ -51,7 +53,7 @@ class TotalBalanceScreen : public UI
 	}
 
 	void _PrintAll() {
-		for (const Client& client : m_BankOperationsReference.AccsessOperations().GetList())
+		for (const Client& client : m_RepositoryReference.OperationsSection.GetList())
 		{
 
 			_PrintFormattedClient(client);
@@ -61,7 +63,7 @@ class TotalBalanceScreen : public UI
 
 	}
 	void _PrintTotalBalance() {
-		double total = m_BankOperationsReference.AccsessOperations().GetTotalBalances();
+		double total = m_RepositoryReference.OperationsSection.GetTotalBalances();
 		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t\t\t\t     Total Balances = " << total << '\n';
 		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t  ( " << Parser::BalanceToText(total) << ")"; // will get cut off to the an integer 
 		
@@ -79,7 +81,7 @@ class TotalBalanceScreen : public UI
 
 	}
 	void PerformMenu(const char* Message = nullptr) override {
-		if (m_BankOperationsReference.AccsessOperations().GetList().size() == 0)
+		if (m_RepositoryReference.OperationsSection.GetList().size() == 0)
 		{
 
 			_Message("\t\t\t\tNo Clients Available In the System!");
@@ -88,7 +90,7 @@ class TotalBalanceScreen : public UI
 		}
 		else
 		{
-			const std::string SubTitle = "\t    (" + std::to_string(m_BankOperationsReference.AccsessOperations().GetList().size()) + ") Client(s).";
+			const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.OperationsSection.GetList().size()) + ") Client(s).";
 
 			PrintHeader(nullptr, SubTitle.c_str());
 			_PrintLayout();
@@ -99,6 +101,13 @@ class TotalBalanceScreen : public UI
 
 	}
 
+public :
+	TotalBalanceScreen(Repository& Repo) : TransactionsScreen(Repo), m_RepositoryReference(Repo) {};
+
+	void Start() override {
+		PerformMenu();
+		_GetBackToMenu();
+	}
 
 };
 
