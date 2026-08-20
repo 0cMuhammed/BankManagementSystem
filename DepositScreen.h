@@ -29,7 +29,11 @@ private :
 			std::cin.get();
 		}
 
-	 
+		 void _PrintAmount(const Client &client) {
+			_Message("New Balance = ");
+			std::cout << client.getBalance() << "\n";
+
+		}
 
 		 bool _PerformConfirmation(const Client& client,  const char* Message = nullptr) {
 
@@ -38,9 +42,9 @@ private :
 			return isConfirm;
 		}
 
-		void _PrintDepositStatus(const std::string &AccountNumber, double amount) {
+		void _PrintDepositStatus(Client &ExistingClient, double amount) {
 
-			switch (m_BankOperationsReference.Deposit(AccountNumber,amount))
+			switch (m_BankOperationsReference.Deposit(ExistingClient,amount))
 			{
 
 			case Operations::OperationStates::AccountNumberNotFound:
@@ -51,6 +55,7 @@ private :
 			case Operations::OperationStates::Successful:
 			{
 				std::cout << "\nAmount Deposited Sucessfully.";
+				_PrintAmount(ExistingClient);
 				break;
 			}
 
@@ -79,7 +84,8 @@ private :
 			{
 				double amount = GetAmount(client);
 
-				(_PerformConfirmation(client)) ? _PrintDepositStatus(AccountNumber, amount) : _Message("Operations is Cancelled.");
+				(_PerformConfirmation(client)) ?  _PrintDepositStatus(client, amount) : _Message("Operations is Cancelled.");
+				   
 			}
 			else 
 			{

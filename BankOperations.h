@@ -70,6 +70,23 @@ public:
 
 	}
 
+	Operations::OperationStates Deposit(Client &ExisitingClient, double amount) {
+
+
+		if (ExisitingClient.isEmpty())
+		{
+			return Operations::OperationStates::AccountNumberNotFound;
+		}
+
+
+		_Deposit(ExisitingClient, amount);
+		m_OpearationsReference.UpdateClient(ExisitingClient);
+
+		return Operations::OperationStates::Successful;
+
+
+	}
+
 
 };
 
