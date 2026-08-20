@@ -13,8 +13,6 @@ private :
 	
 	std::vector<Client> m_ClientList;
 	
-	
-		
 
 public :
 	
@@ -24,19 +22,6 @@ public :
 
 	};
 
-	
-	
-	 const std::vector<Client>& GetClientList() const {
-		return m_ClientList;
-	}
-
-
-
-	  
-	
-	   
-
-	
 };
 
 

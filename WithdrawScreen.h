@@ -145,7 +145,7 @@ private:
 	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 		std::cout << "\t\t\t\t\t______________________________________";
 
-		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Deposit Screen"));
+		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Withdraw Screen"));
 
 		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 

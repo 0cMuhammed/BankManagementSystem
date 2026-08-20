@@ -147,6 +147,9 @@ private :
 
 		 Operations(std::vector<Client>& List) : m_List(List), m_BankOperations(*this) {};
 
+		 const std::vector<Client>& GetList() const {
+			 return m_List;
+		 }
 
 		 bool IsExists(const std::string& accountNumber, const char* pinCode = nullptr)  {
 
@@ -218,6 +221,7 @@ private :
 
 			 return Client(FirstName, LastName, Email, Phone, ExistingAccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
 		 }
+		 
 
 		 Client Find(const std::string& accountNumber, const char* pinCode = nullptr)  {
 			return _FindObject(accountNumber, pinCode);
