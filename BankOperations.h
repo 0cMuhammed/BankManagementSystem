@@ -8,12 +8,10 @@
 
 class BankOperations 
 {
+
 private :
-	
 
 	Operations& m_OpearationsReference; // dependency injection for Operations to accsess Update Methods, BankOperations() -> Operations() --> m_ClientList in Repository
-
-	 
 
 	void _Withdraw(Client &ToWithdrawFrom, double amount) {
 		ToWithdrawFrom.setBalance(ToWithdrawFrom.getBalance() - amount);
@@ -22,8 +20,14 @@ private :
 		ToDeposit.setBalance(ToDeposit.getBalance() + amount);
 	}
 
+
 public:
+
 	BankOperations(Operations& Repo) : m_OpearationsReference(Repo) {};
+	
+	Operations& AccsessOperations() const {
+		return m_OpearationsReference;
+	}
 
 	Operations::OperationStates Withdraw(const std::string& AccountNumber, double amount) {
 

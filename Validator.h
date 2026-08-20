@@ -40,7 +40,7 @@
 		
 			std::cin >> number;
 
-			while (std::cin.fail() || number < 0 )
+			while (std::cin.fail() || number <= 0 )
 			{
 				std::cin.clear();
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

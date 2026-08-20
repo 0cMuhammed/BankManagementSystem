@@ -142,6 +142,7 @@ private :
 	}
 
 	public : 
+
 	 	 BankOperations m_BankOperations;
 
 		 Operations(std::vector<Client>& List) : m_List(List), m_BankOperations(*this) {};
@@ -169,7 +170,6 @@ private :
 
 
 		 }
-
 		 static Client ReadClient()
 		 {
 			 _Message("Enter your account number");
@@ -219,9 +219,23 @@ private :
 			 return Client(FirstName, LastName, Email, Phone, ExistingAccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
 		 }
 
-		Client Find(const std::string& accountNumber, const char* pinCode = nullptr)  {
+		 Client Find(const std::string& accountNumber, const char* pinCode = nullptr)  {
 			return _FindObject(accountNumber, pinCode);
 		}
+		 double GetTotalBalances() const {
+
+			 double total = 0;
+
+
+			 for (const Client& client : m_List)
+			 {
+				 total += client.getBalance();
+			 }
+
+			 return total;
+
+		 }
+
 		 OperationStates AddClient(Client& FilledObject)
 		{
 			if (IsExists(FilledObject.getAccountNumber()))
@@ -239,6 +253,24 @@ private :
 			return OperationStates::Successful;
 
 		}
+
+		 OperationStates DeleteClient(const Client& ExistingObject) {
+
+
+			 if (!_DeleteObject(ExistingObject))
+			 {
+				 return OperationStates::Failed;
+
+			 }
+
+
+
+			 FileHandler::SaveFile(m_List);
+			 _UpdateVector();
+
+			 return OperationStates::Successful;
+
+		 }
 		 OperationStates DeleteClient(const std::string& accountNumber) {
 
 			if (!IsExists(accountNumber))
@@ -260,6 +292,7 @@ private :
 			return OperationStates::Successful;
 
 		}
+
 		 OperationStates UpdateClient(const std::string& accountNumber, const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newPinCode, double newBalance) {
 
 			if (!IsExists(accountNumber))
@@ -293,23 +326,7 @@ private :
 			return OperationStates::Successful;
 
 		}
-		 OperationStates DeleteClient(const Client& ExistingObject) {
-
-
-			if (!_DeleteObject(ExistingObject))
-			{
-				return OperationStates::Failed;
-
-			}
-
-
-
-			FileHandler::SaveFile(m_List);
-			_UpdateVector();
-
-			return OperationStates::Successful;
-
-		}
+		
 
 
 

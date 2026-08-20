@@ -27,6 +27,7 @@ inline  bool FileHandler::_isNotToBeSaved(const Client& client) noexcept {
 	const Client::ObjectMode Mode = client.getMode();
 	return	(Mode == Client::ObjectMode::EmptyMode || Mode == Client::ObjectMode::DeleteMode);
 }
+
 inline std::vector<Client>  FileHandler::LoadFile() {
 	std::fstream file;
 	std::vector<Client> Clients;
@@ -45,6 +46,7 @@ inline std::vector<Client>  FileHandler::LoadFile() {
 
 	return Clients;
 }
+
 inline  void FileHandler::SaveFile(const Client& client) {
 
 	std::fstream File;
@@ -57,6 +59,7 @@ inline  void FileHandler::SaveFile(const Client& client) {
 	File.close();
 
 } // for one client
+
 inline  void FileHandler::SaveFile(const std::vector<Client> &Clients) {
 
 	std::fstream File;
