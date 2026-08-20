@@ -159,6 +159,7 @@
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Person.h" />
     <ClInclude Include="Repository.h" />
+    <ClInclude Include="WithdrawScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -33,7 +33,7 @@ public:
 
 		Client toWithDrawFrom = m_OpearationsReference.Find(AccountNumber);
 
-		if (toWithDrawFrom.isEmpty())
+		if (  toWithDrawFrom.isEmpty()  )
 		{
 			return Operations::OperationStates::AccountNumberNotFound;
 		}
@@ -70,6 +70,29 @@ public:
 
 	}
 
+	Operations::OperationStates Withdraw(Client& ExistingClient, double amount) {
+
+
+
+		if (ExistingClient.isEmpty())
+		{
+			return Operations::OperationStates::AccountNumberNotFound;
+		}
+
+		if (amount > ExistingClient.getBalance())
+		{
+			return Operations::OperationStates::InsufficentBalance;
+		}
+
+
+
+		_Withdraw(ExistingClient, amount);
+		m_OpearationsReference.UpdateClient(ExistingClient);
+
+		return Operations::OperationStates::Successful;
+
+
+	}
 	Operations::OperationStates Deposit(Client &ExisitingClient, double amount) {
 
 

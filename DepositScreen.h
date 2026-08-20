@@ -14,7 +14,7 @@ private :
 	   
 	   BankOperations& m_BankOperationsReference;
 
-	   void _ClearScreen() {
+	    void _ClearScreen() {
 		   system("cls");
 	   }
 		void _Message(const char* Message) {
@@ -22,14 +22,14 @@ private :
 
 		}
 		void _GetBackToMenu(const char* Message = nullptr)  {
-			std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
+			std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Transactions Menu")); std::cout << ".....\n";
 
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			std::cin.get();
 		}
 
-		 void _PrintAmount(const Client &client) {
+		void _PrintAmount(const Client &client) {
 			_Message("New Balance = ");
 			std::cout << client.getBalance() << "\n";
 
@@ -68,7 +68,7 @@ private :
 			}
 		}
 
-		 double GetAmount(const Client &client) {
+		double GetAmount(const Client &client) {
 			Operations::PrintClient(client);
 			_Message("Please enter Deposit amount :");
 
