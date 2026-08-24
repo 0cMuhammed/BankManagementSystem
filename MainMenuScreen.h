@@ -4,34 +4,43 @@
 #include<iomanip>
 #include <string>
 #include "Client.h"
-#include "Repository.h"
+
 #include "Validator.h"
 
 #include "ListScreen.h"
 #include "AddScreen.h"
 #include "DeleteScreen.h"
 #include "UpdateScreen.h"`
-#include"FindScreen.h"`
+#include "FindScreen.h"
 #include "TransactionsScreen.h"
 
 #include "UI.h"
 
 class MainMenuScreen : public UI 
 {
-public :
-    // abstarct functions for classes under MainMenuScreen
-    virtual void _GetBackToMenu(const char* Message = nullptr) = 0;
-    virtual void _ClearScreen() = 0;
-    virtual void _Message(const char *Message = nullptr) = 0;
+private :
+    // virtual functions for classes under MainMenuScreen (objects can override it but they don't have to)
+    virtual void _GetBackToMenu(const char* Message = nullptr) {
+        std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
+
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin.get();
+    }
+    virtual void _ClearScreen() {
+        system("cls");
+    }
+    virtual void _Message(const char* Message = nullptr) {
+        std::cout << '\n' + Message;
+    }
+   
 private :
 
 	enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUser = 7, Logout = 8 };
-	Repository& m_RepositoryReference;
+
+	ClientServices& m_ServicesRef;
 
     // exclusive
-    static void _ClearMainScreen() {
-        system("cls");
-    }
     static void _ExitMenu(bool& isInMainMenu, const char* message = "\nLogging Out...")
     {
         std::cout << message << "\n\n";
@@ -39,14 +48,13 @@ private :
         isInMainMenu = false;
         
     }
-    static void _MainMenuMessage(const char*Message) {
-        std::cout << '\n' + Message;
-    }
+  
+  
 
      void _MainMenuLayout()
     {
 
-        _ClearMainScreen();
+        _ClearScreen();
         PrintHeader();
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
         std::cout << std::setw(37) << std::left << "" << "\t\t\tMain Menue\n";
@@ -63,16 +71,15 @@ private :
 
 
     }
-	MainMenuComponents _NavigateUser(double from = 1, double to = 8)
+	 MainMenuComponents _NavigateUser(double from = 1, double to = 8)
 	{
-         _MainMenuMessage("Choose What do you want to do ? [1 to 8] : ");
+         _Message("Choose What do you want to do ? [1 to 8] : ");
 
 		return  (MainMenuComponents) Validator::returnValidatedNumber(from, to);
 	}
     
 
     //universal
-   
 	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) {
 		
 			std::cout << "\t\t\t\t\t______________________________________";
@@ -95,41 +102,41 @@ private :
             {
             case MainMenuComponents::List: 
             {
-                ListScreen List(m_RepositoryReference);
+                ListScreen List(m_ServicesRef);
                 List.Start();
                 break;
               
             }
             case MainMenuComponents::Add: 
             {
-                AddScreen Add(m_RepositoryReference);
+                AddScreen Add(m_ServicesRef);
                 Add.Start();
                 break;
             }
             case MainMenuComponents::Delete: 
             {
-                DeleteScreen Delete(m_RepositoryReference);
+                DeleteScreen Delete(m_ServicesRef);
                 Delete.Start();
                 break;
 
             }
             case MainMenuComponents::Update: 
             {
-                UpdateScreen Update(m_RepositoryReference);
+                UpdateScreen Update(m_ServicesRef);
                 Update.Start();
                 break;
 
             }
             case MainMenuComponents::Find: 
             {
-                FindScreen Find(m_RepositoryReference);
+                FindScreen Find(m_ServicesRef);
                 Find.Start();
                 break;
 
             } 
             case MainMenuComponents::Transactions:
             {
-                TransactionsScreen Transactions(m_RepositoryReference);
+                TransactionsScreen Transactions(m_ServicesRef);
                 Transactions.Start();
                 break;
 
@@ -159,7 +166,7 @@ private :
 
 public : 
 
-    MainMenuScreen(Repository& Repo) : m_RepositoryReference(Repo) {};
+    MainMenuScreen(ClientServices& Ref) : m_ServicesRef(Ref) {};
 
 
     void Start() override {

@@ -33,7 +33,7 @@ public:
 	
 
 	bool operator==(const Client& client) const {
-		return (this == &client || ( getFirstName() == client.getFirstName() && getLastName() == client.getLastName() && getEmail() == client.getEmail() && getPhoneNumber() == client.getPhoneNumber() && m_accountNumber == client.m_accountNumber && m_pinCode == client.m_pinCode && m_balance == client.m_balance && m_mode == client.m_mode) );
+		return (this == &client || ( GetFirstName() == client.GetFirstName() && GetLastName() == client.GetLastName() && GetEmail() == client.GetEmail() && GetPhoneNumber() == client.GetPhoneNumber() && m_accountNumber == client.m_accountNumber && m_pinCode == client.m_pinCode && m_balance == client.m_balance && m_mode == client.m_mode) );
 	}
 	bool operator !=(const Client& client) const {
 		return !(*this == client);
@@ -68,10 +68,10 @@ public:
 	}
 	
 	void SetObject(const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newPinCode, double newBalance) {
-		setFirstName(newFirstName);
-		setLastName(newLastName);
-		setEmail(newEmail);
-		setPhoneNumber(newPhoneNumber);
+		SetFirstName(newFirstName);
+		SetLastName(newLastName);
+		SetEmail(newEmail);
+		SetPhoneNumber(newPhoneNumber);
 		setPinCode(newPinCode);
 		setBalance(newBalance);
 	}
@@ -109,7 +109,7 @@ public:
 
 #include "FileHandler.h"
 inline void Client::_SaveExistingObject() {
-	std::vector<Client> Clients = FileHandler::LoadFile();
+	std::vector<Client> Clients = FileHandler::LoadClients();
 
 	for (Client& client : Clients)
 	{
@@ -122,11 +122,11 @@ inline void Client::_SaveExistingObject() {
 
 	}
 
-	FileHandler::SaveFile(Clients);
+	FileHandler::SaveClients(Clients);
 }
 inline void Client::_SaveNewObject() {
 	m_mode = ObjectMode::ExistingMode;
-	FileHandler::SaveFile(*this);
+	FileHandler::SaveClients(*this);
 }
 
 

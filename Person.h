@@ -17,32 +17,32 @@ public:
 	};
 	
 	
-	void setFirstName(const std::string & NewFirstName)  {
+	void SetFirstName(const std::string & NewFirstName)  {
 		m_firstName = NewFirstName;
 	}
-	void setLastName(const std::string& NewLastName)  {
+	void SetLastName(const std::string& NewLastName)  {
 		m_lastName = NewLastName;
 	}
-	void setEmail(const std::string& NewEmail)  {
+	void SetEmail(const std::string& NewEmail)  {
 		m_email = NewEmail;
 	}
-	void setPhoneNumber(const std::string& NewPhoneNumber)  {
+	void SetPhoneNumber(const std::string& NewPhoneNumber)  {
 		m_phoneNumber = NewPhoneNumber;
 	}
-	const std::string& getFirstName() const  noexcept  {
+	const std::string& GetFirstName() const  noexcept  {
 		return m_firstName;
 	}
-	const std::string& getLastName() const noexcept {
+	const std::string& GetLastName() const noexcept {
 		return m_lastName;
 	}
-	const std::string& getEmail() const noexcept {
+	const std::string& GetEmail() const noexcept {
 		return m_email;
 	}
-	const std::string& getPhoneNumber() const noexcept {
+	const std::string& GetPhoneNumber() const noexcept {
 		return m_phoneNumber;
 	}
 	
-	std::string getFullName() const  {
+	std::string GetFullName() const  {
 		return m_firstName + " " + m_lastName;
 	}
 

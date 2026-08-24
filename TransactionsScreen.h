@@ -4,8 +4,8 @@
 #include<iomanip>
 #include <string>
 #include "Client.h"
-#include "Repository.h"
 #include "Validator.h"
+
 
 #include "DepositScreen.h"
 #include "WithdrawScreen.h"
@@ -18,7 +18,8 @@ class TransactionsScreen : public MainMenuScreen
 private :
 	enum TransactionsMenuComponents { Deposit = 1, Withdraw = 2, TotalBalances = 3, BackToMain = 4};
 
-    Repository& m_RepositoryReference;
+    ClientServices& m_ServicesRef;
+
 
 	void _GetBackToMenu(const char* Message = nullptr) override {
 		std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
@@ -84,20 +85,20 @@ private :
             {
             case TransactionsMenuComponents::Deposit:
             {
-                DepositScreen Deposit(m_RepositoryReference);
+                DepositScreen Deposit(m_ServicesRef);
                 Deposit.Start();
                 break;
 
             }
             case TransactionsMenuComponents::Withdraw:
             {
-                WithdrawScreen Withdraw(m_RepositoryReference);
+                WithdrawScreen Withdraw(m_ServicesRef);
                 Withdraw.Start();
                 break;
             }
             case TransactionsMenuComponents::TotalBalances: 
             {
-                TotalBalanceScreen TotalBalances(m_RepositoryReference);
+                TotalBalanceScreen TotalBalances(m_ServicesRef);
                 TotalBalances.Start();
                 break;
             }
@@ -121,7 +122,7 @@ private :
 
 public :
 
-    TransactionsScreen(Repository & Repo) : MainMenuScreen(m_RepositoryReference), m_RepositoryReference(Repo) {};
+    TransactionsScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_ServicesRef(Ref) {};
 
     void Start() override {
         PerformMenu();

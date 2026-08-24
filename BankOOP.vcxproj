@@ -143,7 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AddScreen.h" />
-    <ClInclude Include="BankOperations.h" />
+    <ClInclude Include="ClientServices.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="DeleteScreen.h" />
     <ClInclude Include="DepositScreen.h" />
@@ -152,15 +152,17 @@
     <ClInclude Include="Date.h" />
     <ClInclude Include="FileHandler.h" />
     <ClInclude Include="MainMenuScreen.h" />
-    <ClInclude Include="Operations.h" />
     <ClInclude Include="TotalBalanceScreen.h" />
     <ClInclude Include="TransactionsScreen.h" />
     <ClInclude Include="UpdateScreen.h" />
+    <ClInclude Include="User.h" />
+    <ClInclude Include="UserRepository.h" />
+    <ClInclude Include="UserServices.h" />
     <ClInclude Include="Validator.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Person.h" />
-    <ClInclude Include="Repository.h" />
+    <ClInclude Include="ClientRepository.h" />
     <ClInclude Include="WithdrawScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -4,7 +4,7 @@
 #include<fstream>
 #include "Client.h"
 #include "Validator.h"
-
+#include "ClientServices.h"
 
 #include "UI.h"
 
@@ -13,7 +13,7 @@ class WithdrawScreen : public TransactionsScreen
 {
 private:
 
-	Repository& m_RepositoryReference;
+	ClientServices& m_ServicesRef;
 
 	void _ClearScreen() override {
 		system("cls");
@@ -54,21 +54,21 @@ private:
 
 	void _PrintWithdrawStatus(Client& ExistingClient, double amount) {
 
-		switch (m_RepositoryReference.OperationsSection.BankOperationsSection.Withdraw(ExistingClient, amount))
+		switch (m_ServicesRef.Withdraw(ExistingClient, amount))
 		{
 
-		case Operations::OperationStates::AccountNumberNotFound:
+		case ClientRepository::OperationStates::AccountNumberNotFound:
 		{
 			_Message("Account Number is not found.");
 			break;
 		}
-		case Operations::OperationStates::Successful:
+		case ClientRepository::OperationStates::Successful:
 		{
 			_Message("Amount Withdrawn Sucessfully.");
 			_PrintBalance(ExistingClient);
 			break;
 		}
-		case Operations::OperationStates::InsufficentBalance:
+		case ClientRepository::OperationStates::InsufficentBalance:
 		{
 			_Message("Cannot Withdraw, Insufficent Balance !");
 			_PrintAmountAndBalance(ExistingClient,amount);
@@ -85,7 +85,7 @@ private:
 	}
 
 	double GetAmount(const Client& client) {
-		Operations::PrintClient(client);
+		ClientRepository::PrintClient(client);
 		_Message("Please enter Withdraw amount :");
 
 		return Validator::returnNumber();
@@ -94,7 +94,7 @@ private:
 	void _Withdraw(const std::string& AccountNumber) {
 
 
-		Client client = m_RepositoryReference.OperationsSection.Find(AccountNumber);
+		Client client = m_ServicesRef.AccessRepository().Find(AccountNumber);
 
 		if (!client.isEmpty())
 		{
@@ -155,7 +155,7 @@ private:
 
 public:
 
-	WithdrawScreen(Repository& Repo) :  TransactionsScreen(Repo), m_RepositoryReference(Repo) {};
+	WithdrawScreen(ClientServices& Ref) :  TransactionsScreen(Ref), m_ServicesRef(Ref) {};
 
 	void Start() override {
 		PerformMenu();

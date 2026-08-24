@@ -4,9 +4,9 @@
 #include<iomanip>
 
 #include "Client.h"
-#include "Repository.h"
+#include "ClientRepository.h"
 #include "Validator.h"
-#include "Operations.h"
+
 
 #include "UI.h"
 
@@ -14,7 +14,7 @@
 class DeleteScreen : public MainMenuScreen
 {
 private :
-    Repository& m_RepositoryReference;
+    ClientRepository& m_RepositoryReference;
 
     //universal 
     void _ClearScreen() override{
@@ -61,22 +61,22 @@ private :
 
    
     static bool _PerformConfirmation(const Client &client, const char* Message = nullptr) {
-        Operations::PrintClient(client);
+        ClientRepository::PrintClient(client);
         bool isConfirm =  Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Are you sure you want to delete this client?")));
         return isConfirm;
     }
     void _PrintDeleteStatus(Client& client) {
  
-        switch (m_RepositoryReference.OperationsSection.DeleteClient(client))
+        switch (m_RepositoryReference.DeleteClient(client))
         {
 
-        case Operations::Failed : // for some reason....
+        case ClientRepository::Failed : // for some reason....
         {
             std::cout << "Operation Failed, Try again Later...\n";
             break;
 
         }
-        case Operations::Successful:
+        case ClientRepository::Successful:
         {
             std::cout << "Account is deleted Successfully!\n";
             break;
@@ -93,7 +93,7 @@ private :
     }
     void _Delete(const std::string& AccountNumber) {
 
-        Client client = m_RepositoryReference.OperationsSection.Find(AccountNumber);
+        Client client = m_RepositoryReference.Find(AccountNumber);
          
 
         if (client.isEmpty())
@@ -123,7 +123,7 @@ private :
 
     public :
 
-         DeleteScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
+        DeleteScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
 
         void Start() override {
             PerformMenu();

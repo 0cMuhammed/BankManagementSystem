@@ -2,18 +2,18 @@
 #include <iostream>
 #include<vector>
 #include "Client.h"
-#include "Repository.h"
+#include "ClientRepository.h"
 #include<iomanip>
 #include <limits>
 
-#include "MainMenuScreen.h"
+
 #include "UI.h"
 
 class ListScreen : public MainMenuScreen 
 { 
 
 private:
-   const Repository& m_RepositoryReference;  // read only on repository dependency injection
+   const ClientRepository& m_RepositoryReference;  // read only on repository dependency injection
 
     //universal
    void _ClearScreen() override {
@@ -42,7 +42,7 @@ private:
 
     }
    void PerformMenu(const char* Message = nullptr) override {
-       if (m_RepositoryReference.OperationsSection.GetList().size() == 0)
+       if (m_RepositoryReference.GetList().size() == 0)
        {
 
            _Message("\t\t\t\tNo Clients Available In the System!");
@@ -51,11 +51,11 @@ private:
        }
        else
        {
-           const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.OperationsSection.GetList().size()) + ") Client(s).";
+           const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.GetList().size()) + ") Client(s).";
 
            PrintHeader(nullptr, SubTitle.c_str());
            _PrintLayout();
-           _PrintAll(m_RepositoryReference.OperationsSection.GetList());
+           _PrintAll(m_RepositoryReference.GetList());
 
        }
    }
@@ -65,9 +65,9 @@ private:
     {
 
         std::cout << std::setw(8) << std::left << "" << "| " << std::setw(15) << std::left << client.getAccountNumber();
-        std::cout << "| " << std::setw(20) << std::left << client.getFullName();
-        std::cout << "| " << std::setw(12) << std::left << client.getPhoneNumber();
-        std::cout << "| " << std::setw(20) << std::left << client.getEmail();
+        std::cout << "| " << std::setw(20) << std::left << client.GetFullName();
+        std::cout << "| " << std::setw(12) << std::left << client.GetPhoneNumber();
+        std::cout << "| " << std::setw(20) << std::left << client.GetEmail();
         std::cout << "| " << std::setw(10) << std::left << client.getPinCode();
         std::cout << "| " << std::setw(12) << std::left << client.getBalance();
 
@@ -103,7 +103,9 @@ private:
 
     
 public :
-    ListScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
+   
+
+    ListScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
 
     void Start() override {
 

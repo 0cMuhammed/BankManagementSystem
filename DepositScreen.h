@@ -4,14 +4,15 @@
 #include<fstream>
 #include "Client.h"
 #include "Validator.h"
+#include "ClientServices.h"
 
-
+#include "UI.h"
 
 class DepositScreen : public TransactionsScreen
 {
 private :
 	   
-	    Repository& m_RepositoryReference;
+	    ClientServices & m_ServicesRef;
 
 	    void _ClearScreen() override {
 		   system("cls");
@@ -43,15 +44,15 @@ private :
 
 		void _PrintDepositStatus(Client &ExistingClient, double amount) {
 
-			switch (m_RepositoryReference.OperationsSection.BankOperationsSection.Deposit(ExistingClient,amount))
+			switch (m_ServicesRef.Deposit(ExistingClient,amount))
 			{
 
-			case Operations::OperationStates::AccountNumberNotFound:
+			case ClientRepository::AccountNumberNotFound:
 			{
 				std::cout << "\nAccount Number is not found.";
 				break;
 			}
-			case Operations::OperationStates::Successful:
+			case ClientRepository::Successful:
 			{
 				std::cout << "\nAmount Deposited Sucessfully.";
 				_PrintAmount(ExistingClient);
@@ -68,7 +69,7 @@ private :
 		}
 
 		double GetAmount(const Client &client) {
-			Operations::PrintClient(client);
+			ClientRepository::PrintClient(client);
 			_Message("Please enter Deposit amount :");
 
 			return Validator::returnNumber();
@@ -77,7 +78,7 @@ private :
 		void _Deposit(const std::string &AccountNumber) {
 
 			
-			Client client = m_RepositoryReference.OperationsSection.Find(AccountNumber);
+			Client client = m_ServicesRef.AccessRepository().Find(AccountNumber);
 			
 			if (!client.isEmpty()) 
 			{
@@ -138,7 +139,7 @@ private :
 
 		public :
 
-			DepositScreen(Repository& Repo) : TransactionsScreen(Repo), m_RepositoryReference(Repo) {};
+			DepositScreen(ClientServices & Ref) : TransactionsScreen(Ref), m_ServicesRef(Ref) {};
 
 			void Start() override {
 				PerformMenu();

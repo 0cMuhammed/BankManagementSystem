@@ -5,14 +5,14 @@
 
 #include "Client.h"
 #include "Validator.h"
-#include "Operations.h"
+#include "ClientRepository.h"
 #include "UI.h"
 
 
 class UpdateScreen : public MainMenuScreen
 {
 private:
-    Repository& m_RepositoryReference;
+    ClientRepository& m_RepositoryReference;
 
     //universial
     void _ClearScreen() override {
@@ -59,24 +59,24 @@ private:
 
     //exclusive
     static bool _PerformConfirmation(const Client& client, const char* Message = nullptr) {
-        Operations::PrintClient(client);
+        ClientRepository::PrintClient(client);
         bool isConfirm = Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Are you sure you want to update this client?")));
         return isConfirm;
     }
     void _PrintUpdateStatus(Client& client, const std::string &ExistingAccountNumber) {
 
-        client = Operations::ReadClient(ExistingAccountNumber);
+        client = ClientRepository::ReadClient(ExistingAccountNumber);
 
-        switch (m_RepositoryReference.OperationsSection.UpdateClient(client))
+        switch (m_RepositoryReference.UpdateClient(client))
         {
 
-        case Operations::Failed: // for some reason....
+        case ClientRepository::Failed: // for some reason....
         {
             std::cout << "Operation Failed, Try again Later...\n";
             break;
 
         }
-        case Operations::Successful:
+        case ClientRepository::Successful:
         {
             std::cout << "Account is Updated Successfully!\n";
             break;
@@ -94,7 +94,7 @@ private:
     }
     void _Update(const std::string& AccountNumber) {
 
-        Client client = m_RepositoryReference.OperationsSection.Find(AccountNumber);
+        Client client = m_RepositoryReference.Find(AccountNumber);
 
 
         if (client.isEmpty())
@@ -123,7 +123,7 @@ private:
 
 public:
 
-    UpdateScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
+    UpdateScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
 
     void Start() override {
         PerformMenu();

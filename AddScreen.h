@@ -7,24 +7,24 @@
 
 #include "UI.h"
 #include "Validator.h"
-#include "Operations.h"
+#include "ClientRepository.h"
+#include "MainMenuScreen.h"
 
 class AddScreen : public MainMenuScreen 
 {
 private :
 
-    Repository& m_RepositoryReference;
+    ClientRepository& m_RepositoryReference;
 
 
     //universal
     void _ClearScreen() override {
         system("cls");
     }
-
     void _Message(const char* Message) override {
         std::cout << '\n' + Message + ': ';
     }
-     void _GetBackToMenu(const char* Message = nullptr) override {
+    void _GetBackToMenu(const char* Message = nullptr) override {
         std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
 
         std::cin.clear();
@@ -63,24 +63,24 @@ private :
 
   
     void _Add(Client& New) {
-        switch (m_RepositoryReference.OperationsSection.AddClient(New))
+        switch (m_RepositoryReference.AddClient(New))
         {
 
-        case Operations::Successful:
+        case ClientRepository::Successful:
         {
-            Operations::PrintClient(New);
+            ClientRepository::PrintClient(New);
             std::cout << "Account is saved successfuly!\n";
 
             break;
 
         }
-        case Operations::AccountNumberAlreadyExists:
+        case ClientRepository::AccountNumberAlreadyExists:
         {
             std::cout << "Account Number is Already Used.\n";
             break;
 
         }
-        case Operations::Failed: // for some reason....
+        case ClientRepository::Failed: // for some reason....
         {
             std::cout << "Operation Failed, Try again Later...\n";
             break;
@@ -99,14 +99,15 @@ private :
         _ClearScreen();
         PrintHeader();
 
-        Client New = Operations::ReadClient();
+        Client New = ClientRepository::ReadClient();
         _Add(New);
     }
 
    
 
     public :
-        AddScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
+
+        AddScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
 
     void Start() override {
         PerformMenu();

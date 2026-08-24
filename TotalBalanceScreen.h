@@ -2,10 +2,12 @@
 #include <iostream>
 #include<vector>
 #include<fstream>
+#include<iomanip>
+
 #include "Client.h"
 #include "Parser.h"
+#include "ClientServices.h"
 
-#include<iomanip>
 
 #include "UI.h"
 
@@ -14,7 +16,7 @@
 class TotalBalanceScreen : public TransactionsScreen
 {
 private :
-	const Repository& m_RepositoryReference; // read only dependency injection
+	const ClientServices& m_ServicesRef; // read only dependency injection
 
 	void _ClearScreen() override {
 		system("cls");
@@ -47,13 +49,13 @@ private :
 	{
 
 		std::cout << std::setw(25) << std::left << "" << "| " << std::setw(15) << std::left << client.getAccountNumber();
-		std::cout << "| " << std:: setw(40) << std::left << client.getFullName();
+		std::cout << "| " << std:: setw(40) << std::left << client.GetFullName();
 		std::cout << "| " << std::setw(12) << std::left << client.getBalance();
 
 	}
 
 	void _PrintAll() {
-		for (const Client& client : m_RepositoryReference.OperationsSection.GetList())
+		for (const Client& client : m_ServicesRef.AccessRepository().GetList())
 		{
 
 			_PrintFormattedClient(client);
@@ -63,7 +65,7 @@ private :
 
 	}
 	void _PrintTotalBalance() {
-		double total = m_RepositoryReference.OperationsSection.GetTotalBalances();
+		double total = m_ServicesRef.GetTotalBalances();
 		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t\t\t\t     Total Balances = " << total << '\n';
 		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t  ( " << Parser::BalanceToText(total) << ")"; // will get cut off to the an integer 
 		
@@ -81,7 +83,7 @@ private :
 
 	}
 	void PerformMenu(const char* Message = nullptr) override {
-		if (m_RepositoryReference.OperationsSection.GetList().size() == 0)
+		if (m_ServicesRef.AccessRepository().GetList().size() == 0)
 		{
 
 			_Message("\t\t\t\tNo Clients Available In the System!");
@@ -90,7 +92,7 @@ private :
 		}
 		else
 		{
-			const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.OperationsSection.GetList().size()) + ") Client(s).";
+			const std::string SubTitle = "\t    (" + std::to_string(m_ServicesRef.AccessRepository().GetList().size()) + ") Client(s).";
 
 			PrintHeader(nullptr, SubTitle.c_str());
 			_PrintLayout();
@@ -102,7 +104,8 @@ private :
 	}
 
 public :
-	TotalBalanceScreen(Repository& Repo) : TransactionsScreen(Repo), m_RepositoryReference(Repo) {};
+
+	TotalBalanceScreen(ClientServices &Ref) : TransactionsScreen(Ref), m_ServicesRef(Ref) {};
 
 	void Start() override {
 		PerformMenu();

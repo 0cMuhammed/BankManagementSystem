@@ -4,7 +4,7 @@
 #include<iomanip>
 
 #include "Client.h"
-#include "Repository.h"
+#include "ClientRepository.h"
 #include "Validator.h"
 
 
@@ -12,7 +12,7 @@
 class FindScreen : public MainMenuScreen
 {
 private :
-	Repository& m_RepositoryReference; 
+	ClientRepository& m_RepositoryReference; 
 	
 	//universal 
 	 void _Message(const char* Message) override {
@@ -58,15 +58,15 @@ private :
 	 void _PerformFind(const char* NotFoundMessage = nullptr) {
 
 		std::string AccountNumber = Validator::ReadString();
-		Client c  = m_RepositoryReference.OperationsSection.Find(AccountNumber);
+		Client c  = m_RepositoryReference.Find(AccountNumber);
 		
-		(!c.isEmpty()) ? Operations::PrintClient(c) : _Message( ( (NotFoundMessage != nullptr) ? NotFoundMessage : "Account is not found.") );
+		(!c.isEmpty()) ? ClientRepository::PrintClient(c) : _Message( ( (NotFoundMessage != nullptr) ? NotFoundMessage : "Account is not found.") );
 
 	}
 
 
 public:
-	FindScreen(Repository& Repo) : MainMenuScreen(Repo), m_RepositoryReference(Repo) {};
+	FindScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
 	
 	//well obviously
 	void Start() override {
