@@ -2,13 +2,13 @@
 #include <iostream>
 #include<vector>
 #include<fstream>
-#include "User.h"
+
 #include "FileHandler.h"
 #include "UserRepository.h"
 
-using State = UserRepository::OperationStates;
 
 // Wrapper Class for future User features, link this with the screens, ClientServices and UserServices shall be merged into one Services Class
+using UserState = UserRepository::OperationStates;
 
 class UserServices
 {
@@ -19,7 +19,8 @@ public :
 
 	UserServices(UserRepository& Repo) : m_RepositoryRef(Repo) {};
 
-	UserRepository& AccessRepository() const noexcept {
+
+	const UserRepository& AccessRepository()  noexcept {
 		return m_RepositoryRef;
 	}
 

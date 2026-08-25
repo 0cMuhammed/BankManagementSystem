@@ -105,7 +105,7 @@ private:
 public :
    
 
-    ListScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
+    ListScreen(Service& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 
     void Start() override {
 

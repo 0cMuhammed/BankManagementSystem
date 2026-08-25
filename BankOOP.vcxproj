@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AddScreen.h" />
+    <ClInclude Include="AddUsersScreen.h" />
     <ClInclude Include="ClientServices.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="DeleteScreen.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="ListScreen.h" />
     <ClInclude Include="Date.h" />
     <ClInclude Include="FileHandler.h" />
+    <ClInclude Include="ListUsersScreen.h" />
     <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="TotalBalanceScreen.h" />
     <ClInclude Include="TransactionsScreen.h" />

@@ -16,9 +16,9 @@
 class TransactionsScreen : public MainMenuScreen
 {
 private :
-	enum TransactionsMenuComponents { Deposit = 1, Withdraw = 2, TotalBalances = 3, BackToMain = 4};
+	enum MenuComponents { Deposit = 1, Withdraw = 2, TotalBalances = 3, BackToMain = 4};
 
-    ClientServices& m_ServicesRef;
+    ClientServices& m_ClientServiceRef;
 
 
 	void _GetBackToMenu(const char* Message = nullptr) override {
@@ -68,11 +68,11 @@ private :
 
      }
 
-	TransactionsMenuComponents _NavigateUser(double from = 1, double to = 4)
+	MenuComponents _NavigateUser(double from = 1, double to = 4)
 	{
 		_Message("Choose What do you want to do ? [1 to 4] : ");
 
-		return  (TransactionsMenuComponents)Validator::returnValidatedNumber(from, to);
+		return  (MenuComponents)Validator::returnValidatedNumber(from, to);
 	}
     void PerformMenu(const char* Message = nullptr) override {
 
@@ -83,26 +83,26 @@ private :
 
             switch (_NavigateUser())
             {
-            case TransactionsMenuComponents::Deposit:
+            case MenuComponents::Deposit:
             {
-                DepositScreen Deposit(m_ServicesRef);
+                DepositScreen Deposit(m_ClientServiceRef);
                 Deposit.Start();
                 break;
 
             }
-            case TransactionsMenuComponents::Withdraw:
+            case MenuComponents::Withdraw:
             {
-                WithdrawScreen Withdraw(m_ServicesRef);
+                WithdrawScreen Withdraw(m_ClientServiceRef);
                 Withdraw.Start();
                 break;
             }
-            case TransactionsMenuComponents::TotalBalances: 
+            case MenuComponents::TotalBalances: 
             {
-                TotalBalanceScreen TotalBalances(m_ServicesRef);
+                TotalBalanceScreen TotalBalances(m_ClientServiceRef);
                 TotalBalances.Start();
                 break;
             }
-            case TransactionsMenuComponents::BackToMain: 
+            case MenuComponents::BackToMain: 
             {
                 _GetBackToMenu();
                 _ExitMenu(isInMainMenu,"\nGetting Back to Main Menu....");
@@ -122,7 +122,7 @@ private :
 
 public :
 
-    TransactionsScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_ServicesRef(Ref) {};
+    TransactionsScreen(Service& Ref) : MainMenuScreen(Ref), m_ClientServiceRef(Ref.AccessClientServices()) {};
 
     void Start() override {
         PerformMenu();

@@ -10,7 +10,9 @@
 class UserRepository {
 
 public :
-	enum  OperationStates { NotConfirmed = 0, Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3, AccountNumberNotFound = 4 };
+
+	enum  OperationStates { Failed = 1, Successful = 2, UserAlreadyExists = 3, UserNotFound = 4 };
+
 private:
 
 
@@ -240,14 +242,14 @@ private:
 
 
 
-	User _FindObject(const std::string& username, const std::string & password) const {
+	User _FindObject(const std::string& username, const char * password = nullptr) const {
 
 
 
 		for (const User& user: m_List)
 		{
 			bool usernameMatch = user.GetUsername() == username;
-			bool passwordMatch = user.GetPassword() == password;
+			bool passwordMatch = (password == nullptr) ? true :  user.GetPassword().c_str() == password;
 
 			if (usernameMatch && passwordMatch)
 			{
@@ -262,7 +264,7 @@ private:
 
 public:
 
-	UserRepository() : m_List(FileHandler::LoadUsers()) {};
+	UserRepository(std::vector<User> Users) : m_List(std::move(Users)) {};
 
 
 	const std::vector<User>& GetList() const {
@@ -327,7 +329,6 @@ public:
 		_Message("Enter Phone");
 		std::string Phone = Validator::ReadString();
 
-
 		_Message("Enter Password");
 		std::string Password = Validator::ReadString();
 
@@ -339,22 +340,22 @@ public:
 	}
 
 
-	bool IsExists(const std::string& username, const std::string & password) {
+	bool IsExists(const std::string& username, const char * password) {
 
 		User user = _FindObject(username, password);
 		return (!user.isEmpty());
 	}
 
 
-	User Find(const std::string& username, const std::string& password) {
+	User Find(const std::string& username, const char * password = nullptr) {
 		return _FindObject(username, password);
 	}
 
 	OperationStates AddUser(User& FilledObject)
 	{
-		if (IsExists(FilledObject.GetUsername(), FilledObject.GetPassword()))
+		if ( IsExists(FilledObject.GetUsername(), FilledObject.GetPassword().c_str()) )
 		{
-			return OperationStates::AccountNumberAlreadyExists;
+			return OperationStates::UserAlreadyExists;
 		}
 
 
@@ -387,9 +388,9 @@ public:
 	}
 	OperationStates DeleteUser(const std::string& username, const std::string & password) {
 
-		if (!IsExists(username,password))
+		if (!IsExists(username,password.c_str()))
 		{
-			return OperationStates::AccountNumberNotFound;
+			return OperationStates::UserNotFound;
 		}
 
 		if (! _DeleteObject(username,password))
@@ -409,14 +410,14 @@ public:
 
 	OperationStates UpdateUser(const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newUsername, const std::string newPassword, const std::string& OldUsername, const std::string &OldPassword) {
 
-		if (!IsExists(OldUsername,OldPassword))
+		if (!IsExists(OldUsername,OldPassword.c_str()))
 		{
-			return OperationStates::AccountNumberNotFound;
+			return OperationStates::UserNotFound;
 		}
 
 		if (!_UpdateObject(newFirstName, newLastName, newEmail, newPhoneNumber, newUsername,newPassword,OldUsername,OldPassword))
 		{
-			return  OperationStates::AccountNumberNotFound;
+			return  OperationStates::UserNotFound;
 
 		}
 

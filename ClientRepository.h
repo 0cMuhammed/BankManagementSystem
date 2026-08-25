@@ -143,7 +143,7 @@ private :
 public :
 	
 
-	 ClientRepository() : m_List(FileHandler::LoadClients()) {};
+	 ClientRepository(std::vector<Client> Clients) : m_List(std::move(Clients)) {};
 
 	 const std::vector<Client>& GetList() const {
 		 return m_List;
