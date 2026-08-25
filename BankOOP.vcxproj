@@ -143,20 +143,26 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AddScreen.h" />
-    <ClInclude Include="AddUsersScreen.h" />
+    <ClInclude Include="AddUserScreen.h" />
     <ClInclude Include="ClientServices.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="DeleteScreen.h" />
+    <ClInclude Include="DeleteUserScreen.h" />
     <ClInclude Include="DepositScreen.h" />
     <ClInclude Include="FindScreen.h" />
+    <ClInclude Include="FindUserScreen.h" />
     <ClInclude Include="ListScreen.h" />
     <ClInclude Include="Date.h" />
     <ClInclude Include="FileHandler.h" />
-    <ClInclude Include="ListUsersScreen.h" />
+    <ClInclude Include="ListUserScreen.h" />
     <ClInclude Include="MainMenuScreen.h" />
+    <ClInclude Include="ManageUsersScreen.h" />
+    <ClInclude Include="Repository.h" />
+    <ClInclude Include="Service.h" />
     <ClInclude Include="TotalBalanceScreen.h" />
     <ClInclude Include="TransactionsScreen.h" />
     <ClInclude Include="UpdateScreen.h" />
+    <ClInclude Include="UpdateUserScreen.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserRepository.h" />
     <ClInclude Include="UserServices.h" />

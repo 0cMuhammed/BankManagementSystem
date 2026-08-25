@@ -17,15 +17,25 @@ private :
 	ClientServices m_ClientsServices;
 
 public :
-	Service(Repository &Ref) : m_UserServices( Ref.AccessUserRepository() ), m_ClientsServices( Ref.AccessClientRepository() ) {};
+	//Repository outlives Service btw
+	Service(Repository &Ref) : m_UserServices( Ref.AccessUserRepository() ), m_ClientsServices( Ref.AccessClientRepository() ) {}; 
 
-	 const ClientServices& AccessClientServices()  noexcept {
+	ClientServices& AccessClientServices()  noexcept { // mutates m_ClientServices state
 		return m_ClientsServices;
 	}
 
-	const UserServices& AccessUserServices()  noexcept {
+	UserServices& AccessUserServices()  noexcept { // mutates m_UserServices state
 		return m_UserServices;
 	}
+
+	const ClientServices& AccessClientServices() const noexcept { // read only
+		return m_ClientsServices;
+	}
+
+	const UserServices& AccessUserServices() const  noexcept { // read only 
+		return m_UserServices;
+	}
+
 
 };
 

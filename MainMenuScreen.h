@@ -6,7 +6,7 @@
 #include "Client.h"
 
 #include "Validator.h"
-
+#include "Service.h"
 #include "ListScreen.h"
 #include "AddScreen.h"
 #include "DeleteScreen.h"
@@ -38,7 +38,7 @@ private :
 
 	enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUser = 7, Logout = 8 };
 
-	ClientServices& m_ServicesRef;
+	Service& m_ServicesRef;
 
     // exclusive
     static void _ExitMenu(bool& isInMainMenu, const char* message = "\nLogging Out...")
@@ -166,7 +166,7 @@ private :
 
 public : 
 
-    MainMenuScreen(ClientServices& Ref) : m_ServicesRef(Ref) {};
+    MainMenuScreen(Service& Ref) : m_ServicesRef(Ref) {};
 
 
     void Start() override {

@@ -130,7 +130,7 @@ private:
 
 public:
 
-    UpdateUserScreen(UserServices& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
+    UpdateUserScreen(Service& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
     void Start() override {
         PerformMenu();

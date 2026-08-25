@@ -67,7 +67,7 @@ private:
 
 public:
 
-	FindUserScreen(UserServices& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
+	FindUserScreen(Service& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
 	//well obviously
 	void Start() override {

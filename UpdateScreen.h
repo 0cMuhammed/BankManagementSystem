@@ -123,7 +123,7 @@ private:
 
 public:
 
-    UpdateScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
+    UpdateScreen(Service& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 
     void Start() override {
         PerformMenu();

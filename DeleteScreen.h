@@ -123,7 +123,7 @@ private :
 
     public :
 
-        DeleteScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
+        DeleteScreen(Service& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 
         void Start() override {
             PerformMenu();

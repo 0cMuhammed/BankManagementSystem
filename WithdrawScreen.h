@@ -155,7 +155,7 @@ private:
 
 public:
 
-	WithdrawScreen(ClientServices& Ref) :  TransactionsScreen(Ref), m_ServicesRef(Ref) {};
+	WithdrawScreen(Service& Ref) : TransactionsScreen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
 
 	void Start() override {
 		PerformMenu();

@@ -126,7 +126,7 @@ private:
 
 public:
 
-    DeleteUserScreen(UserServices& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
+    DeleteUserScreen(Service& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
     void Start() override {
         PerformMenu();

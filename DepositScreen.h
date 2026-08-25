@@ -139,7 +139,7 @@ private :
 
 		public :
 
-			DepositScreen(ClientServices & Ref) : TransactionsScreen(Ref), m_ServicesRef(Ref) {};
+			DepositScreen(Service & Ref) : TransactionsScreen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
 
 			void Start() override {
 				PerformMenu();

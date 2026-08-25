@@ -66,7 +66,7 @@ private :
 
 
 public:
-	FindScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
+	FindScreen(Service& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 	
 	//well obviously
 	void Start() override {

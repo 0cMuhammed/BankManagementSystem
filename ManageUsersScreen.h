@@ -19,7 +19,7 @@ class ManageUsersScreen : public MainMenuScreen
 {
     enum MenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Exit = 6};
 
-    UserServices& m_ServicesRef;
+    Service& m_ServicesRef;
 
 
     void _GetBackToMenu(const char* Message = nullptr) override {
@@ -137,7 +137,7 @@ class ManageUsersScreen : public MainMenuScreen
 
 public:
 
-    ManageUsersScreen(UserServices& Ref) : MainMenuScreen(Ref), m_ServicesRef(Ref) {};
+    ManageUsersScreen(Service& Ref) : MainMenuScreen(Ref), m_ServicesRef(Ref) {};
 
     void Start() override {
         PerformMenu();

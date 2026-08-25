@@ -27,12 +27,13 @@ private :
 
 public:
 
-	
-
 	ClientServices(ClientRepository& Repo) : m_RepositoryRef(Repo) {};
 
-	const ClientRepository & AccessRepository() noexcept {
-		return m_RepositoryRef;
+	const ClientRepository & AccessRepository() const noexcept {
+		return m_RepositoryRef; // read only
+	}
+    ClientRepository& AccessRepository() noexcept {
+		return m_RepositoryRef; // mutuable
 	}
 
 	double GetTotalBalances() const {

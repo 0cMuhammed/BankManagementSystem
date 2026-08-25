@@ -106,7 +106,7 @@ private :
 
 public:
 
-    AddUserScreen(UserServices& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
+    AddUserScreen(Service& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
     void Start() override {
         PerformMenu();

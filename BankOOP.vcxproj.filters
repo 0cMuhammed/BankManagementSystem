@@ -86,10 +86,28 @@
     <ClInclude Include="UserServices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ListUsersScreen.h">
+    <ClInclude Include="ListUserScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AddUsersScreen.h">
+    <ClInclude Include="AddUserScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeleteUserScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateUserScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FindUserScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ManageUsersScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Service.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Repository.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -18,7 +18,7 @@ class TransactionsScreen : public MainMenuScreen
 private :
 	enum MenuComponents { Deposit = 1, Withdraw = 2, TotalBalances = 3, BackToMain = 4};
 
-    ClientServices& m_ClientServiceRef;
+    Service & m_ServiceRef;
 
 
 	void _GetBackToMenu(const char* Message = nullptr) override {
@@ -85,20 +85,20 @@ private :
             {
             case MenuComponents::Deposit:
             {
-                DepositScreen Deposit(m_ClientServiceRef);
+                DepositScreen Deposit(m_ServiceRef);
                 Deposit.Start();
                 break;
 
             }
             case MenuComponents::Withdraw:
             {
-                WithdrawScreen Withdraw(m_ClientServiceRef);
+                WithdrawScreen Withdraw(m_ServiceRef);
                 Withdraw.Start();
                 break;
             }
             case MenuComponents::TotalBalances: 
             {
-                TotalBalanceScreen TotalBalances(m_ClientServiceRef);
+                TotalBalanceScreen TotalBalances(m_ServiceRef);
                 TotalBalances.Start();
                 break;
             }
@@ -122,7 +122,7 @@ private :
 
 public :
 
-    TransactionsScreen(Service& Ref) : MainMenuScreen(Ref), m_ClientServiceRef(Ref.AccessClientServices()) {};
+    TransactionsScreen(Service& Ref) : MainMenuScreen(Ref), m_ServiceRef(Ref) {};
 
     void Start() override {
         PerformMenu();

@@ -107,7 +107,7 @@ private :
 
     public :
 
-        AddScreen(ClientServices& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {};
+        AddScreen(Service& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 
     void Start() override {
         PerformMenu();

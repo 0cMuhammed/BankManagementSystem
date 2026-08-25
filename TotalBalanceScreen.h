@@ -105,7 +105,7 @@ private :
 
 public :
 
-	TotalBalanceScreen(ClientServices &Ref) : TransactionsScreen(Ref), m_ServicesRef(Ref) {};
+	TotalBalanceScreen(Service& Ref) : TransactionsScreen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
 
 	void Start() override {
 		PerformMenu();

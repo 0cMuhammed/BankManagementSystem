@@ -99,7 +99,7 @@ private :
 public:
 
 
-    ListUserScreen(UserServices& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessRepository()) {}; // fix this later 
+    ListUserScreen(Service& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
     void Start() override {
 
