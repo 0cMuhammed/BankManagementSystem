@@ -4,28 +4,15 @@
 #include<iomanip>
 #include <limits>
 
-#include "UserServices.h"
-#include "UI.h"
+#include "Screen.h"
 
 
-class ListUserScreen : public ManageUsersScreen
+class ListUserScreen : public Screen
 {
 private :
+
     const UserRepository& m_RepositoryReference; 
 
-    void _ClearScreen() override {
-        system("cls");
-    }
-    void _GetBackToMenu(const char* Message = nullptr) override {
-        std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
-
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cin.get();
-    }
-    void _Message(const char* Message = nullptr) override {
-        std::cout << '\n' + Message;
-    }
 
     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
@@ -50,7 +37,7 @@ private :
         {
             const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.GetList().size()) + ") User(s).";
 
-            PrintHeader(nullptr, SubTitle.c_str());
+             PrintHeader(nullptr, SubTitle.c_str());
             _PrintLayout();
             _PrintAll(m_RepositoryReference.GetList());
 
@@ -99,14 +86,14 @@ private :
 public:
 
 
-    ListUserScreen(Service& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
+    ListUserScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
     void Start() override {
 
 
 
         PerformMenu();
-        _GetBackToMenu();
+        _GetBackToMenu("Press Enter to go back to Manage Users Menu");
 
     }
 };

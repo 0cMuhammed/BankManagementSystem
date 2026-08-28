@@ -8,28 +8,15 @@
 #include "Validator.h"
 
 
-#include "UI.h"
+#include "Screen.h"
 
 
-class DeleteScreen : public MainMenuScreen
+class DeleteScreen : public Screen
 {
 private :
+
     ClientRepository& m_RepositoryReference;
 
-    //universal 
-    void _ClearScreen() override{
-        system("cls");
-    }
-    void _Message(const char* Message) override {
-        std::cout << '\n' + Message;
-    }
-    void _GetBackToMenu(const char* Message = nullptr) override {
-        std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
-
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cin.get();
-    }
 
     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
         std::cout << "\t\t\t\t\t______________________________________";
@@ -40,6 +27,7 @@ private :
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
     }
+
     void PerformMenu(const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
@@ -123,7 +111,7 @@ private :
 
     public :
 
-        DeleteScreen(Service& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
+        DeleteScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 
         void Start() override {
             PerformMenu();

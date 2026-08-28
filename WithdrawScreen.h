@@ -2,33 +2,20 @@
 #include <iostream>
 #include<vector>
 #include<fstream>
-#include "Client.h"
+
 #include "Validator.h"
 #include "ClientServices.h"
 
-#include "UI.h"
+#include "Screen.h"
 
 
-class WithdrawScreen : public TransactionsScreen
+class WithdrawScreen : public Screen
 {
 private:
 
 	ClientServices& m_ServicesRef;
 
-	void _ClearScreen() override {
-		system("cls");
-	}
-	void _Message(const char* Message) override {
-		std::cout << '\n' + Message;
 
-	}
-	void _GetBackToMenu(const char* Message = nullptr) override {
-		std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Transactions Menu")); std::cout << ".....\n";
-
-		std::cin.clear();
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		std::cin.get();
-	}
 
 	void _PrintBalance(const Client& client) {
 		_Message("Your balance is :");
@@ -155,11 +142,11 @@ private:
 
 public:
 
-	WithdrawScreen(Service& Ref) : TransactionsScreen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
+	WithdrawScreen(Service& Ref) : Screen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
 
 	void Start() override {
 		PerformMenu();
-		_GetBackToMenu();
+		_GetBackToMenu("Press Enter to go back to Transactions Menu");
 	}
 
 };

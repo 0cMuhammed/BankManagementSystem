@@ -140,6 +140,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BankOOP.cpp" />
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="FileHandler.cpp" />
+    <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AddScreen.h" />
@@ -158,6 +162,7 @@
     <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="ManageUsersScreen.h" />
     <ClInclude Include="Repository.h" />
+    <ClInclude Include="Screen.h" />
     <ClInclude Include="Service.h" />
     <ClInclude Include="TotalBalanceScreen.h" />
     <ClInclude Include="TransactionsScreen.h" />

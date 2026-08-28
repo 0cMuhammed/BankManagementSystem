@@ -3,31 +3,19 @@
 #include<vector>
 #include<iomanip>
 
-#include "Client.h"
 #include "ClientRepository.h"
 #include "Validator.h"
 
 
-#include "UI.h"
-class FindScreen : public MainMenuScreen
+#include "Screen.h"
+
+class FindScreen : public Screen
 {
 private :
 	ClientRepository& m_RepositoryReference; 
 	
 	//universal 
-	 void _Message(const char* Message) override {
-		std::cout << '\n' + Message;
-	}
-	 void _ClearScreen() override {
-		system("cls");
-	}
-	 void _GetBackToMenu(const char* Message = nullptr) override {
-		 std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
-
-		 std::cin.clear();
-		 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		 std::cin.get();
-	 }
+	
 
 	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 		std::cout << "\t\t\t\t\t______________________________________";
@@ -66,7 +54,7 @@ private :
 
 
 public:
-	FindScreen(Service& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
+	FindScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 	
 	//well obviously
 	void Start() override {

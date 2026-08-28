@@ -46,7 +46,7 @@ private :
 	}
 
 	static void _Message(const char* Message) {
-		std::cout << '\n' + Message;
+		std::cout << '\n' + std::string(Message);
 	}
 
 	bool _DeleteObject(const std::string& accountNumber) {
@@ -126,7 +126,7 @@ private :
 		for (const Client& client : m_List)
 		{
 			bool accountNumberMatch = (client.getAccountNumber() == accountNumber);
-			bool pinCodeMatch = (pinCodeParameter == nullptr) ? true : (client.getPinCode().c_str()) == pinCodeParameter;
+			bool pinCodeMatch = (pinCodeParameter == nullptr) ? true : client.getPinCode() == std::string(pinCodeParameter);
 
 			if (accountNumberMatch && pinCodeMatch)
 			{
@@ -167,25 +167,25 @@ public :
 	 }
 	 static Client ReadClient()
 	 {
-		 _Message("Enter your account number");
+		 _Message("Enter your account number :");
 		 std::string AccountNumber = Validator::ReadString();
 
-		 _Message("Enter first name");
+		 _Message("Enter first name :");
 		 std::string FirstName = Validator::ReadString();
 
-		 _Message("Enter last name");
+		 _Message("Enter last name :");
 		 std::string LastName = Validator::ReadString();
 
-		 _Message("Enter Email");
+		 _Message("Enter Email :");
 		 std::string Email = Validator::ReadString();
 
-		 _Message("Enter Phone");
+		 _Message("Enter Phone :");
 		 std::string Phone = Validator::ReadString();
 
-		 _Message("Enter PinCode");
+		 _Message("Enter PinCode :");
 		 std::string PinCode = Validator::ReadString();
 
-		 _Message("Enter Account Balance");
+		 _Message("Enter Account Balance :");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
 
 		 return Client(FirstName, LastName, Email, Phone, AccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
@@ -193,22 +193,22 @@ public :
 	 static Client ReadClient(const std::string& ExistingAccountNumber)
 	 {
 
-		 _Message("Enter first name");
+		 _Message("Enter first name :");
 		 std::string FirstName = Validator::ReadString();
 
-		 _Message("Enter last name");
+		 _Message("Enter last name :");
 		 std::string LastName = Validator::ReadString();
 
-		 _Message("Enter Email");
+		 _Message("Enter Email :");
 		 std::string Email = Validator::ReadString();
 
-		 _Message("Enter Phone");
+		 _Message("Enter Phone :");
 		 std::string Phone = Validator::ReadString();
 
-		 _Message("Enter PinCode");
+		 _Message("Enter PinCode :");
 		 std::string PinCode = Validator::ReadString();
 
-		 _Message("Enter Account Balance");
+		 _Message("Enter Account Balance :");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
 
 		 return Client(FirstName, LastName, Email, Phone, ExistingAccountNumber, PinCode, Balance, Client::ObjectMode::newMode);

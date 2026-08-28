@@ -1,5 +1,6 @@
 #pragma once
 #include<vector>
+#include <cstdint>
 #include<fstream>
 #include "Person.h"
 
@@ -10,7 +11,10 @@ class Client : public Person {
 public :
 
 
-	enum  ObjectMode { EmptyMode = 1, ExistingMode = 2, newMode = 3, DeleteMode = 4 };
+	enum class ObjectMode : uint8_t
+	{
+		EmptyMode = 1, ExistingMode = 2, newMode = 3, DeleteMode = 4 
+	};
 
 private:
 	
@@ -107,27 +111,7 @@ public:
 	
 };
 
-#include "FileHandler.h"
-inline void Client::_SaveExistingObject() {
-	std::vector<Client> Clients = FileHandler::LoadClients();
 
-	for (Client& client : Clients)
-	{
-		if (client.m_accountNumber == m_accountNumber)
-		{
-			client = *this;
-			break;
-
-		}
-
-	}
-
-	FileHandler::SaveClients(Clients);
-}
-inline void Client::_SaveNewObject() {
-	m_mode = ObjectMode::ExistingMode;
-	FileHandler::SaveClients(*this);
-}
 
 
 

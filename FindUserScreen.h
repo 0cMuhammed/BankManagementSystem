@@ -4,30 +4,17 @@
 #include<iomanip>
 
 #include "Validator.h"
-#include "UserServices.h"
-#include "MainMenuScreen.h"
 
-#include "UI.h"
 
-class FindUserScreen : public ManageUsersScreen
+#include "Screen.h"
+
+class FindUserScreen : public Screen
 {
 private:
 	UserRepository& m_RepositoryReference;
 
-	//universal 
-	void _Message(const char* Message) override {
-		std::cout << '\n' + Message;
-	}
-	void _ClearScreen() override {
-		system("cls");
-	}
-	void _GetBackToMenu(const char* Message = nullptr) override {
-		std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
-
-		std::cin.clear();
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		std::cin.get();
-	}
+	
+	
 
 	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 		std::cout << "\t\t\t\t\t______________________________________";
@@ -67,12 +54,12 @@ private:
 
 public:
 
-	FindUserScreen(Service& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
+	FindUserScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
 	//well obviously
 	void Start() override {
 		PerformMenu();
-		_GetBackToMenu();
+		_GetBackToMenu("Press Enter to go back to Manage Users Menu");
 	}
 };
 

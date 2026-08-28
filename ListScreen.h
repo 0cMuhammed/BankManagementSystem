@@ -3,38 +3,26 @@
 #include<vector>
 #include "Client.h"
 #include "ClientRepository.h"
+#include "Screen.h"
 #include<iomanip>
 #include <limits>
 
 
-#include "UI.h"
 
-class ListScreen : public MainMenuScreen 
+
+class ListScreen : public Screen
 { 
 
 private:
    const ClientRepository& m_RepositoryReference;  // read only on repository dependency injection
 
-    //universal
-   void _ClearScreen() override {
-       system("cls");
-    }
-   void _GetBackToMenu(const char* Message = nullptr) override {
-       std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
-
-       std::cin.clear();
-       std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-       std::cin.get();
-   }
-   void _Message(const char *Message = nullptr) override {
-       std::cout << '\n' + Message;
-   }
+ 
    
    void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
        
         std::cout << "\t\t\t\t\t______________________________________";
 
-        std::cout << "\n\n\t\t\t\t\t  " << ( ( (ScreenName != nullptr) ? ScreenName : "Client List") );
+        std::cout << "\n\n\t\t\t\t\t\t\t  " << ( ( (ScreenName != nullptr) ? ScreenName : "Client List") );
 
         if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
@@ -105,7 +93,7 @@ private:
 public :
    
 
-    ListScreen(Service& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
+    ListScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 
     void Start() override {
 

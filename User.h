@@ -1,5 +1,6 @@
 #pragma once
 #include<vector>
+#include <cstdint>
 #include<fstream>
 #include "Person.h"
 
@@ -18,20 +19,22 @@ class FileHandler;
 
 
 class User : public Person {
+
 public :
-	enum ObjectMode 
+
+	enum class ObjectMode : uint8_t
 	{ 
 		EmptyMode = 1, ExistingMode = 2, newMode = 3, DeleteMode = 4 
 	};
-	enum UserPermissions 
+	enum class UserPermissions : int8_t
 	{
 		ShowList = 1 << 0, AddClient = 1 << 1, DeleteClient = 1 << 2, UpdateClient = 1 << 3, FindClient = 1 << 4, Transactions = 1 << 5, ManageUsers = 1 << 6, AllPermissions = -1
 	};
 
 private :
 
-	std::string m_username;
-	std::string m_password;
+	std::string m_username = "";
+	std::string m_password = "";
 	int8_t m_userPermissions = 0;
 	ObjectMode m_mode = ObjectMode::EmptyMode;
 
@@ -123,25 +126,5 @@ public :
 
 };
 
-#include "FileHandler.h"
-inline void User::_SaveExistingObject() {
-	std::vector<User> Users = FileHandler::LoadUsers();
 
-	for (User& user : Users)
-	{
-		if (user.m_password == m_password)
-		{
-			user = *this;
-			break;
-
-		}
-
-	}
-
-	FileHandler::SaveUsers(Users);
-}
-inline void User::_SaveNewObject() {
-	m_mode = ObjectMode::ExistingMode;
-	FileHandler::SaveUsers(*this);
-}
 

@@ -6,6 +6,8 @@
 #include "FileHandler.h"
 #include "Validator.h"
 
+using Permission = User::UserPermissions;
+using Mode = User::ObjectMode;
 
 class UserRepository {
 
@@ -28,15 +30,15 @@ private:
 	}
 
 	User _GetEmptyObject() const noexcept {
-		return User("", "", "", "", "", "", 0, User::ObjectMode::EmptyMode);
+		return User("", "", "", "", "", "", 0, Mode::EmptyMode);
 	}
 
 	User  _GetNewObject() const noexcept {
-		return  User("", "", "", "", "", "", 0, User::ObjectMode::EmptyMode);
+		return  User("", "", "", "", "", "", 0, Mode::EmptyMode);
 	}
 
 	void _MakeEmpty(User& user) {
-		if (user.GetMode() == User::ObjectMode::DeleteMode)
+		if (user.GetMode() == Mode::DeleteMode)
 		{
 			user = _GetEmptyObject();
 		}
@@ -44,7 +46,7 @@ private:
 	}
 
 	static bool _IsModifiable(const User& user, const std::string& username, const std::string &password) {
-		return ( user.GetUsername() == username && user.GetPassword() == password) && user.GetMode() == User::ObjectMode::ExistingMode;
+		return ( user.GetUsername() == username && user.GetPassword() == password) && user.GetMode() == Mode::ExistingMode;
 	}
 
 	static int8_t _SetUserPermissions(User& user) {
@@ -55,37 +57,37 @@ private:
 
 		if (Validator::GetConfirmation("\nShow client list ? y/n : "))
 		{
-			user.SetPermissions(User::ShowList);
+			user.SetPermissions(Permission::ShowList);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nAdd Client? y/n : "))
 		{
-			user.SetPermissions(User::AddClient);
+			user.SetPermissions(Permission::AddClient);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nDelete Client ? y/n : "))
 		{
-			user.SetPermissions(User::DeleteClient);
+			user.SetPermissions(Permission::DeleteClient);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nUpdate Client ? y/n : "))
 		{
-			user.SetPermissions(User::UpdateClient);
+			user.SetPermissions(Permission::UpdateClient);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nFind Client ? y/n : "))
 		{
-			user.SetPermissions(User::FindClient);
+			user.SetPermissions(Permission::FindClient);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nTransactions Client ? y/n : "))
 		{
-			user.SetPermissions(User::Transactions);
+			user.SetPermissions(Permission::Transactions);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nManage Users ? y/n : "))
 		{
-			user.SetPermissions(User::ManageUsers);
+			user.SetPermissions(Permission::ManageUsers);
 			std::cout << "\n";
 		}
 
@@ -99,38 +101,38 @@ private:
 
 		if (Validator::GetConfirmation("\nShow client list ? y/n : "))
 		{
-			Permissions |= User::ShowList;
+			Permissions |= static_cast<int8_t>(Permission::ShowList);
 
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nAdd Client? y/n : "))
 		{
-			Permissions |= User::AddClient;
+			Permissions |= static_cast<int8_t>(Permission::AddClient);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nDelete Client ? y/n : "))
 		{
-			Permissions |= User::DeleteClient;
+			Permissions |= static_cast<int8_t>(Permission::DeleteClient);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nUpdate Client ? y/n : "))
 		{
-			Permissions |= User::UpdateClient;
+			Permissions |= static_cast<int8_t>(Permission::UpdateClient);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nFind Client ? y/n : "))
 		{
-			Permissions |= User::FindClient;
+			Permissions |= static_cast<int8_t>(Permission::FindClient);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nTransactions Client ? y/n : "))
 		{
-			Permissions |= User::Transactions;
+			Permissions |= static_cast<int8_t>(Permission::Transactions);
 			std::cout << "\n";
 		}
 		if (Validator::GetConfirmation("\nManage Users ? y/n : "))
 		{
-			Permissions |= User::ManageUsers;
+			Permissions |= static_cast<int8_t>(Permission::ManageUsers);
 			std::cout << "\n";
 		}
 
@@ -141,7 +143,7 @@ private:
 
 		if (Validator::GetConfirmation("\nDo you want to give full access?"))
 		{
-			user.SetPermissions(static_cast<int>(User::AllPermissions));
+			user.SetPermissions(static_cast<int>(Permission::AllPermissions));
 		}
 		else
 		{
@@ -153,20 +155,14 @@ private:
 	static int8_t _ReadPermissions() {
 		int8_t Permissions = 0;
 
-		if (Validator::GetConfirmation("\nDo you want to give full access?"))
-		{
-			Permissions = static_cast<int8_t>(User::AllPermissions);
-		}
-		else
-		{
-			Permissions = _SetUserPermissions();
-		}
+		Permissions =  (Validator::GetConfirmation("\nDo you want to give full access?")) ? static_cast<int8_t>(Permission::AllPermissions) : _SetUserPermissions();
+	
 		return Permissions;
 
 	}
 
 	static void _Message(const char* Message) {
-		std::cout << '\n' + Message;
+		std::cout << '\n' + std::string(Message);
 	}
 
 	bool _DeleteObject(const std::string& username, const std::string &password) {
@@ -176,7 +172,7 @@ private:
 		{
 			if (_IsModifiable(c, username,password))
 			{
-				c.SetMode(User::ObjectMode::DeleteMode);
+				c.SetMode(Mode::DeleteMode);
 				_MakeEmpty(c);
 				return true;
 			}
@@ -195,7 +191,7 @@ private:
 		{
 			if (_IsModifiable(c, user.GetUsername(), user.GetPassword()))
 			{
-				c.SetMode(User::ObjectMode::DeleteMode);
+				c.SetMode(Mode::DeleteMode);
 				_MakeEmpty(c);
 				return true;
 			}
@@ -229,7 +225,7 @@ private:
 		{
 			if (_IsModifiable(c, user.GetUsername(), user.GetPassword()))
 			{
-				c = std::move(c);
+				c = std::move(user);
 				c.Save();
 				return true;
 			}
@@ -249,7 +245,7 @@ private:
 		for (const User& user: m_List)
 		{
 			bool usernameMatch = user.GetUsername() == username;
-			bool passwordMatch = (password == nullptr) ? true :  user.GetPassword().c_str() == password;
+			bool passwordMatch = (password == nullptr) ? true :  user.GetPassword() == std::string(password);
 
 			if (usernameMatch && passwordMatch)
 			{
@@ -340,9 +336,9 @@ public:
 	}
 
 
-	bool IsExists(const std::string& username, const char * password) {
+	bool IsExists(const std::string& username, const std::string & password) {
 
-		User user = _FindObject(username, password);
+		User user = _FindObject(username, password.c_str());
 		return (!user.isEmpty());
 	}
 
@@ -353,13 +349,13 @@ public:
 
 	OperationStates AddUser(User& FilledObject)
 	{
-		if ( IsExists(FilledObject.GetUsername(), FilledObject.GetPassword().c_str()) )
+		if ( IsExists(FilledObject.GetUsername(), FilledObject.GetPassword() ))
 		{
 			return OperationStates::UserAlreadyExists;
 		}
 
 
-		FilledObject.SetMode(User::ObjectMode::newMode);
+		FilledObject.SetMode(Mode::newMode);
 		FilledObject.Save();
 		_AddInVector(FilledObject);
 

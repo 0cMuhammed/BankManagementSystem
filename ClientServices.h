@@ -11,7 +11,6 @@ using ClientState = ClientRepository::OperationStates;
 class ClientServices 
 {
 
-	
 private :
 
 	

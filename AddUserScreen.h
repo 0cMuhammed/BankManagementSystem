@@ -5,32 +5,21 @@
 
 #include "Validator.h"
 
-#include "UI.h"
-#include "UserServices.h"
+#include "Screen.h"
 
 
 
-class AddUserScreen : public ManageUsersScreen
+
+class AddUserScreen : public Screen
 {
 private :
 
     UserRepository & m_RepositoryReference;
 
-    //universal
-    void _ClearScreen() override {
-        system("cls");
-    }
+
     void _Message(const char* Message) override {
-        std::cout << '\n' + Message + ': ';
+        std::cout << '\n' + std::string(Message) + " :";
     }
-    void _GetBackToMenu(const char* Message = nullptr) override {
-        std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
-
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cin.get();
-    }
-
 
     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
@@ -106,11 +95,11 @@ private :
 
 public:
 
-    AddUserScreen(Service& Ref) : ManageUsersScreen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
+    AddUserScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
     void Start() override {
         PerformMenu();
-        _GetBackToMenu();
+        _GetBackToMenu("Press Enter to go back to Manage Users Menu");
     }
 };
 

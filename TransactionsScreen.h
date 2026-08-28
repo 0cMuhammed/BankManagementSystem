@@ -3,7 +3,7 @@
 #include<vector>
 #include<iomanip>
 #include <string>
-#include "Client.h"
+
 #include "Validator.h"
 
 
@@ -11,29 +11,15 @@
 #include "WithdrawScreen.h"
 #include "TotalBalanceScreen.h"
 
-#include "UI.h"
+#include "Screen.h"
 
-class TransactionsScreen : public MainMenuScreen
+class TransactionsScreen : public Screen
 {
 private :
 	enum MenuComponents { Deposit = 1, Withdraw = 2, TotalBalances = 3, BackToMain = 4};
 
     Service & m_ServiceRef;
 
-
-	void _GetBackToMenu(const char* Message = nullptr) override {
-		std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
-
-		std::cin.clear();
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		std::cin.get();
-	}
-	void _ClearScreen() override {
-		system("cls");
-	}
-	void _Message(const char* Message = nullptr) override {
-		std::cout << '\n' + Message;
-	}
     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
         std::cout << "\t\t\t\t\t______________________________________";
@@ -45,7 +31,6 @@ private :
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
     }
-
      void _TransactionsLayout() {
          
         _ClearScreen();
@@ -122,7 +107,7 @@ private :
 
 public :
 
-    TransactionsScreen(Service& Ref) : MainMenuScreen(Ref), m_ServiceRef(Ref) {};
+    TransactionsScreen(Service& Ref) : Screen(Ref), m_ServiceRef(Ref) {};
 
     void Start() override {
         PerformMenu();

@@ -8,29 +8,15 @@
 #include "UI.h"
 #include "Validator.h"
 #include "ClientRepository.h"
-#include "MainMenuScreen.h"
+#include "Screen.h"
 
-class AddScreen : public MainMenuScreen 
+class AddScreen : public Screen
 {
 private :
 
     ClientRepository& m_RepositoryReference;
 
 
-    //universal
-    void _ClearScreen() override {
-        system("cls");
-    }
-    void _Message(const char* Message) override {
-        std::cout << '\n' + Message + ': ';
-    }
-    void _GetBackToMenu(const char* Message = nullptr) override {
-        std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
-
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cin.get();
-    }
 
 
     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
@@ -50,7 +36,7 @@ private :
 
         do {
             _PerformAdding();
-            IsContinueOperation = Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
+            IsContinueOperation = Validator::GetConfirmation('\n' + std::string( (((Message != nullptr) ? Message : "Do you want to continue this operation?")) ));
 
         } while (IsContinueOperation);
 
@@ -107,7 +93,7 @@ private :
 
     public :
 
-        AddScreen(Service& Ref) : MainMenuScreen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
+        AddScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 
     void Start() override {
         PerformMenu();

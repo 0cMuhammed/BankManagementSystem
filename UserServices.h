@@ -19,12 +19,12 @@ public :
 
 	UserServices(UserRepository& Repo) : m_RepositoryRef(Repo) {};
 
-
 	const UserRepository& AccessRepository()  const noexcept {
 		return m_RepositoryRef; // read only 
 	}
 	UserRepository& AccessRepository()  noexcept {
 		return m_RepositoryRef; // mutable
 	}
+
 };
 

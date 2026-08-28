@@ -3,7 +3,6 @@
 #include<vector>
 #include<iomanip>
 #include <string>
-#include "User.h"
 #include "Validator.h"
 
 
@@ -13,28 +12,15 @@
 #include "UpdateUserScreen.h"
 #include "FindUserScreen.h"
 
-#include "UI.h"
+#include "Screen.h"
 
-class ManageUsersScreen : public MainMenuScreen
+class ManageUsersScreen : public Screen
 {
     enum MenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Exit = 6};
 
     Service& m_ServicesRef;
 
-
-    void _GetBackToMenu(const char* Message = nullptr) override {
-        std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
-
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cin.get();
-    }
-    void _ClearScreen() override {
-        system("cls");
-    }
-    void _Message(const char* Message = nullptr) override {
-        std::cout << '\n' + Message;
-    }
+ 
     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
         std::cout << "\t\t\t\t\t______________________________________";
@@ -125,7 +111,7 @@ class ManageUsersScreen : public MainMenuScreen
                 break;
 
             }
-             default: //for later enuchoice
+            default: //for later enum choices
             {
                 break;
             }
@@ -137,7 +123,7 @@ class ManageUsersScreen : public MainMenuScreen
 
 public:
 
-    ManageUsersScreen(Service& Ref) : MainMenuScreen(Ref), m_ServicesRef(Ref) {};
+    ManageUsersScreen(Service& Ref) : Screen(Ref), m_ServicesRef(Ref) {};
 
     void Start() override {
         PerformMenu();

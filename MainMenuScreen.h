@@ -3,40 +3,26 @@
 #include<vector>
 #include<iomanip>
 #include <string>
-#include "Client.h"
-
 #include "Validator.h"
 #include "Service.h"
+
+
 #include "ListScreen.h"
 #include "AddScreen.h"
 #include "DeleteScreen.h"
 #include "UpdateScreen.h"`
 #include "FindScreen.h"
 #include "TransactionsScreen.h"
+#include "ManageUsersScreen.h"
 
-#include "UI.h"
+#include "Screen.h"
 
-class MainMenuScreen : public UI 
+class MainMenuScreen : public Screen
 {
-private :
-    // virtual functions for classes under MainMenuScreen (objects can override it but they don't have to)
-    virtual void _GetBackToMenu(const char* Message = nullptr) {
-        std::cout << '\n' + (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu")); std::cout << ".....\n";
 
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cin.get();
-    }
-    virtual void _ClearScreen() {
-        system("cls");
-    }
-    virtual void _Message(const char* Message = nullptr) {
-        std::cout << '\n' + Message;
-    }
-   
 private :
 
-	enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUser = 7, Logout = 8 };
+	enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUsers = 7, Logout = 8 };
 
 	Service& m_ServicesRef;
 
@@ -84,9 +70,9 @@ private :
 		
 			std::cout << "\t\t\t\t\t______________________________________";
 
-			std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Main Menu"));
+			std::cout << "\n\n\t\t\t\t\t  \t\t" << (((ScreenName != nullptr) ? ScreenName : "Main Menu"));
             
-                if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
+                if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t\t  " << SubTitle; }
 
             std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
@@ -141,6 +127,13 @@ private :
                 break;
 
             }
+            case MainMenuComponents::ManageUsers:
+            {
+                ManageUsersScreen ManageUsers(m_ServicesRef);
+                ManageUsers.Start();
+                break;
+
+            }
             case MainMenuComponents::Logout: 
             {
                 _ExitMenu(isInMainMenu);
@@ -166,7 +159,7 @@ private :
 
 public : 
 
-    MainMenuScreen(Service& Ref) : m_ServicesRef(Ref) {};
+    MainMenuScreen(Service& Ref) : Screen(Ref), m_ServicesRef(Ref) {};
 
 
     void Start() override {
