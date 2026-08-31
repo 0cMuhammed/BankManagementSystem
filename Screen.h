@@ -24,9 +24,9 @@ class Screen : public UI {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cin.get();
         }
-        virtual void _Message(const char* Message = nullptr) 
+        virtual void _Message(const std ::string &Message)
         {
-            std::cout << '\n' + std::string(Message);
+            std::cout<<"\n" << Message;
         }
 
 

@@ -17,8 +17,8 @@ private :
     UserRepository & m_RepositoryReference;
 
 
-    void _Message(const char* Message) override {
-        std::cout << '\n' + std::string(Message) + " :";
+    void _Message(const std::string & Message) override {
+        std::cout << '\n' + Message + " : ";
     }
 
     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
@@ -38,7 +38,7 @@ private :
 
         do {
             _PerformAdding();
-            IsContinueOperation = Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
+            IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Do you want to continue this operation?"))));
 
         } while (IsContinueOperation);
 
@@ -57,20 +57,20 @@ private :
         case UserState::Successful:
         {
             UserRepository::PrintUser(New);
-            std::cout << "Account is saved successfuly!\n";
+            std::cout << "\nAccount is saved successfuly!\n";
 
             break;
 
         }
         case UserState::UserAlreadyExists:
         {
-            std::cout << "User Already Exists.\n";
+            std::cout << "\nUser Already Exists.\n";
             break;
 
         }
         case UserState::Failed: // for some reason....
         {
-            std::cout << "Operation Failed, Try again Later...\n";
+            std::cout << "\nOperation Failed, Try again Later...\n";
             break;
 
         }
@@ -87,7 +87,7 @@ private :
         _ClearScreen();
         PrintHeader();
 
-        User New = UserRepository::ReadUser();
+        User New = m_RepositoryReference.ReadUser();
         _Add(New);
     }
 

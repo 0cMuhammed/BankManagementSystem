@@ -18,7 +18,7 @@ private :
 
         std::cout << "\t\t\t\t\t______________________________________";
 
-        std::cout << "\n\n\t\t\t\t\t  " << (((ScreenName != nullptr) ? ScreenName : "User List Screen"));
+        std::cout << "\n\n\t\t\t\t\t\t  " << (((ScreenName != nullptr) ? ScreenName : "User List Screen"));
 
         if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
@@ -29,7 +29,7 @@ private :
         if (m_RepositoryReference.GetList().size() == 0)
         {
 
-            _Message("\t\t\t\tNo Users Available In the System!");
+            _Message("\t\t\t\tNo Users Available In the System!.\n");
 
 
         }
@@ -53,7 +53,7 @@ private :
         std::cout << "| " << std::setw(12) << std::left << user.GetPhoneNumber();
         std::cout << "| " << std::setw(20) << std::left << user.GetEmail();
         std::cout << "| " << std::setw(10) << std::left << user.GetPassword();
-        std::cout << "| " << std::setw(12) << std::left << user.GetPermissions();
+        std::cout << "| " << std::setw(12) << std::left << std::to_string( user.GetPermissions());
 
     }
     static void _PrintLine() {

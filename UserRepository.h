@@ -3,10 +3,14 @@
 #include<vector>
 #include<fstream>
 #include "User.h"
+
+#include "Authorizer.h"
+
 #include "FileHandler.h"
 #include "Validator.h"
 
-using Permission = User::UserPermissions;
+using Permission = Authorizer::Permissions;
+
 using Mode = User::ObjectMode;
 
 class UserRepository {
@@ -29,7 +33,7 @@ private:
 		m_List.push_back(user);
 	}
 
-	User _GetEmptyObject() const noexcept {
+	static User _GetEmptyObject() noexcept {
 		return User("", "", "", "", "", "", 0, Mode::EmptyMode);
 	}
 
@@ -49,120 +53,39 @@ private:
 		return ( user.GetUsername() == username && user.GetPassword() == password) && user.GetMode() == Mode::ExistingMode;
 	}
 
-	static int8_t _SetUserPermissions(User& user) {
-
-		user.SetPermissions(0);
-
-		std::cout << "\nDo you want to give access to : \n";
-
-		if (Validator::GetConfirmation("\nShow client list ? y/n : "))
-		{
-			user.SetPermissions(Permission::ShowList);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nAdd Client? y/n : "))
-		{
-			user.SetPermissions(Permission::AddClient);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nDelete Client ? y/n : "))
-		{
-			user.SetPermissions(Permission::DeleteClient);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nUpdate Client ? y/n : "))
-		{
-			user.SetPermissions(Permission::UpdateClient);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nFind Client ? y/n : "))
-		{
-			user.SetPermissions(Permission::FindClient);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nTransactions Client ? y/n : "))
-		{
-			user.SetPermissions(Permission::Transactions);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nManage Users ? y/n : "))
-		{
-			user.SetPermissions(Permission::ManageUsers);
-			std::cout << "\n";
-		}
-
-		return user.GetPermissions();
-	}
-	static int8_t _SetUserPermissions() {
-
-		int8_t Permissions = 0;
-
-		std::cout << "\nDo you want to give access to : \n";
-
-		if (Validator::GetConfirmation("\nShow client list ? y/n : "))
-		{
-			Permissions |= static_cast<int8_t>(Permission::ShowList);
-
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nAdd Client? y/n : "))
-		{
-			Permissions |= static_cast<int8_t>(Permission::AddClient);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nDelete Client ? y/n : "))
-		{
-			Permissions |= static_cast<int8_t>(Permission::DeleteClient);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nUpdate Client ? y/n : "))
-		{
-			Permissions |= static_cast<int8_t>(Permission::UpdateClient);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nFind Client ? y/n : "))
-		{
-			Permissions |= static_cast<int8_t>(Permission::FindClient);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nTransactions Client ? y/n : "))
-		{
-			Permissions |= static_cast<int8_t>(Permission::Transactions);
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nManage Users ? y/n : "))
-		{
-			Permissions |= static_cast<int8_t>(Permission::ManageUsers);
-			std::cout << "\n";
-		}
-
-		return Permissions;
-	}
-
-	static int8_t _ReadPermissions(User& user) {
-
-		if (Validator::GetConfirmation("\nDo you want to give full access?"))
-		{
-			user.SetPermissions(static_cast<int>(Permission::AllPermissions));
-		}
-		else
-		{
-			_SetUserPermissions(user);
-		}
-		return user.GetPermissions();
-
-	}
-	static int8_t _ReadPermissions() {
-		int8_t Permissions = 0;
-
-		Permissions =  (Validator::GetConfirmation("\nDo you want to give full access?")) ? static_cast<int8_t>(Permission::AllPermissions) : _SetUserPermissions();
 	
-		return Permissions;
+	std::string  _ReadUsername() {
 
+		_Message("Enter your username : ");
+		std::string Username = Validator::ReadString();
+
+		while (IsExists(Username)) {
+
+			_Message("Username is Already Used, Please choose another username : \n");
+
+			Username = Validator::ReadString();
+		}
+
+		return Username;
 	}
 
-	static void _Message(const char* Message) {
-		std::cout << '\n' + std::string(Message);
+	static std::string  _ReadUsername() {
+
+		_Message("Enter your username : ");
+		std::string Username = Validator::ReadString();
+
+		while (IsExists(Username)) {
+
+			_Message("Username is Already Used, Please choose another username : \n");
+
+			Username = Validator::ReadString();
+		}
+
+		return Username;
+	}
+
+	static void _Message(const std::string & Message) {
+		std::cout << '\n' + Message;
 	}
 
 	bool _DeleteObject(const std::string& username, const std::string &password) {
@@ -238,14 +161,32 @@ private:
 
 
 
-	User _FindObject(const std::string& username, const char * password = nullptr) const {
+	static User _FindObjectFromFile(const std::string& username, const char * password = nullptr)  {
 
 
+		std::vector<User> users = FileHandler::LoadUsers();
 
-		for (const User& user: m_List)
+		for (const User& user: users)
 		{
 			bool usernameMatch = user.GetUsername() == username;
 			bool passwordMatch = (password == nullptr) ? true :  user.GetPassword() == std::string(password);
+
+			if (usernameMatch && passwordMatch)
+			{
+				return user;
+
+			}
+		}
+
+
+		return _GetEmptyObject();
+	}
+	User _FindObject(const std::string& username, const char* password = nullptr) {
+
+		for (const User& user : m_List)
+		{
+			bool usernameMatch = user.GetUsername() == username;
+			bool passwordMatch = (password == nullptr) ? true : user.GetPassword() == std::string(password);
 
 			if (usernameMatch && passwordMatch)
 			{
@@ -276,69 +217,100 @@ public:
 		std::cout << "\nFull Name   : " << user.GetFullName();
 		std::cout << "\nEmail       : " << user.GetEmail();
 		std::cout << "\nPhone       : " << user.GetPhoneNumber();
-		std::cout << "\nUsername : " << user.GetUsername();
+		std::cout << "\nUsername    : " << user.GetUsername();
 		std::cout << "\nPassword    : " << user.GetPassword();
-		std::cout << "\nPermissions  : " << user.GetPermissions(); 
+		std::cout << "\nPermissions : " << std::to_string(user.GetPermissions());
 		std::cout << "\n___________________\n";
 
 
 	}
-	static User ReadUser()
+	static User ReadNewUser(const User& CurrentUser)
 	{
-	
-		_Message("Enter First name");
+		
+		std::string Username =  _ReadUsername();
+
+
+		_Message("Enter First name : ");
 		std::string FirstName = Validator::ReadString();
 
-		_Message("Enter Last name");
+		_Message("Enter Last name : ");
 		std::string LastName = Validator::ReadString();
 
-		_Message("Enter Email");
+		_Message("Enter Email : ");
 		std::string Email = Validator::ReadString();
 
-		_Message("Enter Phone");
-		std::string Phone = Validator::ReadString();
+		
+		std::string Phone = Validator::ReadPhoneNumber();
 
-		_Message("Enter Username");
-		std::string Username = Validator::ReadString();
+		_Message("Enter Password : ");
+		std::string Password = Hasher::GetHash(Validator::ReadString());
 
-		_Message("Enter Password");
-		std::string Password = Validator::ReadString();
-
-		_Message("Enter Permissions"); 
-		int8_t Permissions = _ReadPermissions(); // function that sets up the permissions
+		_Message("Enter Permissions : "); 
+		int32_t Permissions = Authorizer::ReadPermissions(CurrentUser); // function that sets up the permissions
 		
 
 		return User(FirstName, LastName, Email, Phone, Username, Password, Permissions, User::ObjectMode::newMode);
 	}
-	static User ReadUser(const std::string& ExistingUsername)
+	static User ReadUser(const User & CurrentUser, const std::string& ExistingUsername)
 	{
 
-		_Message("Enter First name");
+		_Message("Enter First name : ");
 		std::string FirstName = Validator::ReadString();
 
-		_Message("Enter Last name");
+		_Message("Enter Last name : ");
 		std::string LastName = Validator::ReadString();
 
-		_Message("Enter Email");
+		_Message("Enter Email : ");
 		std::string Email = Validator::ReadString();
 
-		_Message("Enter Phone");
-		std::string Phone = Validator::ReadString();
+		
+		std::string Phone = Validator::ReadPhoneNumber();
 
-		_Message("Enter Password");
-		std::string Password = Validator::ReadString();
+		_Message("Enter Password : ");
+		std::string Password = Hasher::GetHash(Validator::ReadString());
 
-		_Message("Enter Permissions");
-		int8_t Permissions = _ReadPermissions(); // function that sets up the permissions
+		_Message("Enter Permissions : ");
+		int32_t Permissions = Authorizer::ReadPermissions(CurrentUser); // function that sets up the permissions
 
 
 		return User(FirstName, LastName, Email, Phone, ExistingUsername, Password, Permissions, User::ObjectMode::newMode);
 	}
+	User ReadUser(const User& CurrentUser)
+	{
+		
+		std::string Username = _ReadUsername();
+
+		_Message("Enter First name : ");
+		std::string FirstName = Validator::ReadString();
+
+		_Message("Enter Last name : ");
+		std::string LastName = Validator::ReadString();
+
+		_Message("Enter Email : ");
+		std::string Email = Validator::ReadString();
+
+	
+		std::string Phone = Validator::ReadPhoneNumber();
+
+		_Message("Enter Password : ");
+		std::string Password = Hasher::GetHash(Validator::ReadString());
+
+		_Message("Enter Permissions : ");
+		int32_t Permissions = Authorizer::ReadPermissions(CurrentUser); // function that sets up the permissions
 
 
-	bool IsExists(const std::string& username, const std::string & password) {
+		return User(FirstName, LastName, Email, Phone, Username, Password, Permissions, User::ObjectMode::newMode);
+	}
 
-		User user = _FindObject(username, password.c_str());
+	bool IsExists(const std::string& username, const char * password = nullptr) {
+
+		User user = _FindObject(username, password);
+		return (!user.isEmpty());
+	}
+
+	static bool IsExists(const std::string& username, const char* password = nullptr) {
+
+		User user = _FindObjectFromFile(username, password);
 		return (!user.isEmpty());
 	}
 
@@ -349,7 +321,7 @@ public:
 
 	OperationStates AddUser(User& FilledObject)
 	{
-		if ( IsExists(FilledObject.GetUsername(), FilledObject.GetPassword() ))
+		if ( IsExists(FilledObject.GetUsername(), FilledObject.GetPassword().c_str() ))
 		{
 			return OperationStates::UserAlreadyExists;
 		}

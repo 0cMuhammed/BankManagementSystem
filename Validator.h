@@ -4,15 +4,78 @@
 #include<iostream>
 #include "Date.h"
 #include <limits>
+
+#define PINCODE_LENGTH 4
+#define PHONE_LENGTH 10
+#define ZERO_ASCII 48
+#define NINE_ASCII 57
+
 	class Validator
 	{
 	public:
+		static bool isAllDigits(const std::string& PhoneNumber) {
+			
+			if (PhoneNumber.length() != PHONE_LENGTH) {
+				return false;
+			}
+
+			for (size_t i = 0; i < PHONE_LENGTH; i++)
+			{
+				if (!isNumberBetween(PhoneNumber[i], ZERO_ASCII, NINE_ASCII))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+		static std::string  ReadPhoneNumber() {
+
+			std::string PhoneNumber = "";
+			PhoneNumber.reserve(PHONE_LENGTH);
+
+			std::cout << "Enter your phone number : ";
+			PhoneNumber = Validator::ReadString();
+
+
+			while (!isAllDigits(PhoneNumber))
+			{
+				PhoneNumber.clear();
+				std::cout << "\nInvalid phone number. Please enter exactly "
+					<< PHONE_LENGTH << " digits: ";
+				PhoneNumber = ReadString();
+			}
+
+
+
+			return PhoneNumber;
+
+
+		}
+		static std::string ReadPincode() {
+
+			std::string pincode;
+			pincode.resize(PINCODE_LENGTH);
+
+			for (size_t i = 0; i < PINCODE_LENGTH; i++)
+			{
+				std::cout << "\nEnter your " + std::to_string(i + 1) + "th  digit : ";
+
+				pincode[i] = static_cast<char>('0' + (size_t)Validator::returnValidatedNumber(0, 9)); // shifts form 48 (offset in ascii table) 
+
+			}
+
+			return pincode;
+
+
+		}
 
 		static bool isNumberBetween(double Number, double from, double to) {
 			return (Number >= from && Number <= to);
 		}
 
-		static double returnValidatedNumber(double from = 0, double to = 0, const std::string& invalidMessage = "Invalid Number")
+
+		static double returnValidatedNumber(double from = 0, double to = 0, const std::string& invalidMessage = "Invalid Number, Please enter a valid number : ")
 		{
 
 			double number = 0;
@@ -25,7 +88,7 @@
 			{
 				std::cin.clear();
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cout << "\n" << invalidMessage << "\n";
+				std::cout << "\n" << invalidMessage;
 				std::cin >> number;
 
 			}

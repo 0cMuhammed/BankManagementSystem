@@ -26,7 +26,7 @@ private :
 
 	Service& m_ServicesRef;
 
-    // exclusive
+    
     static void _ExitMenu(bool& isInMainMenu, const char* message = "\nLogging Out...")
     {
         std::cout << message << "\n\n";
@@ -48,7 +48,7 @@ private :
         std::cout << std::setw(37) << std::left << "" << "\t[1] Show Client List.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[2] Add New Client.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[3] Delete Client.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[4] Update Client Info.\n";
+        std::cout << std::setw(37) << std::left << "" << "\t[4] Update Client.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[5] Find Client.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[6] Transactions.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[7] Manage Users.\n";
@@ -65,7 +65,7 @@ private :
 	}
     
 
-    //universal
+    
 	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) {
 		
 			std::cout << "\t\t\t\t\t______________________________________";

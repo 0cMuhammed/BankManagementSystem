@@ -35,7 +35,7 @@ private:
 
             _PerformDelete();
 
-            IsContinueOperation = Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
+            IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Do you want to continue this operation?"))));
 
         } while (IsContinueOperation);
 
@@ -47,7 +47,7 @@ private:
 
     static bool _PerformConfirmation(const User& user, const char* Message = nullptr) {
         UserRepository::PrintUser(user);
-        bool isConfirm = Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Are you sure you want to delete this user?")));
+        bool isConfirm = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Are you sure you want to delete this user?"))));
         return isConfirm;
     }
     void _PrintDeleteStatus(User& user) {
@@ -97,10 +97,10 @@ private:
         _ClearScreen();
         PrintHeader();
 
-        _Message("Please enter your username");
+        _Message("Please enter your username : ");
         std::string username = Validator::ReadString();
 
-        _Message("Please enter your password");
+        _Message("Please enter your password : ");
         std::string password = Validator::ReadString();
 
         _Delete(username,password);

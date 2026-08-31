@@ -6,10 +6,13 @@
 #include "FileHandler.h"
 #include"Validator.h"
 
+
+
 class ClientRepository {
 
 public :
-	enum  OperationStates { NotConfirmed = 0, Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3, AccountNumberNotFound = 4,  InsufficentBalance = 5};
+
+	enum class OperationStates : uint8_t { NotConfirmed = 0, Failed = 1, Successful = 2, AccountNumberAlreadyExists = 3, AccountNumberNotFound = 4,  InsufficentBalance = 5};
 
 private :
 
@@ -45,8 +48,25 @@ private :
 		return client.getAccountNumber() == accountNumber && client.getMode() == Client::ObjectMode::ExistingMode;
 	}
 
-	static void _Message(const char* Message) {
-		std::cout << '\n' + std::string(Message);
+
+	static void _Message(const std::string& Message) {
+		std::cout << '\n' << Message;
+	}
+
+
+	std::string  _ReadAccountNumber() {
+
+		_Message("Enter your account number : ");
+		std::string AccountNumber = Validator::ReadString();
+
+		while (IsExists(AccountNumber)) {
+
+			_Message("Account Number is Already Used, Please enter another account number : \n");
+
+			AccountNumber = Validator::ReadString();
+		}
+
+		return AccountNumber;
 	}
 
 	bool _DeleteObject(const std::string& accountNumber) {
@@ -119,7 +139,7 @@ private :
 	}
 
 
-	Client  _FindObject(const std::string& accountNumber, const char* pinCodeParameter = nullptr) const {
+	 Client  _FindObject(const std::string& accountNumber, const char* pinCodeParameter = nullptr)  const {
 
 
 
@@ -159,31 +179,30 @@ public :
 		 std::cout << "\nEmail       : " << client.GetEmail();
 		 std::cout << "\nPhone       : " << client.GetPhoneNumber();
 		 std::cout << "\nAcc. Number : " << client.getAccountNumber();
-		 std::cout << "\nPassword    : " << client.getPinCode();
+		 std::cout << "\nPin Code    : " << client.getPinCode();
 		 std::cout << "\nBalance     : " << client.getBalance();
 		 std::cout << "\n___________________\n";
 
 
 	 }
-	 static Client ReadClient()
+	 static Client ReadNewClient()
 	 {
-		 _Message("Enter your account number :");
+		 
+		 _Message("Enter your account number : ");
 		 std::string AccountNumber = Validator::ReadString();
-
-		 _Message("Enter first name :");
+		 
+		 _Message("Enter first name : ");
 		 std::string FirstName = Validator::ReadString();
 
-		 _Message("Enter last name :");
+		 _Message("Enter last name : ");
 		 std::string LastName = Validator::ReadString();
 
-		 _Message("Enter Email :");
+		 _Message("Enter Email : ");
 		 std::string Email = Validator::ReadString();
 
-		 _Message("Enter Phone :");
-		 std::string Phone = Validator::ReadString();
+		 std::string Phone = Validator::ReadPhoneNumber();
 
-		 _Message("Enter PinCode :");
-		 std::string PinCode = Validator::ReadString();
+		 std::string PinCode = Validator::ReadPincode();
 
 		 _Message("Enter Account Balance :");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
@@ -193,26 +212,49 @@ public :
 	 static Client ReadClient(const std::string& ExistingAccountNumber)
 	 {
 
-		 _Message("Enter first name :");
+		 _Message("Enter first name : ");
 		 std::string FirstName = Validator::ReadString();
 
-		 _Message("Enter last name :");
+		 _Message("Enter last name : ");
 		 std::string LastName = Validator::ReadString();
 
-		 _Message("Enter Email :");
+		 _Message("Enter Email : ");
 		 std::string Email = Validator::ReadString();
 
-		 _Message("Enter Phone :");
-		 std::string Phone = Validator::ReadString();
+		
+		 std::string Phone = Validator::ReadPhoneNumber();
 
-		 _Message("Enter PinCode :");
-		 std::string PinCode = Validator::ReadString();
+		 std::string PinCode = Validator::ReadPincode();
 
-		 _Message("Enter Account Balance :");
+		 _Message("Enter Account Balance : ");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
 
 		 return Client(FirstName, LastName, Email, Phone, ExistingAccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
 	 }
+	 Client ReadClient() {
+		 std::string AccountNumber = _ReadAccountNumber();
+
+		 _Message("Enter first name : ");
+		 std::string FirstName = Validator::ReadString();
+
+		 _Message("Enter last name : ");
+		 std::string LastName = Validator::ReadString();
+
+		 _Message("Enter Email : ");
+		 std::string Email = Validator::ReadString();
+
+		 
+		 std::string Phone = Validator::ReadPhoneNumber();
+
+		
+		 std::string PinCode = Validator::ReadPincode();
+
+		 _Message("Enter Account Balance :");
+		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
+
+		 return Client(FirstName, LastName, Email, Phone, AccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
+	 }
+
 
 
 	 bool IsExists(const std::string& accountNumber, const char* pinCode = nullptr) {
@@ -228,6 +270,8 @@ public :
 
 	 OperationStates AddClient(Client& FilledObject)
 	 {
+		
+
 		 if (IsExists(FilledObject.getAccountNumber()))
 		 {
 			 return OperationStates::AccountNumberAlreadyExists;

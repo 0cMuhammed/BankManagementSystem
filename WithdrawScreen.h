@@ -18,11 +18,11 @@ private:
 
 
 	void _PrintBalance(const Client& client) {
-		_Message("Your balance is :");
+		_Message("Your balance is : ");
 		std::cout << client.getBalance() << "\n";
 	}
 	void _PrintWithdrawAmount(double amount) {
-		_Message("Amount to withdraw :");
+		_Message("Amount to withdraw : ");
 		std::cout << amount << "\n";
 	}
 
@@ -35,7 +35,7 @@ private:
 	bool _PerformConfirmation(const Client& client, const char* Message = nullptr) {
 
 
-		bool isConfirm = Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Are you sure you want to perform this transaction?")));
+		bool isConfirm = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Are you sure you want to perform this transaction?"))));
 		return isConfirm;
 	}
 
@@ -46,18 +46,18 @@ private:
 
 		case ClientRepository::OperationStates::AccountNumberNotFound:
 		{
-			_Message("Account Number is not found.");
+			_Message("\nAccount Number is not found.\n");
 			break;
 		}
 		case ClientRepository::OperationStates::Successful:
 		{
-			_Message("Amount Withdrawn Sucessfully.");
+			_Message("\nAmount Withdrawn Sucessfully.\n");
 			_PrintBalance(ExistingClient);
 			break;
 		}
 		case ClientRepository::OperationStates::InsufficentBalance:
 		{
-			_Message("Cannot Withdraw, Insufficent Balance !");
+			_Message("\nCannot Withdraw, Insufficent Balance !\n");
 			_PrintAmountAndBalance(ExistingClient,amount);
 			break;
 		}
@@ -73,7 +73,7 @@ private:
 
 	double GetAmount(const Client& client) {
 		ClientRepository::PrintClient(client);
-		_Message("Please enter Withdraw amount :");
+		_Message("Please enter Withdraw amount : ");
 
 		return Validator::returnNumber();
 	}
@@ -87,12 +87,12 @@ private:
 		{
 			double amount = GetAmount(client);
 
-			(_PerformConfirmation(client)) ? _PrintWithdrawStatus(client, amount) : _Message("Operations is Cancelled.");
+			(_PerformConfirmation(client)) ? _PrintWithdrawStatus(client, amount) : _Message("\nOperations is Cancelled.\n");
 
 		}
 		else
 		{
-			_Message("Account number is not found");
+			_Message("\nAccount number is not found.\n");
 		}
 
 
@@ -106,7 +106,7 @@ private:
 		_ClearScreen();
 		PrintHeader();
 
-		_Message("Please enter your account number");
+		_Message("Please enter your account number : ");
 		std::string AccountNumber = Validator::ReadString();
 
 		_Withdraw(AccountNumber);
@@ -125,7 +125,7 @@ private:
 
 			_PerformWithdraw();
 
-			IsContinueOperation = Validator::GetConfirmation('\n' + ((Message != nullptr) ? Message : "Do you want to continue this operation?"));
+			IsContinueOperation = Validator::GetConfirmation('\n' +  std::string (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
 
 		} while (IsContinueOperation);
 

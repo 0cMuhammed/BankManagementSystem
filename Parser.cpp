@@ -2,8 +2,10 @@
 #include "Client.h"
 #include "User.h"
 
+
 std::string Parser::ObjectToLine(const Client& client, const std::string& delimiter) {
-	return client.GetFirstName() + delimiter + client.GetLastName() + delimiter + client.GetEmail() + delimiter + client.GetPhoneNumber() + delimiter + client.getAccountNumber() + delimiter + client.getPinCode() + delimiter + std::to_string(client.getBalance()) + '\n';
+
+	return client.GetFirstName() + delimiter + client.GetLastName() + delimiter + client.GetEmail() + delimiter + client.GetPhoneNumber() + delimiter + client.getAccountNumber() + delimiter + client.getPinCode() + delimiter + std::to_string(client.getBalance());
 }
 std::string Parser::ObjectToLine(const User& user, const std::string& delimiter) {
 	return user.GetFirstName() + delimiter + user.GetLastName() + delimiter + user.GetEmail() + delimiter + user.GetPhoneNumber() + delimiter + user.GetUsername() + delimiter + user.GetPassword() + delimiter + std::to_string(user.GetPermissions());
@@ -12,6 +14,7 @@ Client Parser::LineToClient(std::string line) {
 
 	std::vector<std::string> Tokens;
 	Tokens.reserve(7);
+
 	Tokens = Parser::TokensToVec(std::move(line));
 
 	if (Tokens.size() != 7)

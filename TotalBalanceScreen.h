@@ -52,7 +52,7 @@ private :
 	void _PrintTotalBalance() {
 		double total = m_ServicesRef.GetTotalBalances();
 		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t\t\t\t     Total Balances = " << total << '\n';
-		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t  ( " << Parser::BalanceToText(total) << ")"; // will get cut off to the an integer 
+		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t  ( " << Parser::BalanceToText(total) << ")\n\n"; // will get cut off to the an integer 
 		
 	}
 
@@ -60,7 +60,7 @@ private :
 
 		std::cout << "\t\t\t\t\t______________________________________";
 
-		std::cout << "\n\n\t\t\t\t\t  " << (((ScreenName != nullptr) ? ScreenName : "Balances List Screen"));
+		std::cout << "\n\n\t\t\t\t\t\t   " << (((ScreenName != nullptr) ? ScreenName : "Balances List Screen"));
 
 		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 

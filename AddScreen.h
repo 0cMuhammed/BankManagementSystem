@@ -3,9 +3,8 @@
 #include<vector>
 #include<iomanip>
 
-#include "Client.h"
 
-#include "UI.h"
+
 #include "Validator.h"
 #include "ClientRepository.h"
 #include "Screen.h"
@@ -48,11 +47,13 @@ private :
    
 
   
-    void _Add(Client& New) {
+    void _Add(Client& New, const std::string &AccountNumber = "Empty") {
+
+
         switch (m_RepositoryReference.AddClient(New))
         {
 
-        case ClientRepository::Successful:
+        case ClientRepository::OperationStates::Successful :
         {
             ClientRepository::PrintClient(New);
             std::cout << "Account is saved successfuly!\n";
@@ -60,14 +61,14 @@ private :
             break;
 
         }
-        case ClientRepository::AccountNumberAlreadyExists:
+        case ClientRepository::OperationStates::AccountNumberAlreadyExists :
         {
             std::cout << "Account Number is Already Used.\n";
             break;
 
         }
-        case ClientRepository::Failed: // for some reason....
-        {
+        case ClientRepository::OperationStates::Failed : // for some reason....
+        { 
             std::cout << "Operation Failed, Try again Later...\n";
             break;
 
@@ -84,8 +85,10 @@ private :
 
         _ClearScreen();
         PrintHeader();
+       
 
-        Client New = ClientRepository::ReadClient();
+        Client New = m_RepositoryReference.ReadClient();
+        
         _Add(New);
     }
 

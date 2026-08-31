@@ -125,5 +125,14 @@
     <ClInclude Include="Screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Authenticator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Authorizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hasher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -33,7 +33,7 @@ private:
 			PrintHeader();
 			_PerformFind();
 
-			isContinue = Validator::GetConfirmation('\n' + ((Message != nullptr) ? Message : "Do you want to continue this operation?"));
+			isContinue = Validator::GetConfirmation('\n' + std::string (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
 
 		} while (isContinue);
 
@@ -43,11 +43,11 @@ private:
 
 
 	void _PerformFind(const char* NotFoundMessage = nullptr) {
-
+		_Message("Please enter a username : ");
 		std::string Username = Validator::ReadString();
 		User user = m_RepositoryReference.Find(Username);
 
-		(!user.isEmpty()) ? UserRepository::PrintUser(user) : _Message(((NotFoundMessage != nullptr) ? NotFoundMessage : "User is not found."));
+		(!user.isEmpty()) ? UserRepository::PrintUser(user) : _Message(std::string ( ((NotFoundMessage != nullptr) ? NotFoundMessage : "User is not found.")));
 
 	}
 

@@ -12,6 +12,7 @@
 class FindScreen : public Screen
 {
 private :
+
 	ClientRepository& m_RepositoryReference; 
 	
 	//universal 
@@ -34,7 +35,7 @@ private :
 			PrintHeader();
 			_PerformFind();
 
-			isContinue = Validator::GetConfirmation('\n' + ( (Message != nullptr) ? Message : "Do you want to continue this operation?") );
+			isContinue = Validator::GetConfirmation('\n' + std::string ( ( (Message != nullptr) ? Message : "Do you want to continue this operation?") ));
 
 		} while (isContinue);
 
@@ -44,11 +45,11 @@ private :
 	
 
 	 void _PerformFind(const char* NotFoundMessage = nullptr) {
-
+		 _Message("Please enter your account number : ");
 		std::string AccountNumber = Validator::ReadString();
 		Client c  = m_RepositoryReference.Find(AccountNumber);
 		
-		(!c.isEmpty()) ? ClientRepository::PrintClient(c) : _Message( ( (NotFoundMessage != nullptr) ? NotFoundMessage : "Account is not found.") );
+		(!c.isEmpty()) ? ClientRepository::PrintClient(c) : _Message( std::string( ( (NotFoundMessage != nullptr) ? NotFoundMessage : "Account is not found.\n") ));
 
 	}
 

@@ -18,7 +18,7 @@ private:
     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
         std::cout << "\t\t\t\t\t______________________________________";
 
-        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Delete Client Screen"));
+        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Update Client Screen"));
 
         if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
@@ -34,7 +34,7 @@ private:
 
             _PerformUpdate();
 
-            IsContinueOperation = Validator::GetConfirmation('\n' + ( (Message != nullptr) ? Message : "Do you want to continue this operation?") );
+            IsContinueOperation = Validator::GetConfirmation('\n' + std::string( ( (Message != nullptr) ? Message : "Do you want to continue this operation?") ));
 
         } while (IsContinueOperation);
 
@@ -46,7 +46,7 @@ private:
     //exclusive
     static bool _PerformConfirmation(const Client& client, const char* Message = nullptr) {
         ClientRepository::PrintClient(client);
-        bool isConfirm = Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Are you sure you want to update this client?")));
+        bool isConfirm = Validator::GetConfirmation('\n' + std::string ((((Message != nullptr) ? Message : "Are you sure you want to update this client?"))));
         return isConfirm;
     }
     void _PrintUpdateStatus(Client& client, const std::string &ExistingAccountNumber) {
@@ -56,15 +56,15 @@ private:
         switch (m_RepositoryReference.UpdateClient(client))
         {
 
-        case ClientRepository::Failed: // for some reason....
+        case ClientRepository::OperationStates::Failed: // for some reason....
         {
-            std::cout << "Operation Failed, Try again Later...\n";
+            std::cout << "\nOperation Failed, Try again Later...\n";
             break;
 
         }
-        case ClientRepository::Successful:
+        case ClientRepository::OperationStates::Successful:
         {
-            std::cout << "Account is Updated Successfully!\n";
+            std::cout << "\nAccount is Updated Successfully!\n";
             break;
 
         }
@@ -98,7 +98,7 @@ private:
         _ClearScreen();
         PrintHeader();
 
-        _Message("Please enter your account number");
+        _Message("Please enter your account number : ");
         std::string AccountNumber = Validator::ReadString();
 
         _Update(AccountNumber);

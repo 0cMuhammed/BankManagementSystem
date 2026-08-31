@@ -39,7 +39,7 @@ class ManageUsersScreen : public Screen
         PrintHeader();
 
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t\t\tManage Users Menue\n";
+        std::cout << std::setw(37) << std::left << "" << "\t\t Manage Users Menue\n";
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
         std::cout << std::setw(37) << std::left << "" << "\t[1] List Users.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[2] Add New User.\n";

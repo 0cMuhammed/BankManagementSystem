@@ -3,19 +3,10 @@
 #include <cstdint>
 #include<fstream>
 #include "Person.h"
+#include "Authorizer.h"
 
+using Permission = Authorizer::Permissions;
 class FileHandler;
-
-/*/ bool hasAccess(const stUser & user, eUserPermissions requiredPerm) {
-
-
-	if (user.userPermissions == static_cast<int>(eUserPermissions::allPermissions))
-		return true;
-
-
-	return user.userPermissions & static_cast<int>(requiredPerm);
-
-} /*/
 
 
 class User : public Person {
@@ -26,16 +17,13 @@ public :
 	{ 
 		EmptyMode = 1, ExistingMode = 2, newMode = 3, DeleteMode = 4 
 	};
-	enum class UserPermissions : int8_t
-	{
-		ShowList = 1 << 0, AddClient = 1 << 1, DeleteClient = 1 << 2, UpdateClient = 1 << 3, FindClient = 1 << 4, Transactions = 1 << 5, ManageUsers = 1 << 6, AllPermissions = -1
-	};
+
 
 private :
 
 	std::string m_username = "";
-	std::string m_password = "";
-	int8_t m_userPermissions = 0;
+	std::string m_password = "";  // hashed
+	int32_t m_userPermissions = 0;
 	ObjectMode m_mode = ObjectMode::EmptyMode;
 
 	//using FileHandler
@@ -64,7 +52,7 @@ public :
 	const std::string& GetPassword() const noexcept { 
 		return m_password;
 	}
-	int8_t GetPermissions() const noexcept { 
+	int32_t GetPermissions() const noexcept { 
 		return m_userPermissions; // read only. and only the admins can change the permissions of other users 
 	}
 	ObjectMode GetMode() const noexcept {
@@ -78,14 +66,9 @@ public :
 		m_mode = mode;
 	}
 	void SetPassword(const std::string& password) {
-		m_password = password;
+		m_password = Hasher::GetHash(password);
 	}
-	void SetPermissions(UserPermissions Permission) {
-		m_userPermissions |= static_cast<int8_t>(Permission);
-	}
-	void SetPermissions(int8_t number) {
-		m_userPermissions = number;
-	}
+
 
 	void SetObject(const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newUserName, const std::string &newPassword) {
 		SetFirstName(newFirstName);

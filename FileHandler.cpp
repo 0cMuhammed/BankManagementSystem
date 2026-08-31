@@ -14,15 +14,17 @@
 }
 
  std::vector<Client>FileHandler::LoadClients() {
+
 	std::fstream file;
 	std::vector<Client> Clients;
+
 	file.open(CLIENTS_FILE, std::ios::in);
 
 	if (file.is_open())
 	{
 		std::string dataline = "";
 
-		while (!(std::getline(file, dataline).fail()) && (!dataline.empty()))
+		while ( (!std::getline(file, dataline).fail()) && (!dataline.empty())  )
 		{
 			Clients.emplace_back(Parser::LineToClient(std::move(dataline))); // internally std::move(dataline) to to Tokens() if passed rvalue, if a lvalue is passed a copy would happen
 		}

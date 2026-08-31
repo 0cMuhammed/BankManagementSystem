@@ -3,7 +3,7 @@
 #include<vector>
 #include<iomanip>
 
-#include "Client.h"
+
 #include "ClientRepository.h"
 #include "Validator.h"
 
@@ -38,7 +38,7 @@ private :
 
             _PerformDelete();
 
-            IsContinueOperation = Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
+            IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Do you want to continue this operation?"))));
 
         } while (IsContinueOperation);
 
@@ -50,21 +50,22 @@ private :
    
     static bool _PerformConfirmation(const Client &client, const char* Message = nullptr) {
         ClientRepository::PrintClient(client);
-        bool isConfirm =  Validator::GetConfirmation('\n' + (((Message != nullptr) ? Message : "Are you sure you want to delete this client?")));
+        bool isConfirm =  Validator::GetConfirmation('\n' + std::string ((((Message != nullptr) ? Message : "Are you sure you want to delete this client?"))));
         return isConfirm;
     }
+
     void _PrintDeleteStatus(Client& client) {
  
         switch (m_RepositoryReference.DeleteClient(client))
         {
 
-        case ClientRepository::Failed : // for some reason....
+        case ClientRepository::OperationStates::Failed : // for some reason....
         {
             std::cout << "Operation Failed, Try again Later...\n";
             break;
 
         }
-        case ClientRepository::Successful:
+        case ClientRepository::OperationStates::Successful:
         {
             std::cout << "Account is deleted Successfully!\n";
             break;
@@ -91,7 +92,7 @@ private :
         }
         else 
         {
-            (_PerformConfirmation(client)) ? _PrintDeleteStatus(client) : _Message("Operation is cancelled");
+            (_PerformConfirmation(client)) ? _PrintDeleteStatus(client) : _Message("\nOperation is cancelled.\n");
         }
 
     }
@@ -99,7 +100,7 @@ private :
         _ClearScreen();
         PrintHeader();
 
-        _Message("Please enter your account number");
+        _Message("Please enter your account number : ");
         std::string AccountNumber = Validator::ReadString();
 
         _Delete(AccountNumber);
