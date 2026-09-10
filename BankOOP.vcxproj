@@ -140,6 +140,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BankOOP.cpp" />
+    <ClCompile Include="bcrypt\bcrypt.c" />
+    <ClCompile Include="bcrypt\crypt_blowfish.c" />
+    <ClCompile Include="bcrypt\crypt_gensalt.c" />
+    <ClCompile Include="bcrypt\wrapper.c" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="Parser.cpp" />
@@ -162,11 +166,13 @@
     <ClInclude Include="Date.h" />
     <ClInclude Include="FileHandler.h" />
     <ClInclude Include="ListUserScreen.h" />
+    <ClInclude Include="LoginScreen.h" />
     <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="ManageUsersScreen.h" />
     <ClInclude Include="Repository.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Service.h" />
+    <ClInclude Include="Session.h" />
     <ClInclude Include="TotalBalanceScreen.h" />
     <ClInclude Include="TransactionsScreen.h" />
     <ClInclude Include="UpdateScreen.h" />

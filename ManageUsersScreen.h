@@ -5,21 +5,25 @@
 #include <string>
 #include "Validator.h"
 
-
+#include "Session.h"
 #include "ListUserScreen.h"
 #include "AddUserScreen.h"
 #include "DeleteUserScreen.h"
 #include "UpdateUserScreen.h"
 #include "FindUserScreen.h"
-
 #include "Screen.h"
 
 class ManageUsersScreen : public Screen
 {
+public :
+
     enum MenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Exit = 6};
 
-    Service& m_ServicesRef;
+private :
 
+    Session& m_Session;
+    Service& m_ServicesRef;
+    
  
     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
@@ -49,24 +53,8 @@ class ManageUsersScreen : public Screen
         std::cout << std::setw(37) << std::left << "" << "\t[6] Main Menu.\n";
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
     }
-    static void _ExitMenu(bool& isInMainMenu, const char* message = "\nGetting Back to Main Menu...")
-    {
-        std::cout << message << "\n\n";
 
-        isInMainMenu = false;
-
-    }
-
-    MenuComponents _NavigateUser(double from = 1, double to = 6)
-    {
-        _Message("Choose What do you want to do ? [1 to 6] : ");
-
-        return  (MenuComponents)Validator::returnValidatedNumber(from, to);
-    }
-
-    void PerformMenu(const char* Message = nullptr) override {
-
-        bool isInMainMenu = true;
+    void _Menu(bool &isInMainMenu) {
         do
         {
             _PrintLayout();
@@ -76,32 +64,32 @@ class ManageUsersScreen : public Screen
             case MenuComponents::List:
             {
                 ListUserScreen List(m_ServicesRef);
-                List.Start();
+                List.Start(m_Session.GetUser());
                 break;
 
             }
             case MenuComponents::Add:
             {
                 AddUserScreen Add(m_ServicesRef);
-                Add.Start();
+                Add.Start(m_Session.GetUser());
                 break;
             }
             case MenuComponents::Delete:
             {
                 DeleteUserScreen Delete(m_ServicesRef);
-                Delete.Start();
+                Delete.Start(m_Session.GetUser());
                 break;
             }
             case MenuComponents::Update:
             {
                 UpdateUserScreen Update(m_ServicesRef);
-                Update.Start();
+                Update.Start(m_Session.GetUser());
                 break;
             }
             case MenuComponents::Find:
             {
                 FindUserScreen Find(m_ServicesRef);
-                Find.Start();
+                Find.Start(m_Session.GetUser());
                 break;
             }
             case MenuComponents::Exit:
@@ -118,15 +106,39 @@ class ManageUsersScreen : public Screen
             }
 
         } while (isInMainMenu);
+    }
 
+    static void _ExitMenu(bool& isInMainMenu, const char* message = "\nGetting Back to Main Menu...")
+    {
+        std::cout << message << "\n\n";
+
+        isInMainMenu = false;
+
+    }
+
+    MenuComponents _NavigateUser(double from = 1, double to = 6)
+    {
+        _Message("Choose What do you want to do ? [1 to 6] : ");
+
+        return  (MenuComponents)Validator::returnValidatedNumber(from, to);
+    }
+
+    void PerformMenu(const User& CurrentUser,const char* Message = nullptr) override {
+
+        bool isInMainMenu = true;
+       
+        (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ManageUsers)) ? _Menu(isInMainMenu) : NoAccessMsg();
+       
     }
 
 public:
 
-    ManageUsersScreen(Service& Ref) : Screen(Ref), m_ServicesRef(Ref) {};
+    ManageUsersScreen(Service& Ref, Session &CurrentUser) : Screen(Ref), m_Session(CurrentUser), m_ServicesRef(Ref) {};
 
-    void Start() override {
-        PerformMenu();
+    void Start(const User & CurrentUser) override 
+    {
+        PerformMenu(CurrentUser);
+        _GetBackToMenu();
     }
 };
 

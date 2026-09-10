@@ -7,13 +7,11 @@
 #include<iomanip>
 #include <limits>
 
-
-
-
 class ListScreen : public Screen
 { 
 
 private:
+
    const ClientRepository& m_RepositoryReference;  // read only on repository dependency injection
 
  
@@ -29,12 +27,13 @@ private:
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
     }
-   void PerformMenu(const char* Message = nullptr) override {
+   void _List() 
+   {
        if (m_RepositoryReference.GetList().size() == 0)
        {
 
            _Message("\t\t\t\tNo Clients Available In the System!");
-           
+
 
        }
        else
@@ -46,6 +45,11 @@ private:
            _PrintAll(m_RepositoryReference.GetList());
 
        }
+   }
+   void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
+
+       (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowClientList)) ? _List() : NoAccessMsg();
+
    }
 
     //exclusive
@@ -79,12 +83,14 @@ private:
    
    
     static void _PrintAll(const std::vector<Client> &AllClients) {
+
         for (const Client& client : AllClients)
         {
 
             _PrintFormattedClient(client);
             std::cout << std::endl;
         }
+
         _PrintLine();
         
     }
@@ -95,11 +101,11 @@ public :
 
     ListScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 
-    void Start() override {
+    void Start(const User &CurrentUser) override {
 
       
 
-        PerformMenu();
+        PerformMenu(CurrentUser);
        _GetBackToMenu();
 
     }

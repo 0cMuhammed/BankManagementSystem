@@ -3,9 +3,9 @@
 #include <cstdint>
 #include<fstream>
 #include "Person.h"
-#include "Authorizer.h"
+#include "Hasher.h"
 
-using Permission = Authorizer::Permissions;
+
 class FileHandler;
 
 
@@ -31,8 +31,8 @@ private :
 	void _SaveNewObject();
 
 public :
-
-	User(std::string firstName, std::string lastName, std::string email, std::string phoneNumber,std::string username, std::string password, int8_t userPermissions, ObjectMode mode) : Person(std::move(firstName), std::move(lastName), std::move(email), std::move(phoneNumber)), m_username(std::move(username)), m_password(std::move(password)), m_userPermissions(userPermissions), m_mode(mode) {};
+	User() = default;
+	User(std::string firstName, std::string lastName, std::string email, std::string phoneNumber,std::string username, std::string password, int32_t userPermissions, ObjectMode mode) : Person(std::move(firstName), std::move(lastName), std::move(email), std::move(phoneNumber)), m_username(std::move(username)), m_password(std::move(password)), m_userPermissions(userPermissions), m_mode(mode) {};
 
 
 	bool operator==(const User& user) const {

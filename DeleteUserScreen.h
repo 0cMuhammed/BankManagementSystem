@@ -2,12 +2,7 @@
 #include <iostream>
 #include<vector>
 #include<iomanip>
-
-
-
 #include "Validator.h"
-
-
 #include "Screen.h"
 
 class DeleteUserScreen : public Screen
@@ -25,15 +20,13 @@ private:
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
     }
-    void PerformMenu(const char* Message = nullptr) override {
+    void PerformMenu(const User& CurrentUser,const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
 
         do
         {
-
-
-            _PerformDelete();
+            _PerformDelete(CurrentUser);
 
             IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Do you want to continue this operation?"))));
 
@@ -93,17 +86,27 @@ private:
         }
 
     }
-    void _PerformDelete() {
+    void _PerformDelete(const User &CurrentUser) {
+
         _ClearScreen();
         PrintHeader();
 
-        _Message("Please enter your username : ");
-        std::string username = Validator::ReadString();
 
-        _Message("Please enter your password : ");
-        std::string password = Validator::ReadString();
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::DeleteUser)) 
+        {
+            _Message("Please enter your username : ");
+            std::string username = Validator::ReadString();
 
-        _Delete(username,password);
+            _Message("Please enter your password : ");
+            std::string password = Validator::ReadString();
+
+            _Delete(username, password);
+
+        }
+        else 
+        {
+            NoAccessMsg();
+        }
 
     }
 
@@ -114,8 +117,8 @@ public:
 
     DeleteUserScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
-    void Start() override {
-        PerformMenu();
+    void Start(const User &CurrentUser) override {
+         PerformMenu(CurrentUser);
         _GetBackToMenu("Press Enter to go back to Manage Users Menu");
     }
 };

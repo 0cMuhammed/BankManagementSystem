@@ -2,7 +2,8 @@
 #include "FileHandler.h"
 #include "Client.h"
 #include "User.h"
-#include "Parser.h";
+#include "Parser.h"
+#include <filesystem>
 
  bool FileHandler::_isNotToBeSaved(const Client& client) noexcept {
 	const Client::ObjectMode Mode = client.getMode();
@@ -28,6 +29,7 @@
 		{
 			Clients.emplace_back(Parser::LineToClient(std::move(dataline))); // internally std::move(dataline) to to Tokens() if passed rvalue, if a lvalue is passed a copy would happen
 		}
+
 		file.close();
 	}
 
@@ -36,6 +38,7 @@
 std::vector<User>  FileHandler::LoadUsers() {
 	std::fstream file;
 	std::vector<User> Users;
+
 	file.open(USERS_FILE, std::ios::in);
 
 	if (file.is_open())
@@ -46,7 +49,13 @@ std::vector<User>  FileHandler::LoadUsers() {
 		{
 			Users.emplace_back(Parser::LineToUser(std::move(dataline))); // internally std::move(dataline) to to Tokens() if passed rvalue, if a lvalue is passed a copy would happen
 		}
+
 		file.close();
+	}
+	else 
+	{
+		std::cout<< "Failed to open Users.txt.\n";
+		std::cout << "Path : " << std::filesystem::current_path() << "\n";
 	}
 
 	return Users;

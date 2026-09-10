@@ -67,7 +67,8 @@ private :
 		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
 	}
-	void PerformMenu(const char* Message = nullptr) override {
+	void _ShowTotal() 
+	{
 		if (m_ServicesRef.AccessRepository().GetList().size() == 0)
 		{
 
@@ -85,6 +86,11 @@ private :
 			_PrintTotalBalance();
 
 		}
+	}
+
+	void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
+	
+		(Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions)) ? _ShowTotal() : NoAccessMsg();
 
 	}
 
@@ -92,8 +98,8 @@ public :
 
 	TotalBalanceScreen(Service& Ref) : Screen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
 
-	void Start() override {
-		PerformMenu();
+	void Start(const User & CurrentUser) override {
+		PerformMenu(CurrentUser);
 		_GetBackToMenu("Press Enter to go back to Transactions Menu");
 	}
 

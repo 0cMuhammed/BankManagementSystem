@@ -28,7 +28,24 @@ class Screen : public UI {
         {
             std::cout<<"\n" << Message;
         }
+        
+        virtual User Login() {
+            std::cout << "Login Screen here\n";
+            return User("", "", "", "", "", "", 0, Mode::EmptyMode);
+        }
 
+        virtual void NoAccessMsg(const char* ScreenName = nullptr, const char* SubTitle = nullptr) {
+
+            std::cout << "\t\t\t\t\t______________________________________";
+
+            std::cout << "\n\n\t\t\t\t\t\t  " << (((ScreenName != nullptr) ? ScreenName : "Access Denied, Please contact Admin"));
+
+            if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
+
+            std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+
+        }
+  
 
     public:
 

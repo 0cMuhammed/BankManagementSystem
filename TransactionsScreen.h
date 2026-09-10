@@ -18,9 +18,11 @@ class TransactionsScreen : public Screen
 private :
 	enum MenuComponents { Deposit = 1, Withdraw = 2, TotalBalances = 3, BackToMain = 4};
 
+    Session& m_Session;
     Service & m_ServiceRef;
+   
 
-    void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
         std::cout << "\t\t\t\t\t______________________________________";
 
@@ -31,6 +33,7 @@ private :
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
     }
+
      void _TransactionsLayout() {
          
         _ClearScreen();
@@ -45,6 +48,7 @@ private :
         std:: cout << std::setw(37) << std::left << "" << "\t[4] Main Menue.\n";
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
     }
+
      static void _ExitMenu(bool& isInMainMenu, const char* message = "\nLogging Out...")
      {
          std::cout << message << "\n\n";
@@ -53,64 +57,79 @@ private :
 
      }
 
+     void _Menu(bool& isInMainMenu) {
+         do
+         {
+             _TransactionsLayout();
+
+             switch (_NavigateUser())
+             {
+             case MenuComponents::Deposit:
+             {
+                 DepositScreen Deposit(m_ServiceRef);
+                 Deposit.Start(m_Session.GetUser());
+                 break;
+
+             }
+             case MenuComponents::Withdraw:
+             {
+                 WithdrawScreen Withdraw(m_ServiceRef);
+                 Withdraw.Start(m_Session.GetUser());
+                 break;
+             }
+             case MenuComponents::TotalBalances:
+             {
+                 TotalBalanceScreen TotalBalances(m_ServiceRef);
+                 TotalBalances.Start(m_Session.GetUser());
+                 break;
+             }
+             case MenuComponents::BackToMain:
+             {
+                 _GetBackToMenu();
+                 _ExitMenu(isInMainMenu, "\nGetting Back to Main Menu....");
+                 break;
+
+             }
+             default: //for later enum choices
+             {
+                 break;
+
+             }
+             }
+
+         } while (isInMainMenu);
+     }
+
 	MenuComponents _NavigateUser(double from = 1, double to = 4)
 	{
 		_Message("Choose What do you want to do ? [1 to 4] : ");
 
 		return  (MenuComponents)Validator::returnValidatedNumber(from, to);
 	}
-    void PerformMenu(const char* Message = nullptr) override {
+
+    void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
         bool isInMainMenu = true;
-        do
+
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions)) 
         {
-            _TransactionsLayout();
-
-            switch (_NavigateUser())
-            {
-            case MenuComponents::Deposit:
-            {
-                DepositScreen Deposit(m_ServiceRef);
-                Deposit.Start();
-                break;
-
-            }
-            case MenuComponents::Withdraw:
-            {
-                WithdrawScreen Withdraw(m_ServiceRef);
-                Withdraw.Start();
-                break;
-            }
-            case MenuComponents::TotalBalances: 
-            {
-                TotalBalanceScreen TotalBalances(m_ServiceRef);
-                TotalBalances.Start();
-                break;
-            }
-            case MenuComponents::BackToMain: 
-            {
-                _GetBackToMenu();
-                _ExitMenu(isInMainMenu,"\nGetting Back to Main Menu....");
-                break;
-
-            }
-            default: //for later enuchoice
-            {
-                break;
-
-            }
-            }
-
-        } while (isInMainMenu);
+            _Menu(isInMainMenu);
+        }
+        else 
+        {
+            NoAccessMsg();
+            _GetBackToMenu();
+        }
 
     }
 
 public :
 
-    TransactionsScreen(Service& Ref) : Screen(Ref), m_ServiceRef(Ref) {};
+    TransactionsScreen(Service& Ref, Session& SessionRef) : Screen(Ref), m_Session(SessionRef), m_ServiceRef(Ref) {};
 
-    void Start() override {
-        PerformMenu();
+    void Start(const User &CurrentUser) override {
+        PerformMenu(CurrentUser);
+       
     }
 
 };

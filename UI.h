@@ -1,13 +1,32 @@
 #pragma once
 #include <string>
 
+class User;
+class Session;
+
 class UI {
 
 public :
 
-	virtual void PrintHeader(const char* ScreenName = nullptr, const char *SubTitle = nullptr) = 0;
-	virtual void PerformMenu(const char *Message = nullptr) = 0;
-	virtual void Start() = 0;
+	virtual void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) {
+
+	}
+
+	virtual void PerformMenu(const User& CurrentUser, const char* Message = nullptr) {
+
+	}
+	virtual void Start(const User& CurrentUser) {
+
+	}
+
+	virtual void PerformMainMenu(Session& CurrentUser, const char* Message = nullptr)
+	{
+
+	}
+	virtual void StartMainMenu(Session& CurrentUser)
+	{
+
+	}
 
 	virtual ~UI() = default;
 

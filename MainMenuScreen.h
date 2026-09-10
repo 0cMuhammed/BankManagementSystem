@@ -10,7 +10,7 @@
 #include "ListScreen.h"
 #include "AddScreen.h"
 #include "DeleteScreen.h"
-#include "UpdateScreen.h"`
+#include "UpdateScreen.h"
 #include "FindScreen.h"
 #include "TransactionsScreen.h"
 #include "ManageUsersScreen.h"
@@ -24,19 +24,19 @@ private :
 
 	enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUsers = 7, Logout = 8 };
 
+    Session& m_Session;
 	Service& m_ServicesRef;
 
     
     static void _ExitMenu(bool& isInMainMenu, const char* message = "\nLogging Out...")
     {
+        
         std::cout << message << "\n\n";
         
         isInMainMenu = false;
         
     }
   
-  
-
      void _MainMenuLayout()
     {
 
@@ -57,6 +57,7 @@ private :
 
 
     }
+
 	 MainMenuComponents _NavigateUser(double from = 1, double to = 8)
 	{
          _Message("Choose What do you want to do ? [1 to 8] : ");
@@ -77,65 +78,64 @@ private :
             std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
     }
-    void PerformMenu(const char* Message = nullptr) override {
-
-        bool isInMainMenu = true;
+    void _Menu(bool &isInMainMenu) {
         do
         {
             _MainMenuLayout();
-            
+
             switch (_NavigateUser())
             {
-            case MainMenuComponents::List: 
+            case MainMenuComponents::List:
             {
                 ListScreen List(m_ServicesRef);
-                List.Start();
+                List.Start(m_Session.GetUser());
                 break;
-              
+
             }
-            case MainMenuComponents::Add: 
+            case MainMenuComponents::Add:
             {
                 AddScreen Add(m_ServicesRef);
-                Add.Start();
+                Add.Start(m_Session.GetUser());
                 break;
             }
-            case MainMenuComponents::Delete: 
+            case MainMenuComponents::Delete:
             {
                 DeleteScreen Delete(m_ServicesRef);
-                Delete.Start();
+                Delete.Start(m_Session.GetUser());
                 break;
 
             }
-            case MainMenuComponents::Update: 
+            case MainMenuComponents::Update:
             {
                 UpdateScreen Update(m_ServicesRef);
-                Update.Start();
+                Update.Start(m_Session.GetUser());
                 break;
 
             }
-            case MainMenuComponents::Find: 
+            case MainMenuComponents::Find:
             {
                 FindScreen Find(m_ServicesRef);
-                Find.Start();
+                Find.Start(m_Session.GetUser());
                 break;
 
-            } 
+            }
             case MainMenuComponents::Transactions:
             {
-                TransactionsScreen Transactions(m_ServicesRef);
-                Transactions.Start();
+                TransactionsScreen Transactions(m_ServicesRef, m_Session);
+                Transactions.Start(m_Session.GetUser());
                 break;
 
             }
             case MainMenuComponents::ManageUsers:
             {
-                ManageUsersScreen ManageUsers(m_ServicesRef);
-                ManageUsers.Start();
+                ManageUsersScreen ManageUsers(m_ServicesRef, m_Session);
+                ManageUsers.Start(m_Session.GetUser());
                 break;
 
             }
-            case MainMenuComponents::Logout: 
+            case MainMenuComponents::Logout:
             {
+                m_Session.SetIsActive(false);
                 _ExitMenu(isInMainMenu);
                 break;
 
@@ -145,12 +145,28 @@ private :
                 break;
 
             }
-                                       
+
 
 
             }
 
         } while (isInMainMenu);
+    }
+
+    void PerformMainMenu(Session& CurrentUser, const char* Message = nullptr) override {
+
+        bool isInMainMenu = true;
+
+        if (CurrentUser.isActive()) 
+        {
+            _Menu(isInMainMenu);
+        }
+        else 
+        {
+            NoAccessMsg();
+            CurrentUser.SetIsActive(false);
+        }
+       
         
     }
     
@@ -159,11 +175,11 @@ private :
 
 public : 
 
-    MainMenuScreen(Service& Ref) : Screen(Ref), m_ServicesRef(Ref) {};
+    MainMenuScreen(Service& Ref, Session &CurrentUser) : Screen(Ref), m_Session(CurrentUser), m_ServicesRef(Ref) {};
 
 
-    void Start() override {
-        PerformMenu();
+    void StartMainMenu(Session &CurrentUser) override {
+        PerformMainMenu(CurrentUser);
     }
 
 };

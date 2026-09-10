@@ -1,10 +1,15 @@
 #pragma once
 #include <string>
-#include "bcrypt/BCrypt.hpp"
-#define SALT_FACTOR 12
+#include "bcrypt/bcrypt.hpp"
+
+
 
 class Hasher
 {
+
+private :
+
+	constexpr static size_t SALT_FACTOR = 12;
 
 public :
 

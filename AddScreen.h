@@ -2,19 +2,16 @@
 #include <iostream>
 #include<vector>
 #include<iomanip>
-
-
-
 #include "Validator.h"
 #include "ClientRepository.h"
 #include "Screen.h"
+
 
 class AddScreen : public Screen
 {
 private :
 
     ClientRepository& m_RepositoryReference;
-
 
 
 
@@ -29,23 +26,20 @@ private :
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
     }
-    void PerformMenu(const char* Message = nullptr) override {
+
+    void PerformMenu(const User & CurrentUser, const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
 
-        do {
-            _PerformAdding();
+        do 
+        {
+            _PerformAdding(CurrentUser);
             IsContinueOperation = Validator::GetConfirmation('\n' + std::string( (((Message != nullptr) ? Message : "Do you want to continue this operation?")) ));
 
         } while (IsContinueOperation);
 
     }
-   
-
-  
-    
-   
-
+ 
   
     void _Add(Client& New, const std::string &AccountNumber = "Empty") {
 
@@ -81,15 +75,24 @@ private :
         }
         }
     }
-    void _PerformAdding() {
+    void _PerformAdding(const User & CurrentUser) {
 
         _ClearScreen();
-        PrintHeader();
+     
        
-
-        Client New = m_RepositoryReference.ReadClient();
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::AddClient))
+        {
+            PrintHeader();
+            Client New = m_RepositoryReference.ReadClient();
+            _Add(New);
+        }
+        else 
+        {
+            NoAccessMsg();
+        }
         
-        _Add(New);
+        
+        
     }
 
    
@@ -98,8 +101,9 @@ private :
 
         AddScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 
-    void Start() override {
-        PerformMenu();
+    void Start(const User &CurrentUser) override 
+    {
+        PerformMenu(CurrentUser);
         _GetBackToMenu();
     }
  	

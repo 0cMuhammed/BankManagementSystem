@@ -12,9 +12,9 @@ private :
 	static  bool _isNotToBeSaved(const Client& client) noexcept;
 	static  bool _isNotToBeSaved(const User& user) noexcept;
 
-	static constexpr const char * CLIENTS_FILE = "Clients.txt";
-	static constexpr const char * USERS_FILE = "Users.txt";
-	static constexpr const char*  DELIMITER = "#//#";
+	static constexpr const char * CLIENTS_FILE = "ClientsData.txt";
+	static constexpr const char * USERS_FILE = "UsersData.txt";
+	static constexpr const char * DELIMITER = "#//#";
 
 public :
 

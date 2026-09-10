@@ -100,22 +100,31 @@ private:
 
 	}
 
-	void _PerformWithdraw() {
+	void _PerformWithdraw(const User &CurrentUser) {
 
 
 		_ClearScreen();
-		PrintHeader();
 
-		_Message("Please enter your account number : ");
-		std::string AccountNumber = Validator::ReadString();
+		if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions)) 
+		{
+			PrintHeader();
 
-		_Withdraw(AccountNumber);
+			_Message("Please enter your account number : ");
+			std::string AccountNumber = Validator::ReadString();
+
+			_Withdraw(AccountNumber);
+
+		 }
+		else 
+		{
+			NoAccessMsg();
+		}
 
 
 
 	}
 
-	void PerformMenu(const char* Message = nullptr) override {
+	void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
 		bool IsContinueOperation = true;
 
@@ -123,7 +132,7 @@ private:
 		{
 
 
-			_PerformWithdraw();
+			_PerformWithdraw(CurrentUser);
 
 			IsContinueOperation = Validator::GetConfirmation('\n' +  std::string (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
 
@@ -144,8 +153,8 @@ public:
 
 	WithdrawScreen(Service& Ref) : Screen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
 
-	void Start() override {
-		PerformMenu();
+	void Start(const User& CurrentUser) override {
+		PerformMenu(CurrentUser);
 		_GetBackToMenu("Press Enter to go back to Transactions Menu");
 	}
 

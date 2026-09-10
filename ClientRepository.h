@@ -3,6 +3,7 @@
 #include<vector>
 #include<fstream>
 #include "Client.h"
+#include "Hasher.h"
 #include "FileHandler.h"
 #include"Validator.h"
 
@@ -146,7 +147,7 @@ private :
 		for (const Client& client : m_List)
 		{
 			bool accountNumberMatch = (client.getAccountNumber() == accountNumber);
-			bool pinCodeMatch = (pinCodeParameter == nullptr) ? true : client.getPinCode() == std::string(pinCodeParameter);
+			bool pinCodeMatch = (pinCodeParameter == nullptr) ? true : ( Hasher::VerifyUser( std::string(pinCodeParameter), client.getPinCode() ) ) ;
 
 			if (accountNumberMatch && pinCodeMatch)
 			{
@@ -202,7 +203,7 @@ public :
 
 		 std::string Phone = Validator::ReadPhoneNumber();
 
-		 std::string PinCode = Validator::ReadPincode();
+		 std::string PinCode = Hasher::GetHash(Validator::ReadPincode());
 
 		 _Message("Enter Account Balance :");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
@@ -224,7 +225,7 @@ public :
 		
 		 std::string Phone = Validator::ReadPhoneNumber();
 
-		 std::string PinCode = Validator::ReadPincode();
+		 std::string PinCode = Hasher::GetHash(Validator::ReadPincode());
 
 		 _Message("Enter Account Balance : ");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
@@ -232,6 +233,7 @@ public :
 		 return Client(FirstName, LastName, Email, Phone, ExistingAccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
 	 }
 	 Client ReadClient() {
+
 		 std::string AccountNumber = _ReadAccountNumber();
 
 		 _Message("Enter first name : ");
@@ -247,7 +249,7 @@ public :
 		 std::string Phone = Validator::ReadPhoneNumber();
 
 		
-		 std::string PinCode = Validator::ReadPincode();
+		 std::string PinCode = Hasher::GetHash(Validator::ReadPincode());
 
 		 _Message("Enter Account Balance :");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");

@@ -3,15 +3,14 @@
 #include<vector>
 #include<fstream>
 #include "User.h"
-
-#include "Authorizer.h"
-
 #include "FileHandler.h"
 #include "Validator.h"
 
-using Permission = Authorizer::Permissions;
+
+
 
 using Mode = User::ObjectMode;
+
 
 class UserRepository {
 
@@ -38,7 +37,7 @@ private:
 	}
 
 	User  _GetNewObject() const noexcept {
-		return  User("", "", "", "", "", "", 0, Mode::EmptyMode);
+		return  User("", "", "", "", "", "", 0, Mode::newMode);
 	}
 
 	void _MakeEmpty(User& user) {
@@ -50,7 +49,7 @@ private:
 	}
 
 	static bool _IsModifiable(const User& user, const std::string& username, const std::string &password) {
-		return ( user.GetUsername() == username && user.GetPassword() == password) && user.GetMode() == Mode::ExistingMode;
+		return ( user.GetUsername() == username && ( Hasher::VerifyUser(password, user.GetPassword()) || password == user.GetPassword() ) ) && user.GetMode() == Mode::ExistingMode;
 	}
 
 	
@@ -69,12 +68,12 @@ private:
 		return Username;
 	}
 
-	static std::string  _ReadUsername() {
+	static std::string  s_ReadUsername() {
 
 		_Message("Enter your username : ");
 		std::string Username = Validator::ReadString();
 
-		while (IsExists(Username)) {
+		while (IsExistsInFile(Username)) {
 
 			_Message("Username is Already Used, Please choose another username : \n");
 
@@ -112,7 +111,7 @@ private:
 
 		for (User& c : m_List)
 		{
-			if (_IsModifiable(c, user.GetUsername(), user.GetPassword()))
+			if ( _IsModifiable( c, user.GetUsername(), user.GetPassword() ) )
 			{
 				c.SetMode(Mode::DeleteMode);
 				_MakeEmpty(c);
@@ -169,7 +168,7 @@ private:
 		for (const User& user: users)
 		{
 			bool usernameMatch = user.GetUsername() == username;
-			bool passwordMatch = (password == nullptr) ? true :  user.GetPassword() == std::string(password);
+			bool passwordMatch = (password == nullptr) ? true : (Hasher::VerifyUser(std::string(password), user.GetPassword()));
 
 			if (usernameMatch && passwordMatch)
 			{
@@ -186,7 +185,7 @@ private:
 		for (const User& user : m_List)
 		{
 			bool usernameMatch = user.GetUsername() == username;
-			bool passwordMatch = (password == nullptr) ? true : user.GetPassword() == std::string(password);
+			bool passwordMatch = (password == nullptr) ? true : ( Hasher::VerifyUser( std::string(password), user.GetPassword() ) || user.GetPassword() == std::string(password) );
 
 			if (usernameMatch && passwordMatch)
 			{
@@ -198,6 +197,7 @@ private:
 
 		return _GetEmptyObject();
 	}
+	
 
 public:
 
@@ -205,7 +205,10 @@ public:
 
 
 	const std::vector<User>& GetList() const {
-		return m_List;
+		return m_List; // read only 
+	}
+	std::vector<User>& GetMutableList()  noexcept {
+		return m_List; 
 	}
 
 	static void PrintUser(const User& user) {
@@ -224,10 +227,11 @@ public:
 
 
 	}
-	static User ReadNewUser(const User& CurrentUser)
+
+	static User ReadNewUser(int32_t permbits)
 	{
 		
-		std::string Username =  _ReadUsername();
+		std::string Username =  s_ReadUsername(); // file 
 
 
 		_Message("Enter First name : ");
@@ -245,13 +249,37 @@ public:
 		_Message("Enter Password : ");
 		std::string Password = Hasher::GetHash(Validator::ReadString());
 
-		_Message("Enter Permissions : "); 
-		int32_t Permissions = Authorizer::ReadPermissions(CurrentUser); // function that sets up the permissions
 		
 
-		return User(FirstName, LastName, Email, Phone, Username, Password, Permissions, User::ObjectMode::newMode);
+		return User(FirstName, LastName, Email, Phone, Username, Password, permbits, User::ObjectMode::newMode);
 	}
-	static User ReadUser(const User & CurrentUser, const std::string& ExistingUsername)
+	 User ReadUser(int32_t permbits)
+	{
+
+		std::string Username = _ReadUsername(); // Vector
+
+
+		_Message("Enter First name : ");
+		std::string FirstName = Validator::ReadString();
+
+		_Message("Enter Last name : ");
+		std::string LastName = Validator::ReadString();
+
+		_Message("Enter Email : ");
+		std::string Email = Validator::ReadString();
+
+
+		std::string Phone = Validator::ReadPhoneNumber();
+
+		_Message("Enter Password : ");
+		std::string Password = Hasher::GetHash(Validator::ReadString());
+
+
+
+
+		return User(FirstName, LastName, Email, Phone, Username, Password, permbits, User::ObjectMode::newMode);
+	}
+	static User UpdateExistingUser( const std::string& ExistingUsername, int32_t permbits)
 	{
 
 		_Message("Enter First name : ");
@@ -268,39 +296,11 @@ public:
 
 		_Message("Enter Password : ");
 		std::string Password = Hasher::GetHash(Validator::ReadString());
-
-		_Message("Enter Permissions : ");
-		int32_t Permissions = Authorizer::ReadPermissions(CurrentUser); // function that sets up the permissions
-
-
-		return User(FirstName, LastName, Email, Phone, ExistingUsername, Password, Permissions, User::ObjectMode::newMode);
-	}
-	User ReadUser(const User& CurrentUser)
-	{
-		
-		std::string Username = _ReadUsername();
-
-		_Message("Enter First name : ");
-		std::string FirstName = Validator::ReadString();
-
-		_Message("Enter Last name : ");
-		std::string LastName = Validator::ReadString();
-
-		_Message("Enter Email : ");
-		std::string Email = Validator::ReadString();
 
 	
-		std::string Phone = Validator::ReadPhoneNumber();
-
-		_Message("Enter Password : ");
-		std::string Password = Hasher::GetHash(Validator::ReadString());
-
-		_Message("Enter Permissions : ");
-		int32_t Permissions = Authorizer::ReadPermissions(CurrentUser); // function that sets up the permissions
-
-
-		return User(FirstName, LastName, Email, Phone, Username, Password, Permissions, User::ObjectMode::newMode);
+		return User(FirstName, LastName, Email, Phone, ExistingUsername, Password, permbits, User::ObjectMode::newMode);
 	}
+
 
 	bool IsExists(const std::string& username, const char * password = nullptr) {
 
@@ -308,7 +308,7 @@ public:
 		return (!user.isEmpty());
 	}
 
-	static bool IsExists(const std::string& username, const char* password = nullptr) {
+	static bool IsExistsInFile(const std::string& username, const char* password = nullptr) {
 
 		User user = _FindObjectFromFile(username, password);
 		return (!user.isEmpty());
@@ -410,5 +410,5 @@ public:
 
 	}
 
-};
 
+};

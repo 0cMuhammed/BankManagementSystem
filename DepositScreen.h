@@ -21,8 +21,6 @@ private :
 		}
 
 	    bool _PerformConfirmation(const Client& client,  const char* Message = nullptr) {
-
-			
 			bool isConfirm = Validator::GetConfirmation('\n' +std::string ( (((Message != nullptr) ? Message : "Are you sure you want to perform this transaction?"))));
 			return isConfirm;
 		}
@@ -82,30 +80,36 @@ private :
 
 	    }
 
-		void _PerformDeposit()  {
+		void _PerformDeposit(const User &CurrentUser)  {
 
 			
 			    _ClearScreen();
-				PrintHeader();
 
-				_Message("Please enter your account number : ");
-				std::string AccountNumber = Validator::ReadString();
+				if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions)) 
+				{
+					PrintHeader();
 
-				_Deposit(AccountNumber);
+					_Message("Please enter your account number : ");
+					std::string AccountNumber = Validator::ReadString();
 
+					_Deposit(AccountNumber);
+
+		     	}
+				else 
+				{
+					NoAccessMsg();
+				}
 			
 
 		}
 
-		void PerformMenu(const char* Message = nullptr) override {
+		void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
 			bool IsContinueOperation = true;
 
 			do
 			{
-
-
-				_PerformDeposit();
+				_PerformDeposit(CurrentUser);
 
 				IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( ((Message != nullptr) ? Message : "Do you want to continue this operation?")));
 
@@ -126,8 +130,8 @@ private :
 
 			DepositScreen(Service & Ref) : Screen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
 
-			void Start() override {
-				PerformMenu();
+			void Start(const User& CurrentUser) override {
+				PerformMenu(CurrentUser);
 				_GetBackToMenu("Press Enter to go back to Transactions Menu");
 			}
 

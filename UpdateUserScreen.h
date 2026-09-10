@@ -5,7 +5,7 @@
 #include "Validator.h"
 
 #include "Screen.h"
-
+#include "Session.h"
 
 class UpdateUserScreen : public Screen
 {
@@ -23,13 +23,13 @@ private:
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
     }
-    void PerformMenu(const char* Message = nullptr) override {
+    void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
 
         do
         {
-            _PerformUpdate();
+            _PerformUpdate(CurrentUser);
 
             IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( ((Message != nullptr) ? Message : "Do you want to continue this operation?")));
 
@@ -39,16 +39,14 @@ private:
 
 
 
-
-    //exclusive
     static bool _PerformConfirmation(const User& user, const char* Message = nullptr) {
         UserRepository::PrintUser(user);
         bool isConfirm = Validator::GetConfirmation('\n' + std::string ((((Message != nullptr) ? Message : "Are you sure you want to update this user?"))));
         return isConfirm;
     }
-    void _PrintUpdateStatus(User& target,  const std::string& ExistingUsername, const User &CurrentUser) {
+    void _PrintUpdateStatus(User& target, const User &CurrentUser, const std::string& ExistingUsername) {
 
-        target = UserRepository::ReadUser(CurrentUser,ExistingUsername);
+        target = UserRepository::UpdateExistingUser(ExistingUsername, static_cast<int32_t>(Authorizer::ReadPermissions(CurrentUser) ) );
 
         switch (m_RepositoryReference.UpdateUser(target))
         {
@@ -76,7 +74,7 @@ private:
 
     }
 
-    void _Update(const std::string& Username, const std::string &Password, const User& CurrentUser) {
+    void _Update(const User& CurrentUser,const std::string& Username, const std::string &Password) {
 
         User user = m_RepositoryReference.Find(Username,Password.c_str());
 
@@ -88,22 +86,32 @@ private:
         }
         else
         {
-            (_PerformConfirmation(user)) ? _PrintUpdateStatus(user, Username,CurrentUser) : _Message("\nOperation is cancelled.\n");
+            (_PerformConfirmation(user)) ? _PrintUpdateStatus(user,CurrentUser, Username) : _Message("\nOperation is cancelled.\n");
         }
 
     }
 
-    void _PerformUpdate() {
+    void _PerformUpdate(const User& CurrentUser) {
+
         _ClearScreen();
         PrintHeader();
 
-        _Message("Please enter your username : ");
-        std::string Username = Validator::ReadString();
 
-        _Message("Please enter your password : ");
-        std::string Password = Validator::ReadString();
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::UpdateUser))
+        {
+            _Message("Please enter your username : ");
+            std::string Username = Validator::ReadString();
 
-        _Update(Username,Password);
+            _Message("Please enter your password : ");
+            std::string Password = Validator::ReadString();
+
+            _Update(CurrentUser, Username, Password);
+        }
+        else 
+        {
+            NoAccessMsg();
+        }
+
 
     }
 
@@ -113,8 +121,8 @@ public:
 
     UpdateUserScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
-    void Start() override {
-        PerformMenu();
+    void Start(const User & CurrentUser) override {
+        PerformMenu(CurrentUser);
         _GetBackToMenu("Press Enter to go back to Manage Users Menu");
     }
 };

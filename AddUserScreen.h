@@ -4,10 +4,8 @@
 #include<iomanip>
 
 #include "Validator.h"
-
+#include "UserRepository.h"
 #include "Screen.h"
-
-
 
 
 class AddUserScreen : public Screen
@@ -32,15 +30,16 @@ private :
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
     }
-    void PerformMenu(const char* Message = nullptr) override {
+
+    void PerformMenu(const User & CurrentUser,const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
 
         do {
-            _PerformAdding();
+            _PerformAdding(CurrentUser);
             IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Do you want to continue this operation?"))));
 
-        } while (IsContinueOperation);
+           } while (IsContinueOperation);
 
     }
 
@@ -51,6 +50,7 @@ private :
 
 
     void _Add(User& New) {
+
         switch (m_RepositoryReference.AddUser(New))
         {
 
@@ -82,13 +82,23 @@ private :
         }
         }
     }
-    void _PerformAdding() {
+    void _PerformAdding(const User& CurrentUser) {
 
         _ClearScreen();
         PrintHeader();
 
-        User New = m_RepositoryReference.ReadUser();
-        _Add(New);
+      
+
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::AddUser)) 
+        {
+            User New = m_RepositoryReference.ReadUser(static_cast<int32_t>(Authorizer::ReadPermissions(CurrentUser)));
+            _Add(New);
+        }
+        else
+        {
+            NoAccessMsg();
+        }
+
     }
 
 
@@ -97,8 +107,8 @@ public:
 
     AddUserScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
-    void Start() override {
-        PerformMenu();
+    void Start(const User & CurrentUser) override {
+        PerformMenu(CurrentUser);
         _GetBackToMenu("Press Enter to go back to Manage Users Menu");
     }
 };

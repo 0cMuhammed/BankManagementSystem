@@ -3,7 +3,8 @@
 #include<vector>
 #include<iomanip>
 #include <limits>
-
+#include "Session.h"
+#include "Authorizer.h"
 #include "Screen.h"
 
 
@@ -13,6 +14,23 @@ private :
 
     const UserRepository& m_RepositoryReference; 
 
+    void _ShowList() {
+        if (m_RepositoryReference.GetList().size() == 0)
+        {
+
+            _Message("\t\t\t\tNo Users Available In the System!.\n");
+        }
+
+        else
+        {
+            const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.GetList().size()) + ") User(s).";
+
+            PrintHeader(nullptr, SubTitle.c_str());
+            _PrintLayout();
+            _PrintAll(m_RepositoryReference.GetList());
+
+        }
+    }
 
     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
@@ -25,23 +43,11 @@ private :
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
     }
-    void PerformMenu(const char* Message = nullptr) override {
-        if (m_RepositoryReference.GetList().size() == 0)
-        {
+    void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
-            _Message("\t\t\t\tNo Users Available In the System!.\n");
+        (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowUserList )) ? _ShowList() : NoAccessMsg();
 
-
-        }
-        else
-        {
-            const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.GetList().size()) + ") User(s).";
-
-             PrintHeader(nullptr, SubTitle.c_str());
-            _PrintLayout();
-            _PrintAll(m_RepositoryReference.GetList());
-
-        }
+       
     }
 
     //exclusive
@@ -88,11 +94,11 @@ public:
 
     ListUserScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
-    void Start() override {
+    void Start(const User &CurrentUser) override {
 
 
 
-        PerformMenu();
+        PerformMenu(CurrentUser);
         _GetBackToMenu("Press Enter to go back to Manage Users Menu");
 
     }
