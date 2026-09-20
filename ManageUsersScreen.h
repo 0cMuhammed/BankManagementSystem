@@ -94,8 +94,7 @@ private :
             }
             case MenuComponents::Exit:
             {
-                _GetBackToMenu();
-                _ExitMenu(isInMainMenu, "\nGetting Back to Main Menu....");
+                _ExitMenu(isInMainMenu);
                 break;
 
             }
@@ -139,6 +138,7 @@ public:
     {
         PerformMenu(CurrentUser);
         _GetBackToMenu();
+     
     }
 };
 

@@ -15,7 +15,13 @@ public :
 	virtual void PerformMenu(const User& CurrentUser, const char* Message = nullptr) {
 
 	}
+	virtual void PerformMenu(User &CurrentUser, const char* Message = nullptr) {
+
+	}
 	virtual void Start(const User& CurrentUser) {
+
+	}
+	virtual void Start(User &CurrentUser) {
 
 	}
 

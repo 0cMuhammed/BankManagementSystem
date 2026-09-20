@@ -16,6 +16,23 @@ class Screen : public UI {
         { 
             system("cls"); 
         }
+        virtual void UserIsAdminMsg(const std::string& process) {
+            _ClearScreen();
+            std::cout << "\t\t\t\t\t______________________________________";
+
+            std::cout << "\n\n\t\t\t\t\t      you can't " << process + " the admin.";
+
+            std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+        } 
+        virtual void SelfEditMsg(const std::string& process) {
+            _ClearScreen();
+            std::cout << "\t\t__________________________________________________________________________________________________________________";
+
+            std::cout << "\n\n\t\t\t\t Note : Your account has been " + process + ", please logout and sign in again.";
+
+            std::cout << "\n\t\t__________________________________________________________________________________________________________________\n\n";
+        }
+        
         virtual void _GetBackToMenu(const char* Message = nullptr) 
         { 
             std::cout << '\n' + std::string( (((Message != nullptr) ? Message : "Press Enter to go back to Main Menu"))) + ".....\n";
@@ -38,7 +55,7 @@ class Screen : public UI {
 
             std::cout << "\t\t\t\t\t______________________________________";
 
-            std::cout << "\n\n\t\t\t\t\t\t  " << (((ScreenName != nullptr) ? ScreenName : "Access Denied, Please contact Admin"));
+            std::cout << "\n\n\t\t\t\t          " << (((ScreenName != nullptr) ? ScreenName : "Access Denied, Please contact Admin"));
 
             if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 

@@ -20,7 +20,8 @@ private:
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
     }
-    void PerformMenu(const User& CurrentUser,const char* Message = nullptr) override {
+
+    void PerformMenu(User& CurrentUser,const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
 
@@ -28,7 +29,16 @@ private:
         {
             _PerformDelete(CurrentUser);
 
-            IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Do you want to continue this operation?"))));
+            if (!CurrentUser.isEmpty()) 
+            { 
+                IsContinueOperation = Validator::GetConfirmation('\n' + std::string((((Message != nullptr) ? Message : "Do you want to continue this operation?")))); 
+            }
+
+            else 
+            {
+                IsContinueOperation = false;
+
+            }
 
         } while (IsContinueOperation);
 
@@ -43,9 +53,17 @@ private:
         bool isConfirm = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Are you sure you want to delete this user?"))));
         return isConfirm;
     }
-    void _PrintDeleteStatus(User& user) {
+    void _PrintDeleteStatus(User &CurrentUser, const User& target) {
 
-        switch (m_RepositoryReference.DeleteUser(user))
+    
+        if (m_RepositoryReference.IsAdmin(target))
+        {
+            UserIsAdminMsg("Delete");
+
+            return;
+        }
+
+        switch (m_RepositoryReference.DeleteUser(CurrentUser,target))
         {
 
         case UserState::Failed: // for some reason....
@@ -56,9 +74,19 @@ private:
         }
         case UserState::Successful:
         {
-            std::cout << "user is deleted Successfully!\n";
+            std::cout << "\nUser is deleted Successfully!\n";
             break;
-
+            
+        }
+        case UserState::UserIsAdmin:
+        {
+            UserIsAdminMsg("Delete");
+            break;
+        }
+        case UserState::SuccessfulSelfDelete:
+        {
+            SelfEditMsg("deleted");
+            break;
         }
 
         default:
@@ -70,23 +98,24 @@ private:
         }
     }
 
-    void _Delete(const std::string& Username, const std::string &Password) {
+    void _Delete(User &CurrentUser,const std::string& Username, const std::string &Password) {
 
-        User user = m_RepositoryReference.Find(Username,Password.c_str());
+        User user = m_RepositoryReference.Find(Username);
 
 
         if (user.isEmpty())
         {
-            std::cout << "User is not found.\n";
+            std::cout << "\nUser is not found.\n";
 
         }
         else
         {
-            ( _PerformConfirmation(user) ) ? _PrintDeleteStatus(user) : _Message("Operation is cancelled");
+            ( _PerformConfirmation(user) ) ? _PrintDeleteStatus(CurrentUser, user) : _Message("Operation is cancelled");
         }
 
+
     }
-    void _PerformDelete(const User &CurrentUser) {
+    void _PerformDelete(User &CurrentUser) {
 
         _ClearScreen();
         PrintHeader();
@@ -99,8 +128,8 @@ private:
 
             _Message("Please enter your password : ");
             std::string password = Validator::ReadString();
-
-            _Delete(username, password);
+     
+            _Delete(CurrentUser,username, password);
 
         }
         else 
@@ -117,7 +146,7 @@ public:
 
     DeleteUserScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
-    void Start(const User &CurrentUser) override {
+    void Start(User &CurrentUser) override {
          PerformMenu(CurrentUser);
         _GetBackToMenu("Press Enter to go back to Manage Users Menu");
     }

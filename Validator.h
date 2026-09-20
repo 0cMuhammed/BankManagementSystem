@@ -4,8 +4,11 @@
 #include<iostream>
 #include "Date.h"
 #include <limits>
+#include "Global.h"
 
 #define PINCODE_LENGTH 4
+
+
 #define PHONE_LENGTH 10
 #define ZERO_ASCII 48
 #define NINE_ASCII 57
@@ -29,20 +32,21 @@
 
 			return true;
 		}
+
+
 		static std::string  ReadPhoneNumber() {
 
 			std::string PhoneNumber = "";
 			PhoneNumber.reserve(PHONE_LENGTH);
 
-			std::cout << "Enter your phone number : ";
+			std::cout << "\nEnter phone number : ";
 			PhoneNumber = Validator::ReadString();
 
 
 			while (!isAllDigits(PhoneNumber))
 			{
 				PhoneNumber.clear();
-				std::cout << "\nInvalid phone number. Please enter exactly "
-					<< PHONE_LENGTH << " digits: ";
+				std::cout << "\nInvalid phone number. Please enter exactly " << PHONE_LENGTH << " digits : ";
 				PhoneNumber = ReadString();
 			}
 
@@ -57,6 +61,7 @@
 			std::string pincode;
 			pincode.resize(PINCODE_LENGTH);
 
+			std::cout << "\n Enter pincode : \n";
 			for (size_t i = 0; i < PINCODE_LENGTH; i++)
 			{
 				std::cout << "\nEnter your " + std::to_string(i + 1) + "th  digit : ";
@@ -162,6 +167,41 @@
 
 		static bool GetConfirmation(const std::string& msg) {
 			return (toupper(returnValidatedChar(msg + " y / n : ", "YyNn")) == 'Y');
+		}
+		static bool IsInvalid(const std::string& any) {
+			return any.find_first_of(DELIMITER) != std::string::npos; // so nothing can intervene with the delimiter in the file and cause a File I/O error
+		}
+	
+		static std::string ReadNames(const std::string& Order) {
+
+			std::cout << "Enter your " + Order + " name : ";
+			std::string name = Validator::ReadString();
+
+			while (IsInvalid(name)) {
+
+				std::cout <<"\n" + Order + " name is invalid, try again  : ";
+
+				name = Validator::ReadString();
+			}
+
+			return name;
+
+		}
+
+		static std::string  ReadEmails() {
+
+			std::cout << "\nEnter your email : ";
+			std::string email = Validator::ReadString();
+
+			while (IsInvalid(email)) {
+
+				std::cout << "\nEmail is invalid, try again  : ";
+
+				email = Validator::ReadString();
+			}
+
+			return email;
+
 		}
 
 	};

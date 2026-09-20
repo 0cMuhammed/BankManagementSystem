@@ -46,6 +46,8 @@ private :
 
 	 void _PerformFind(const User &CurrentUser, const char* NotFoundMessage = nullptr) {
 
+		 _ClearScreen();
+
 		 if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::FindClient)) 
 		 {
 			 PrintHeader();

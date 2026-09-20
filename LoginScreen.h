@@ -18,6 +18,9 @@ private :
 
 		while (attempts < MAX_ATTEMPTS) 
 		{
+			
+
+
 			_Message("Please enter your username : ");
 			std::string Username = Validator::ReadString();
 			
@@ -37,25 +40,29 @@ private :
 			{
 				return user;
 			}
-			
+
+		
+
 		}
 
+		
 		_Message("\n\nToo Many failed attempts, Exiting...");
-	
+		return nullptr;
 	}
 
 	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 		std::cout << "\t\t\t\t\t______________________________________";
 
-		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Login Screen"));
+		std::cout << "\n\n\t\t\t\t\t\t     " << (((ScreenName != nullptr) ? ScreenName : "Login Screen"));
 
 		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
 		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 	}
 	User* PerformLogin(const char* Message = nullptr)  {
-		
+		_ClearScreen();
 		PrintHeader(Message);
+
 		return _Login();
         
 		

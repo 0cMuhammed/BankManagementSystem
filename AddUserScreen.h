@@ -89,7 +89,7 @@ private :
 
       
 
-        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::AddUser)) 
+        if (     Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::AddUser)    ) 
         {
             User New = m_RepositoryReference.ReadUser(static_cast<int32_t>(Authorizer::ReadPermissions(CurrentUser)));
             _Add(New);

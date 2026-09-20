@@ -20,7 +20,7 @@ private:
        
         std::cout << "\t\t\t\t\t______________________________________";
 
-        std::cout << "\n\n\t\t\t\t\t\t\t  " << ( ( (ScreenName != nullptr) ? ScreenName : "Client List") );
+        std::cout << "\n\n\t\t\t\t\t  " << ( ( (ScreenName != nullptr) ? ScreenName : "Client List") );
 
         if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
@@ -60,7 +60,6 @@ private:
         std::cout << "| " << std::setw(20) << std::left << client.GetFullName();
         std::cout << "| " << std::setw(12) << std::left << client.GetPhoneNumber();
         std::cout << "| " << std::setw(20) << std::left << client.GetEmail();
-        std::cout << "| " << std::setw(10) << std::left << client.getPinCode();
         std::cout << "| " << std::setw(12) << std::left << client.getBalance();
 
     }
@@ -76,7 +75,6 @@ private:
         std::cout << "| " << std::left << std::setw(20) << "Client Name";
         std::cout << "| " << std::left << std::setw(12) << "Phone";
         std::cout << "| " << std::left << std::setw(20) << "Email";
-        std::cout << "| " << std::left << std::setw(10) << "Pin Code";
         std::cout << "| " << std::left << std::setw(12) << "Balance";
         _PrintLine();
     }

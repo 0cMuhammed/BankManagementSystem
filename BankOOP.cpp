@@ -13,18 +13,18 @@ int main()
     Service service(repository);
 
     Session session;
- 
-  
-   do {
+    session.SetIsActive(true);
 
+ 
+      while (session.isActiveState()) {
+          
        session = LoginScreen(service).Login();
 
        std::unique_ptr<UI> ui = std::make_unique<MainMenuScreen>(service, session);
 
        ui->StartMainMenu(session);
 
-   } while (!session.isActive());
-
+       } 
   
     
 

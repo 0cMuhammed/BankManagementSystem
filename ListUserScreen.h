@@ -15,6 +15,7 @@ private :
     const UserRepository& m_RepositoryReference; 
 
     void _ShowList() {
+        _ClearScreen();
         if (m_RepositoryReference.GetList().size() == 0)
         {
 
@@ -58,7 +59,6 @@ private :
         std::cout << "| " << std::setw(20) << std::left << user.GetFullName();
         std::cout << "| " << std::setw(12) << std::left << user.GetPhoneNumber();
         std::cout << "| " << std::setw(20) << std::left << user.GetEmail();
-        std::cout << "| " << std::setw(10) << std::left << user.GetPassword();
         std::cout << "| " << std::setw(12) << std::left << std::to_string( user.GetPermissions());
 
     }
@@ -73,7 +73,6 @@ private :
         std::cout << "| " << std::left << std::setw(20) << "Full Name";
         std::cout << "| " << std::left << std::setw(12) << "Phone";
         std::cout << "| " << std::left << std::setw(20) << "Email";
-        std::cout << "| " << std::left << std::setw(10) << "Password";
         std::cout << "| " << std::left << std::setw(12) << "Permissions";
         _PrintLine();
     }

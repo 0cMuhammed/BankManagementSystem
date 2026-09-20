@@ -5,7 +5,7 @@
 #include "User.h"
 #include "FileHandler.h"
 #include "Validator.h"
-
+#include "Global.h"
 
 
 
@@ -14,14 +14,15 @@ using Mode = User::ObjectMode;
 
 class UserRepository {
 
-public :
+public:
 
-	enum  OperationStates { Failed = 1, Successful = 2, UserAlreadyExists = 3, UserNotFound = 4 };
+	enum  OperationStates { Failed = 1, Successful = 2, UserAlreadyExists = 3, UserNotFound = 4, UserIsAdmin = 5, SuccessfulSelfDelete = 6, SuccessfulSelfUpdate = 7 };
 
 private:
 
-
+	
 	std::vector<User> m_List;
+
 
 	void _UpdateVector() {
 		m_List.clear();
@@ -40,40 +41,47 @@ private:
 		return  User("", "", "", "", "", "", 0, Mode::newMode);
 	}
 
-	void _MakeEmpty(User& user) {
+	void _MakeEmptyIfToBeDeleted(User& user) {
 		if (user.GetMode() == Mode::DeleteMode)
 		{
 			user = _GetEmptyObject();
 		}
 
 	}
+	void _EmptyObject(User& user) {
 
-	static bool _IsModifiable(const User& user, const std::string& username, const std::string &password) {
-		return ( user.GetUsername() == username && ( Hasher::VerifyUser(password, user.GetPassword()) || password == user.GetPassword() ) ) && user.GetMode() == Mode::ExistingMode;
+		user = _GetEmptyObject();
 	}
 
-	
+	static bool _IsModifiable(const User& user, const std::string& username, const std::string& password) {
+		return (user.GetUsername() == username && (Hasher::VerifyUser(password, user.GetPassword()) || password == user.GetPassword())) && user.GetMode() == Mode::ExistingMode;
+	}
+
+
 	std::string  _ReadUsername() {
 
 		_Message("Enter your username : ");
-		std::string Username = Validator::ReadString();
+		std::string Username = Validator::ReadString(); 
 
-		while (IsExists(Username)) {
+			while (IsExists(Username) || Validator::IsInvalid(Username)) {
 
-			_Message("Username is Already Used, Please choose another username : \n");
+				_Message("Username is already used/invalid, Please choose another username : ");
 
-			Username = Validator::ReadString();
-		}
+				Username = Validator::ReadString();
+			}
 
 		return Username;
 	}
+
+
+
 
 	static std::string  s_ReadUsername() {
 
 		_Message("Enter your username : ");
 		std::string Username = Validator::ReadString();
 
-		while (IsExistsInFile(Username)) {
+		while (IsExistsInFile(Username) || Validator::IsInvalid(Username) ) {
 
 			_Message("Username is Already Used, Please choose another username : \n");
 
@@ -95,26 +103,27 @@ private:
 			if (_IsModifiable(c, username,password))
 			{
 				c.SetMode(Mode::DeleteMode);
-				_MakeEmpty(c);
+				_MakeEmptyIfToBeDeleted(c);
 				return true;
 			}
 
 		}
-
+	
 
 		return false;
 
 	}
 
 	bool _DeleteObject(const User& user) {
-
+	
 
 		for (User& c : m_List)
 		{
 			if ( _IsModifiable( c, user.GetUsername(), user.GetPassword() ) )
 			{
+
 				c.SetMode(Mode::DeleteMode);
-				_MakeEmpty(c);
+				_MakeEmptyIfToBeDeleted(c);
 				return true;
 			}
 
@@ -141,17 +150,18 @@ private:
 		return false;
 
 	}
-	bool _UpdateObject(User & user) {
+	bool _UpdateObject(const User &OldUser, User & NewUser) {
+
 
 		for (User & c : m_List)
 		{
-			if (_IsModifiable(c, user.GetUsername(), user.GetPassword()))
+
+			if (_IsModifiable(c, OldUser.GetUsername(), OldUser.GetPassword()))
 			{
-				c = std::move(user);
-				c.Save();
+				c = std::move(NewUser);
 				return true;
 			}
-
+				
 		}
 
 		return false;
@@ -160,7 +170,7 @@ private:
 
 
 
-	static User _FindObjectFromFile(const std::string& username, const char * password = nullptr)  {
+	static User _FindObjectFromFile(const std::string& username)  {
 
 
 		std::vector<User> users = FileHandler::LoadUsers();
@@ -168,9 +178,8 @@ private:
 		for (const User& user: users)
 		{
 			bool usernameMatch = user.GetUsername() == username;
-			bool passwordMatch = (password == nullptr) ? true : (Hasher::VerifyUser(std::string(password), user.GetPassword()));
 
-			if (usernameMatch && passwordMatch)
+			if (usernameMatch)
 			{
 				return user;
 
@@ -180,14 +189,11 @@ private:
 
 		return _GetEmptyObject();
 	}
-	User _FindObject(const std::string& username, const char* password = nullptr) {
+	User _FindObject(const std::string& username) {
 
 		for (const User& user : m_List)
 		{
-			bool usernameMatch = user.GetUsername() == username;
-			bool passwordMatch = (password == nullptr) ? true : ( Hasher::VerifyUser( std::string(password), user.GetPassword() ) || user.GetPassword() == std::string(password) );
-
-			if (usernameMatch && passwordMatch)
+			if (user.GetUsername() == username)
 			{
 				return user;
 
@@ -221,11 +227,27 @@ public:
 		std::cout << "\nEmail       : " << user.GetEmail();
 		std::cout << "\nPhone       : " << user.GetPhoneNumber();
 		std::cout << "\nUsername    : " << user.GetUsername();
-		std::cout << "\nPassword    : " << user.GetPassword();
 		std::cout << "\nPermissions : " << std::to_string(user.GetPermissions());
 		std::cout << "\n___________________\n";
 
 
+	}
+
+	static bool IsPasswordsChanged(const User& Old, const std::string &NewHash) {
+		return Old.GetPassword() != NewHash;
+	}
+	static bool IsPermissionsChanged(const User& Old, const User& New) {
+		bool IsAllPermissions = Old.GetPermissions() == FullPermissions && New.GetPermissions() == FullPermisssionsInPositive || New.GetPermissions() == FullPermissions && Old.GetPermissions() == FullPermisssionsInPositive;
+		return IsAllPermissions ? false : Old.GetPermissions() != New.GetPermissions();
+	}
+	static bool IsSelf(const User& CurrentUser, const std::string& OtherUsername) {
+		return CurrentUser.GetUsername() == OtherUsername;
+	}
+	static bool IsUsernameDifferent(const std::string&Username, const std::string&OtherUsername) {
+		return Username == OtherUsername;
+	}
+	static bool IsUsernameDifferent(const User & user, const User &OtherUser) {
+		return user.GetUsername() != OtherUser.GetUsername();
 	}
 
 	static User ReadNewUser(int32_t permbits)
@@ -234,20 +256,20 @@ public:
 		std::string Username =  s_ReadUsername(); // file 
 
 
-		_Message("Enter First name : ");
-		std::string FirstName = Validator::ReadString();
 
-		_Message("Enter Last name : ");
-		std::string LastName = Validator::ReadString();
+		std::string FirstName = Validator::ReadNames("First");
 
-		_Message("Enter Email : ");
-		std::string Email = Validator::ReadString();
+		std::string LastName = Validator::ReadNames("Last");
 
-		
+
+		std::string Email = Validator::ReadEmails();
+
+
 		std::string Phone = Validator::ReadPhoneNumber();
 
 		_Message("Enter Password : ");
 		std::string Password = Hasher::GetHash(Validator::ReadString());
+
 
 		
 
@@ -259,14 +281,13 @@ public:
 		std::string Username = _ReadUsername(); // Vector
 
 
-		_Message("Enter First name : ");
-		std::string FirstName = Validator::ReadString();
+		
+		std::string FirstName = Validator::ReadNames("First");
 
-		_Message("Enter Last name : ");
-		std::string LastName = Validator::ReadString();
+		std::string LastName = Validator::ReadNames("Last");
 
-		_Message("Enter Email : ");
-		std::string Email = Validator::ReadString();
+	
+		std::string Email = Validator::ReadEmails();
 
 
 		std::string Phone = Validator::ReadPhoneNumber();
@@ -279,49 +300,119 @@ public:
 
 		return User(FirstName, LastName, Email, Phone, Username, Password, permbits, User::ObjectMode::newMode);
 	}
-	static User UpdateExistingUser( const std::string& ExistingUsername, int32_t permbits)
+	static User UpdateExistingUser(const User&target, const std::string& ExistingUsername, int32_t permbits)
 	{
 
-		_Message("Enter First name : ");
-		std::string FirstName = Validator::ReadString();
+		std::string FirstName;
+		std::string LastName;
+		std::string email;
+		std::string phone;
+		std::string Password;
+		std::string Username;
 
-		_Message("Enter Last name : ");
-		std::string LastName = Validator::ReadString();
 
-		_Message("Enter Email : ");
-		std::string Email = Validator::ReadString();
+		if (Validator::GetConfirmation("\nDo you want to change your First name ? y/n : "))
+		{
+
+
+			_Message("Enter your new first name : \n");
+			FirstName = Validator::ReadNames("First");
+		}
+		else
+		{
+			FirstName = target.GetFirstName();
+		}
+		if (Validator::GetConfirmation("\nDo you want to change your last name ? y/n : "))
+		{
+
+
+			_Message("Enter your new last name : \n");
+			LastName = Validator::ReadNames("Last");
+		}
+		else
+		{
+			LastName = target.GetLastName();
+		}
+		if (Validator::GetConfirmation("\nDo you want to change your email ? y/n : "))
+		{
+
+
+			_Message("Enter your new email name : \n");
+			email = Validator::ReadEmails();
+		}
+		else
+		{
+			email = target.GetEmail();
+		}
+
+		if (Validator::GetConfirmation("\nDo you want to change your phone number ? y/n : "))
+		{
+
+
+			_Message("Enter your new phone number : \n");
+			phone = Validator::ReadPhoneNumber();
+		}
+		else
+		{
+			phone = target.GetPhoneNumber();
+		}
+
+		if (Validator::GetConfirmation("\nDo you want to change your username? y/n : "))
+		{
+
+
+			_Message("Enter your new username: \n");
+			Username = s_ReadUsername();
+		}
+		else
+		{
+			Username = target.GetUsername();
+		}
+
+		if (Validator::GetConfirmation("\nDo you want to change your password? y/n : "))
+		{
+
+
+			_Message("Enter your new Password : ");
+			Password = Hasher::GetHash(Validator::ReadString());
+		}
+		else
+		{
+		    Password = target.GetPassword();   
+		}
 
 		
-		std::string Phone = Validator::ReadPhoneNumber();
-
-		_Message("Enter Password : ");
-		std::string Password = Hasher::GetHash(Validator::ReadString());
-
 	
-		return User(FirstName, LastName, Email, Phone, ExistingUsername, Password, permbits, User::ObjectMode::newMode);
+		return User(FirstName, LastName, email, phone, Username, Password, permbits, User::ObjectMode::ExistingMode);
 	}
 
 
-	bool IsExists(const std::string& username, const char * password = nullptr) {
+	bool IsExists(const std::string& username) {
 
-		User user = _FindObject(username, password);
+		User user = _FindObject(username);
 		return (!user.isEmpty());
 	}
 
-	static bool IsExistsInFile(const std::string& username, const char* password = nullptr) {
+	static bool IsExistsInFile(const std::string& username) {
 
-		User user = _FindObjectFromFile(username, password);
+		User user = _FindObjectFromFile(username);
 		return (!user.isEmpty());
+	}
+	static bool IsAdmin(const User& user) {
+		return	user.GetUsername() == ADMIN_USERNAME && user.GetPassword() == std::string(ADMIN_HASH);
+	}
+	static bool IsAdmin(const std::string& username, const std::string& password) {
+		return	username == ADMIN_USERNAME && password == std::string(ADMIN_HASH);
 	}
 
 
-	User Find(const std::string& username, const char * password = nullptr) {
-		return _FindObject(username, password);
+	User Find(const std::string& username) {
+		return _FindObject(username);
 	}
 
 	OperationStates AddUser(User& FilledObject)
 	{
-		if ( IsExists(FilledObject.GetUsername(), FilledObject.GetPassword().c_str() ))
+		if ( IsExists(FilledObject.GetUsername()))
 		{
 			return OperationStates::UserAlreadyExists;
 		}
@@ -337,8 +428,13 @@ public:
 
 	}
 
-	OperationStates DeleteUser(const User& ExistingObject) {
+	OperationStates DeleteUser(User & CurrentUser,const User& ExistingObject) {
 
+		if (IsAdmin(ExistingObject)) 
+		{
+		   return OperationStates::UserIsAdmin;
+		}
+	
 
 		if (!_DeleteObject(ExistingObject))
 		{
@@ -346,21 +442,35 @@ public:
 
 		}
 
+		
 
 
 		FileHandler::SaveUsers(m_List);
 		_UpdateVector();
 
+		if (IsSelf(CurrentUser,ExistingObject.GetUsername()))
+		{
+			CurrentUser.SetMode(Mode::DeleteMode);
+			_MakeEmptyIfToBeDeleted(CurrentUser);
+
+			return OperationStates::SuccessfulSelfDelete;
+		}
+
 		return OperationStates::Successful;
 
 	}
-	OperationStates DeleteUser(const std::string& username, const std::string & password) {
+	OperationStates DeleteUser(User &CurrentUser,const std::string& username, const std::string & password) {
 
-		if (!IsExists(username,password.c_str()))
+
+
+		if (!IsExists(username))
 		{
 			return OperationStates::UserNotFound;
 		}
-
+		if (IsAdmin(username,password))
+		{
+			return OperationStates::UserIsAdmin;
+		}
 		if (! _DeleteObject(username,password))
 		{
 			return OperationStates::Failed;
@@ -372,16 +482,29 @@ public:
 		FileHandler::SaveUsers(m_List);
 		_UpdateVector();
 
+		if (IsSelf(CurrentUser,username))
+		{
+			CurrentUser.SetMode(Mode::DeleteMode);
+			_MakeEmptyIfToBeDeleted(CurrentUser);
+
+			return OperationStates::SuccessfulSelfDelete;
+		}
+
 		return OperationStates::Successful;
 
 	}
 
 	OperationStates UpdateUser(const std::string& newFirstName, const std::string& newLastName, const std::string& newEmail, const std::string& newPhoneNumber, const std::string& newUsername, const std::string newPassword, const std::string& OldUsername, const std::string &OldPassword) {
 
-		if (!IsExists(OldUsername,OldPassword.c_str()))
+		if (!IsExists( OldUsername ))
 		{
 			return OperationStates::UserNotFound;
 		}
+		if (IsAdmin(OldUsername, OldPassword)) 
+		{
+			return OperationStates::UserIsAdmin;
+		}
+		
 
 		if (!_UpdateObject(newFirstName, newLastName, newEmail, newPhoneNumber, newUsername,newPassword,OldUsername,OldPassword))
 		{
@@ -394,19 +517,48 @@ public:
 		return OperationStates::Successful;
 
 	}
-	OperationStates UpdateUser(User& ExistingObject) {
+
+	OperationStates UpdateUser(User& CurrentUser, const User& OldUser, User& ExistingObject) {
 
 
+		bool ArePasswordsDifferent = IsPasswordsChanged(OldUser, ExistingObject.GetPassword());
+		bool ArePermissionsDifferent = IsPermissionsChanged(OldUser, ExistingObject);
+		bool AreUsernamesDifferent = IsUsernameDifferent(OldUser, ExistingObject);
 
-		if (!_UpdateObject(ExistingObject))
+		if (IsAdmin(OldUser))
+		{
+			return OperationStates::UserIsAdmin;
+		}
+
+		
+
+		User Temp = ExistingObject;
+
+		if (!_UpdateObject(OldUser, ExistingObject))
 		{
 			return OperationStates::Failed;
-
 		}
 
 		FileHandler::SaveUsers(m_List);
 
-		return OperationStates::Successful;
+		if (IsSelf(CurrentUser, OldUser.GetUsername() ))
+		{
+			if (ArePasswordsDifferent || ArePermissionsDifferent || AreUsernamesDifferent)
+			{
+				_EmptyObject(CurrentUser);
+
+				return OperationStates::SuccessfulSelfUpdate;
+			}
+			else 
+			{
+				CurrentUser = Temp; // if changes are not passwords or permissions then refresh all the other changes in sync
+			}
+
+		}
+		else 
+		{
+			return OperationStates::Successful;
+		}
 
 	}
 

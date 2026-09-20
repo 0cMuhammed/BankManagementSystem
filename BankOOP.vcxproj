@@ -161,6 +161,7 @@
     <ClInclude Include="DepositScreen.h" />
     <ClInclude Include="FindScreen.h" />
     <ClInclude Include="FindUserScreen.h" />
+    <ClInclude Include="Global.h" />
     <ClInclude Include="Hasher.h" />
     <ClInclude Include="ListScreen.h" />
     <ClInclude Include="Date.h" />

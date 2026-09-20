@@ -51,7 +51,7 @@ private:
     }
     void _PrintUpdateStatus(Client& client, const std::string &ExistingAccountNumber) {
 
-        client = ClientRepository::ReadClient(ExistingAccountNumber);
+        client = ClientRepository::UpdateExistingClient(client,ExistingAccountNumber);
 
         switch (m_RepositoryReference.UpdateClient(client))
         {
@@ -97,7 +97,6 @@ private:
     void _PerformUpdate(const User & CurrentUser) {
 
         _ClearScreen();
-       PrintHeader();
         
         if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::UpdateClient))
         {

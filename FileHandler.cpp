@@ -3,6 +3,7 @@
 #include "Client.h"
 #include "User.h"
 #include "Parser.h"
+#include "Global.h"
 #include <filesystem>
 
  bool FileHandler::_isNotToBeSaved(const Client& client) noexcept {

@@ -60,9 +60,9 @@ private :
 		_Message("Enter your account number : ");
 		std::string AccountNumber = Validator::ReadString();
 
-		while (IsExists(AccountNumber)) {
+		while (IsExists(AccountNumber) || Validator::IsInvalid(AccountNumber)) {
 
-			_Message("Account Number is Already Used, Please enter another account number : \n");
+			_Message("Account Number is already used/invalid, Please enter another account number : \n");
 
 			AccountNumber = Validator::ReadString();
 		}
@@ -124,6 +124,8 @@ private :
 	}
 	bool _UpdateObject(Client& client) {
 
+		
+
 		for (Client& c : m_List)
 		{
 			if (_IsModifiable(c, client.getAccountNumber()))
@@ -180,7 +182,6 @@ public :
 		 std::cout << "\nEmail       : " << client.GetEmail();
 		 std::cout << "\nPhone       : " << client.GetPhoneNumber();
 		 std::cout << "\nAcc. Number : " << client.getAccountNumber();
-		 std::cout << "\nPin Code    : " << client.getPinCode();
 		 std::cout << "\nBalance     : " << client.getBalance();
 		 std::cout << "\n___________________\n";
 
@@ -251,10 +252,90 @@ public :
 		
 		 std::string PinCode = Hasher::GetHash(Validator::ReadPincode());
 
-		 _Message("Enter Account Balance :");
+		 _Message("Enter Account Balance : ");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
 
 		 return Client(FirstName, LastName, Email, Phone, AccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
+	 }
+
+	static Client UpdateExistingClient(const Client &target, const std::string& ExistingAccountNumber) {
+
+		
+
+	
+		std::string FirstName;
+
+		std::string LastName;
+
+		std::string email;
+
+		std::string phone;
+		
+		std::string pincode;
+
+	
+
+		if (Validator::GetConfirmation("\nDo you want to change your First name ? : "))
+		{
+
+
+			_Message("Enter your new first name : \n");
+			FirstName = Validator::ReadNames("First");
+		}
+		else
+		{
+			FirstName = target.GetFirstName();
+		}
+		if (Validator::GetConfirmation("\nDo you want to change your last name ? : "))
+		{
+
+
+			_Message("Enter your new last name : \n");
+			LastName = Validator::ReadNames("Last");
+		}
+		else
+		{
+			LastName = target.GetLastName();
+		}
+		if (Validator::GetConfirmation("\nDo you want to change your email ? : "))
+		{
+
+
+			_Message("Enter your new email name : \n");
+			email = Validator::ReadEmails();
+		}
+		else
+		{
+			email = target.GetEmail();
+		}
+
+		if (Validator::GetConfirmation("\nDo you want to change your phone number ? : "))
+		{
+
+
+			_Message("Enter your new phone number : \n");
+			phone = Validator::ReadPhoneNumber();
+		}
+		else
+		{
+			phone = target.GetPhoneNumber();
+		}
+
+
+		if (Validator::GetConfirmation("\nDo you want to change your pin code? : "))
+		{
+
+
+			_Message("Enter your new pincode : ");
+			pincode = Hasher::GetHash(Validator::ReadPincode());
+		}
+		else
+		{
+			pincode = target.getPinCode();
+		}
+
+	
+		 return Client(FirstName, LastName, email, phone, ExistingAccountNumber, pincode, target.getBalance(), Client::ObjectMode::newMode);
 	 }
 
 
@@ -349,7 +430,7 @@ public :
 	 }
 	 OperationStates UpdateClient(Client& ExistingObject) {
 
-
+	
 
 		 if (!_UpdateObject(ExistingObject))
 		 {

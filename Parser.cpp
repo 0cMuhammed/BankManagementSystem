@@ -34,6 +34,6 @@ User Parser::LineToUser(std::string line) {
 		throw std::runtime_error("Malformed line: expected 7 fields, got " + std::to_string(Tokens.size()));
 
 
-	return User(std::move(Tokens[0]), std::move(Tokens[1]), std::move(Tokens[2]), std::move(Tokens[3]), std::move(Tokens[4]), std::move(Tokens[5]), static_cast<uint8_t>(stoi(Tokens[6])), User::ObjectMode::ExistingMode);
+	return User(std::move(Tokens[0]), std::move(Tokens[1]), std::move(Tokens[2]), std::move(Tokens[3]), std::move(Tokens[4]), std::move(Tokens[5]), static_cast<int32_t>(stoi(Tokens[6])), User::ObjectMode::ExistingMode);
 
 }
