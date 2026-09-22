@@ -11,7 +11,9 @@ public :
 	virtual void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) {
 
 	}
+	virtual void PrintHeader(const User& CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) {
 
+	}
 	virtual void PerformMenu(const User& CurrentUser, const char* Message = nullptr) {
 
 	}

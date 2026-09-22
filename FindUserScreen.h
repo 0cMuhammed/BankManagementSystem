@@ -16,7 +16,7 @@ private:
 
 
 
-	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+	void PrintHeader(const User &CurrentUser,const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 		std::cout << "\t\t\t\t\t______________________________________";
 
 		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Find User Screen"));
@@ -24,6 +24,7 @@ private:
 		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
 		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+		ShowUserAndDate(CurrentUser);
 	}
 
 	void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
@@ -31,7 +32,7 @@ private:
 		do
 		{
 			_ClearScreen();
-			PrintHeader();
+			PrintHeader(CurrentUser);
 
 			(Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::FindUser)) ? _PerformFind() : NoAccessMsg();
 

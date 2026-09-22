@@ -18,7 +18,7 @@ private :
 	//universal 
 	
 
-	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+	void PrintHeader(const User &CurrentUser,const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 		std::cout << "\t\t\t\t\t______________________________________";
 
 		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Find Client Screen"));
@@ -26,6 +26,7 @@ private :
 		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
 		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+		ShowUserAndDate(CurrentUser);
 	}
 	void PerformMenu(const User &CurrentUser, const char * Message = nullptr) override {
 
@@ -50,7 +51,7 @@ private :
 
 		 if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::FindClient)) 
 		 {
-			 PrintHeader();
+			 PrintHeader(CurrentUser);
 
 			 _Message("Please enter your account number : ");
 			 std::string AccountNumber = Validator::ReadString();

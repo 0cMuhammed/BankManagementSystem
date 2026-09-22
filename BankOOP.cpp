@@ -16,15 +16,17 @@ int main()
     session.SetIsActive(true);
 
  
-      while (session.isActiveState()) {
+      while (true) {
           
        session = LoginScreen(service).Login();
+
+      
 
        std::unique_ptr<UI> ui = std::make_unique<MainMenuScreen>(service, session);
 
        ui->StartMainMenu(session);
 
-       } 
+     } 
   
     
 

@@ -17,6 +17,7 @@
 
 #include "Screen.h"
 
+
 class MainMenuScreen : public Screen
 {
 
@@ -28,20 +29,19 @@ private :
 	Service& m_ServicesRef;
 
     
-    static void _ExitMenu(bool& isInMainMenu, const char* message = "\nLogging Out...")
-    {
-        
-        std::cout << message << "\n\n";
-        
-        isInMainMenu = false;
-        
-    }
+
   
      void _MainMenuLayout()
     {
-
+        
         _ClearScreen();
+
+   
+      
+
         PrintHeader();
+        
+
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
         std::cout << std::setw(37) << std::left << "" << "\t\t\tMain Menue\n";
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
@@ -71,12 +71,17 @@ private :
 		
 			std::cout << "\t\t\t\t\t______________________________________";
 
-			std::cout << "\n\n\t\t\t\t\t  \t\t" << (((ScreenName != nullptr) ? ScreenName : "Main Menu"));
+			std::cout << "\n\n\t\t\t\t\t  \t\t" << (((ScreenName != nullptr) ? ScreenName : "  Main Menu"));
             
-                if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t\t  " << SubTitle; }
+                if (SubTitle != nullptr) 
+                { 
+                    std::cout << "\n\t\t\t\t\t\t  " << SubTitle; 
+                }
 
             std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
+            ShowUserAndDate(m_Session.GetUser());
+          
     }
     void _Menu(bool &isInMainMenu) {
         do
@@ -135,8 +140,7 @@ private :
             }
             case MainMenuComponents::Logout:
             {
-                m_Session.SetIsActive(false);
-                _ExitMenu(isInMainMenu);
+                m_Session.Logout(isInMainMenu);
                 break;
 
             }
@@ -159,6 +163,8 @@ private :
 
         if (CurrentUser.isActive()) 
         {
+           
+
             _Menu(isInMainMenu);
         }
         else 

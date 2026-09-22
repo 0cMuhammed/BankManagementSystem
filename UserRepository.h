@@ -530,8 +530,6 @@ public:
 			return OperationStates::UserIsAdmin;
 		}
 
-		
-
 		User Temp = ExistingObject;
 
 		if (!_UpdateObject(OldUser, ExistingObject))
@@ -549,16 +547,14 @@ public:
 
 				return OperationStates::SuccessfulSelfUpdate;
 			}
-			else 
-			{
-				CurrentUser = Temp; // if changes are not passwords or permissions then refresh all the other changes in sync
-			}
+			
+			 CurrentUser = Temp; // if changes are not passwords or permissions then refresh all the other changes in sync
+			
 
 		}
-		else 
-		{
+		
 			return OperationStates::Successful;
-		}
+		
 
 	}
 

@@ -56,7 +56,7 @@ private :
 		
 	}
 
-	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+	void PrintHeader(const User &CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
 		std::cout << "\t\t\t\t\t______________________________________";
 
@@ -65,9 +65,10 @@ private :
 		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
 		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+		ShowUserAndDate(CurrentUser);
 
 	}
-	void _ShowTotal() 
+	void _ShowTotal(const User &CurrentUser) 
 	{
 		if (m_ServicesRef.AccessRepository().GetList().size() == 0)
 		{
@@ -80,7 +81,7 @@ private :
 		{
 			const std::string SubTitle = "\t    (" + std::to_string(m_ServicesRef.AccessRepository().GetList().size()) + ") Client(s).";
 
-			PrintHeader(nullptr, SubTitle.c_str());
+			PrintHeader(CurrentUser,nullptr, SubTitle.c_str());
 			_PrintLayout();
 			_PrintAll();
 			_PrintTotalBalance();
@@ -90,7 +91,7 @@ private :
 
 	void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
 	
-		(Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions)) ? _ShowTotal() : NoAccessMsg();
+		(Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions)) ? _ShowTotal(CurrentUser) : NoAccessMsg();
 
 	}
 

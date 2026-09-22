@@ -42,34 +42,36 @@ private:
 	UserRepository& m_Ref;
 
 
-	static bool _isEligibile(const User &CurrentUser) {
+	static bool _isEligibileUser(const User &CurrentUser) {
 		 return HasAccess(CurrentUser, Permissions::ShowUserList) || HasAccess(CurrentUser, Permissions::AddUser) || HasAccess(CurrentUser, Permissions::DeleteUser) || HasAccess(CurrentUser, Permissions::UpdateUser)|| HasAccess(CurrentUser, Permissions::FindUser);
 	}
-	static void _Message(const std::string& msg) {
-		std::cout << '\n' + msg;
+	static bool _isEligibileClientPerm(const User& CurrentUser) {
+		return HasAccess(CurrentUser, Permissions::ShowClientList) || HasAccess(CurrentUser, Permissions::AddClient) || HasAccess(CurrentUser, Permissions::DeleteClient) || HasAccess(CurrentUser, Permissions::UpdateClient) || HasAccess(CurrentUser, Permissions::FindClient) || HasAccess(CurrentUser, Permissions::Transactions);
 	}
+
 
 
 
 	static void _SetPermission(int32_t &PermissionBits, Permissions permission) {
 
-		if (PermissionBits == -1)
+		if (PermissionBits == static_cast<int32_t>(Permissions::AllPermissions))
 			return;
+
 
 		PermissionBits |= static_cast<int32_t>(permission);
 	}
 
 	static void _SetPermission(int32_t &PermissionBits, int32_t Number) {
 
-		if (PermissionBits == -1)
+		if (PermissionBits == static_cast<int32_t>(Permissions::AllPermissions))
 			return;
 
 		PermissionBits = Number;
 	}
 
-	static int32_t _SetManagingPermissions(const User & CurrentUser) 
+	static int32_t _SetUserPermissions(const User & CurrentUser) 
 	{
-		if (!_isEligibile(CurrentUser)) 
+		if (!_isEligibileUser(CurrentUser)) 
 		{
 			std::cout << "\nYou have no permissions available to grant.\n";
 			return static_cast<int32_t>(Permissions::None);
@@ -130,56 +132,88 @@ private:
 		return bits;
 	}
 
-	static int32_t _SetUserPermissions(const User& CurrentUser) {
+	static int32_t _SetClientPermissions(const User &CurrentUser) {
+
+
+		if (!_isEligibileClientPerm(CurrentUser))
+		{
+			std::cout << "\nYou have no permissions available to grant.\n";
+			return static_cast<int32_t>(Permissions::None);
+		}
+
+
+		
+		int32_t bits = static_cast<int32_t>(Permissions::None);
+		int8_t count = 0;
+		
+
+		do {
+
+			std::cout << "\nDo you want to give access to : \n";
+
+			if (HasAccess(CurrentUser, Permissions::ShowClientList) && Validator::GetConfirmation("\nShow client list ? y/n : "))
+			{
+				bits |= static_cast<int32_t>(Permissions::ShowClientList);
+				count++;
+				std::cout << "\n";
+			}
+			if (HasAccess(CurrentUser, Permissions::AddClient) && Validator::GetConfirmation("\nAdd Client? y/n : "))
+			{
+				bits |= static_cast<int32_t>(Permissions::AddClient);
+				count++;
+				std::cout << "\n";
+			}
+			if (HasAccess(CurrentUser, Permissions::DeleteClient) && Validator::GetConfirmation("\nDelete Client ? y/n : "))
+			{
+				bits |= static_cast<int32_t>(Permissions::DeleteClient);
+				count++;
+				std::cout << "\n";
+			}
+			if (HasAccess(CurrentUser, Permissions::UpdateClient) && Validator::GetConfirmation("\nUpdate Client ? y/n : "))
+			{
+				bits |= static_cast<int32_t>(Permissions::UpdateClient);
+				count++;
+				std::cout << "\n";
+			}
+			if (HasAccess(CurrentUser, Permissions::FindClient) && Validator::GetConfirmation("\nFind Client ? y/n : "))
+			{
+				bits |= static_cast<int32_t>(Permissions::FindClient);
+				count++;
+				std::cout << "\n";
+			}
+			if ( HasAccess(CurrentUser, Permissions::Transactions) && Validator::GetConfirmation("\nTransactions Client ? y/n : "))
+			{
+				bits |= static_cast<int32_t>(Permissions::Transactions);
+				count++;
+				std::cout << "\n";
+			}
+
+
+			if (count < 1)
+			{
+				std::cout << "\nAt least ONE permission is needed, try again : ";
+				bits = 0;
+			}
+
+		} while (count < 1);
+
+
+		return bits;
+
+	}
+
+	static int32_t _SetAllPermissions(const User& CurrentUser) {
 
 		int32_t bits = static_cast<int32_t>(Permissions::None);
-		
-
-		std::cout << "\nDo you want to give access to : \n";
-
-		if (Validator::GetConfirmation("\nShow client list ? y/n : "))
-		{
-			bits |= static_cast<int32_t>(Permissions::ShowClientList);
-			
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nAdd Client? y/n : "))
-		{
-			bits |= static_cast<int32_t>( Permissions::AddClient);
-			
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nDelete Client ? y/n : "))
-		{
-			bits |= static_cast<int32_t>( Permissions::DeleteClient);
-			
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nUpdate Client ? y/n : "))
-		{
-			bits |= static_cast<int32_t>(Permissions::UpdateClient);
-			
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nFind Client ? y/n : "))
-		{
-			bits |= static_cast<int32_t>(Permissions::FindClient);
-		
-			std::cout << "\n";
-		}
-		if (Validator::GetConfirmation("\nTransactions Client ? y/n : "))
-		{
-			bits |= static_cast<int32_t>(Permissions::Transactions);
-			
-			std::cout << "\n";
-		}
+	
+		bits = _SetClientPermissions(CurrentUser);
 
 		if ( (IsAdmin(CurrentUser) || HasAccess(CurrentUser, Permissions::ManageUsers) ) && Validator::GetConfirmation("\nManage Users ? y/n : "))
 		{
 			bits |= static_cast<int32_t>(Permissions::ManageUsers);
 			
 
-			bits |= _SetManagingPermissions(CurrentUser);
+			bits |= _SetUserPermissions(CurrentUser);
 			std::cout << "\n";
 		}
 
@@ -198,6 +232,7 @@ public:
 
 	}
 	static bool IsAdmin(const User& user) {
+
 		return	user.GetUsername() == ADMIN_USERNAME && user.GetPassword() == std::string(ADMIN_HASH);
 	}
 
@@ -205,7 +240,7 @@ public:
 
 		int32_t bits = static_cast<int32_t>(Permissions::None);
 
-		bits = (IsAdmin(CurrentUser) && Validator::GetConfirmation("\nDo you want to give full access?")) ? static_cast<int32_t>( Permissions::AllPermissions) : _SetUserPermissions(CurrentUser);
+		bits = (IsAdmin(CurrentUser) && Validator::GetConfirmation("\nDo you want to give full access?")) ? static_cast<int32_t>(Permissions::AllPermissions) : _SetAllPermissions(CurrentUser);
 
 		return bits;
 

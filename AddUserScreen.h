@@ -19,7 +19,7 @@ private :
         std::cout << '\n' + Message + " : ";
     }
 
-    void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+    void PrintHeader(const User &CurrentUser,const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
 
         std::cout << "\t\t\t\t\t______________________________________";
@@ -29,6 +29,7 @@ private :
         if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+        ShowUserAndDate(CurrentUser);
     }
 
     void PerformMenu(const User & CurrentUser,const char* Message = nullptr) override {
@@ -85,7 +86,7 @@ private :
     void _PerformAdding(const User& CurrentUser) {
 
         _ClearScreen();
-        PrintHeader();
+        PrintHeader(CurrentUser);
 
       
 

@@ -8,7 +8,7 @@ class LoginScreen : public Screen
 {
 private :     
 	                                                               
-	static constexpr uint8_t MAX_ATTEMPTS = 4;      
+	static constexpr uint8_t MAX_ATTEMPTS = 3;      
 	
     Authenticator& m_Auth;                                        
 	                                                             
@@ -59,6 +59,7 @@ private :
 
 		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 	}
+
 	User* PerformLogin(const char* Message = nullptr)  {
 		_ClearScreen();
 		PrintHeader(Message);

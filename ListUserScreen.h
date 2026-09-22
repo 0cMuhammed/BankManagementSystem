@@ -14,7 +14,8 @@ private :
 
     const UserRepository& m_RepositoryReference; 
 
-    void _ShowList() {
+    void _ShowList(const User &CurrentUser) {
+
         _ClearScreen();
         if (m_RepositoryReference.GetList().size() == 0)
         {
@@ -26,14 +27,14 @@ private :
         {
             const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.GetList().size()) + ") User(s).";
 
-            PrintHeader(nullptr, SubTitle.c_str());
+            PrintHeader(CurrentUser,nullptr, SubTitle.c_str());
             _PrintLayout();
             _PrintAll(m_RepositoryReference.GetList());
 
         }
     }
 
-    void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+    void PrintHeader(const User &CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
         std::cout << "\t\t\t\t\t______________________________________";
 
@@ -43,10 +44,11 @@ private :
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
+        ShowUserAndDate(CurrentUser);
     }
     void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
-        (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowUserList )) ? _ShowList() : NoAccessMsg();
+        (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowUserList )) ? _ShowList(CurrentUser) : NoAccessMsg();
 
        
     }

@@ -13,6 +13,14 @@ private :
 	static User _GetEmptyObject() noexcept {
 		return User("", "", "", "", "", "", 0, User::ObjectMode::EmptyMode);
 	}
+	static void _ExitMenu(bool& isInMainMenu, const char* message = "\nLogging Out...")
+	{
+
+		std::cout << message << "\n\n";
+
+		isInMainMenu = false;
+
+	}
 
 public :
 
@@ -40,6 +48,10 @@ public :
 	}
 	bool isEnded() const noexcept {
 		return !m_isActive;
+	}
+	void Logout(bool &isInMainMenu) {
+		m_isActive = false;
+	    _ExitMenu(isInMainMenu);
 	}
 
 

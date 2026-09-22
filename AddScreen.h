@@ -15,7 +15,7 @@ private :
 
 
 
-    void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+    void PrintHeader(const User &CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
 
         std::cout << "\t\t\t\t\t______________________________________";
@@ -25,6 +25,8 @@ private :
         if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+
+        ShowUserAndDate(CurrentUser);
     }
 
     void PerformMenu(const User & CurrentUser, const char* Message = nullptr) override {
@@ -82,7 +84,7 @@ private :
        
         if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::AddClient))
         {
-            PrintHeader();
+            PrintHeader(CurrentUser);
             Client New = m_RepositoryReference.ReadClient();
             _Add(New);
         }

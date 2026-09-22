@@ -14,7 +14,7 @@ private:
     UserRepository& m_RepositoryReference;
 
 
-     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+     void PrintHeader(const User &CurrentUser,const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
         std::cout << "\t\t\t\t\t______________________________________";
 
         std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Update User Screen"));
@@ -22,6 +22,7 @@ private:
         if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+        ShowUserAndDate(CurrentUser);
     }
 
    
@@ -133,7 +134,7 @@ private:
     void _PerformUpdate(User& CurrentUser) {
 
         _ClearScreen();
-        PrintHeader();
+        PrintHeader(CurrentUser);
 
 
         if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::UpdateUser))

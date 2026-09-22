@@ -34,6 +34,7 @@ private :
         if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
         std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+        ShowUserAndDate(m_Session.GetUser());
 
     }
 

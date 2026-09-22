@@ -1,7 +1,7 @@
 #pragma once
 #include "UI.h"
 #include "Service.h"
-
+#include "Date.h"
 class Screen : public UI {
     // abstract class : cannot be instatated 
 
@@ -20,7 +20,7 @@ class Screen : public UI {
             _ClearScreen();
             std::cout << "\t\t\t\t\t______________________________________";
 
-            std::cout << "\n\n\t\t\t\t\t      you can't " << process + " the admin.";
+            std::cout << "\n\n\t\t\t\t\t      You can't " << process + " the admin.";
 
             std::cout << "\n\t\t\t\t\t______________________________________\n\n";
         } 
@@ -55,12 +55,30 @@ class Screen : public UI {
 
             std::cout << "\t\t\t\t\t______________________________________";
 
-            std::cout << "\n\n\t\t\t\t          " << (((ScreenName != nullptr) ? ScreenName : "Access Denied, Please contact Admin"));
+            std::cout << "\n\n\t\t\t\t          " << (((ScreenName != nullptr) ? ScreenName : "Access Denied, Please contact your Admin"));
 
             if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
             std::cout << "\n\t\t\t\t\t______________________________________\n\n";
 
+        }
+        virtual void ShowCurrentUser(const User &CurrentUser) {
+
+            
+            std::cout << "\t\t\t\t\tUser : " << CurrentUser.GetUsername();
+            
+
+        }
+        virtual void ShowDate() {
+
+            Date Today;
+            std::cout << "\n\t\t\t\t\tDate : " << Today.DateToString() << '\n';
+
+
+        }
+        virtual void ShowUserAndDate(const User& CurrentUser) {
+            ShowCurrentUser(CurrentUser);
+            ShowDate();
         }
   
 
