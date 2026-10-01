@@ -42,8 +42,9 @@ public :
 	static std::string ObjectToLine(const Client& client, const std::string& delimiter = "#//#");
 	static std::string ObjectToLine(const User& user, const std::string& delimiter = "#//#");
 
+
 	static  Client LineToClient(std::string line);
-	static  User LineToUser(std::string line);
+	static  User LineToUser(std::string line);	
 
 
 	static std::string BalanceToText(int Number)

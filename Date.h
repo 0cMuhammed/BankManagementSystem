@@ -102,6 +102,7 @@ public:
 
 		return Date(Day, Month, Year);
 	}
+	
 
 	static	bool IsValidDate(Date Date)
 	{

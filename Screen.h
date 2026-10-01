@@ -2,6 +2,9 @@
 #include "UI.h"
 #include "Service.h"
 #include "Date.h"
+#include "time.h"
+
+
 class Screen : public UI {
     // abstract class : cannot be instatated 
 
@@ -52,6 +55,7 @@ class Screen : public UI {
         }
 
         virtual void NoAccessMsg(const char* ScreenName = nullptr, const char* SubTitle = nullptr) {
+         
 
             std::cout << "\t\t\t\t\t______________________________________";
 
@@ -71,8 +75,11 @@ class Screen : public UI {
         }
         virtual void ShowDate() {
 
-            Date Today;
-            std::cout << "\n\t\t\t\t\tDate : " << Today.DateToString() << '\n';
+         
+            time_t currentTime;
+            time(&currentTime);
+
+            std::cout << "\n\t\t\t\t\tDate : " << ctime(&currentTime) << '\n';
 
 
         }

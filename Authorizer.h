@@ -5,11 +5,6 @@
 #include "Service.h"  
 #include "Global.h"
 
-//a normal user cannot see all admins data they can only see the email + phone(Number censord) and full name 
-//only admins can give full permissions and admins data are heavily censored when they are printed 
-//a user cannot manage users except if they have that permission or they are an admin and specific permissions are allowed not all of them 
-//hmm u need to add a pointer parameter to whoever user is currently signed in every CRUD operation so we can keep track of permissions
-
 
 
 class Authorizer

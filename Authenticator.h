@@ -1,7 +1,7 @@
 #pragma once
 #include "UserRepository.h"
 #include "Hasher.h"
-
+#include "Logger.h"
 
 
 class Authenticator
@@ -23,10 +23,12 @@ private:
 		{
 			if (_IsExistingUser(user,username,PasswordText))
 			{
+				Logger::LogUser(user.GetUsername(), Logger::Category::Login, Logger::Level::INFO);
 				return &user;
 			}
 		}
-	     
+
+		Logger::LogUser(username, Logger::Category::Attempt, Logger::Level::WARN);
 		return  nullptr;
 	}
 

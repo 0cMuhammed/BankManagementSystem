@@ -56,6 +56,8 @@ private :
     }
 
     void _Menu(bool &isInMainMenu) {
+
+       
         do
         {
             _PrintLayout();
@@ -127,7 +129,16 @@ private :
 
         bool isInMainMenu = true;
        
-        (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ManageUsers)) ? _Menu(isInMainMenu) : NoAccessMsg();
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ManageUsers)) 
+        { 
+            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::ManageUsers, Logger::Level::INFO);
+            _Menu(isInMainMenu);
+        }
+        else 
+        {
+            NoAccessMsg();
+            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Managing Users");
+        }
        
     }
 

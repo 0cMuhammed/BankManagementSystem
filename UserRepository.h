@@ -432,6 +432,7 @@ public:
 
 		if (IsAdmin(ExistingObject)) 
 		{
+			Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::DeleteUser, Logger::Level::WARN);
 		   return OperationStates::UserIsAdmin;
 		}
 	

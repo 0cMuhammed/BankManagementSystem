@@ -17,6 +17,7 @@ public :
 
 	static std::vector<Client> LoadClients();
 	static std::vector<User> LoadUsers();
+	static void SaveLog(const std::string &message);
 	static void SaveClients(const Client& client);
 	static void SaveClients(const std::vector<Client> &Clients);
 

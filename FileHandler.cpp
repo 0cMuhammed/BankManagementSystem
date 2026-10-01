@@ -62,7 +62,18 @@ std::vector<User>  FileHandler::LoadUsers() {
 	return Users;
 }
 
+static void SaveLog(const std::string& message) {
 
+	std::fstream File;
+	File.open(LOGGER_FILE, std::ios::out | std::ios::app);
+
+	if (File.is_open())
+	{
+		File << message << '\n';
+	}
+	File.close();
+
+}
   void FileHandler::SaveClients(const Client& client) {
 
 	std::fstream File;

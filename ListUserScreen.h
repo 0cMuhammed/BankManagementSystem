@@ -16,11 +16,14 @@ private :
 
     void _ShowList(const User &CurrentUser) {
 
+      
+
         _ClearScreen();
         if (m_RepositoryReference.GetList().size() == 0)
         {
 
             _Message("\t\t\t\tNo Users Available In the System!.\n");
+            
         }
 
         else
@@ -29,7 +32,7 @@ private :
 
             PrintHeader(CurrentUser,nullptr, SubTitle.c_str());
             _PrintLayout();
-            _PrintAll(m_RepositoryReference.GetList());
+            _PrintAll(CurrentUser.GetUsername(),m_RepositoryReference.GetList());
 
         }
     }
@@ -48,7 +51,17 @@ private :
     }
     void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
-        (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowUserList )) ? _ShowList(CurrentUser) : NoAccessMsg();
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowUserList)) 
+        {
+           
+            _ShowList(CurrentUser);
+        }    
+        else 
+        {
+            Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::INFO, "List Users");
+            NoAccessMsg();
+        }
+            
 
        
     }
@@ -78,7 +91,9 @@ private :
         std::cout << "| " << std::left << std::setw(12) << "Permissions";
         _PrintLine();
     }
-    static void _PrintAll(const std::vector<User>& Users) {
+    static void _PrintAll(const std::string &CurrentUser,const std::vector<User>& Users) {
+        Logger::LogUser(CurrentUser, Logger::Category::ShowUserList, Logger::Level::INFO);
+
         for (const  User & u : Users)
         {
 
