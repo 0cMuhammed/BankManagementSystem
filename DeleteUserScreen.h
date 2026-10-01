@@ -57,9 +57,12 @@ private:
     }
     void _PrintDeleteStatus(User &CurrentUser, const User& target) {
 
+        const std::string Actor = CurrentUser.GetUsername(); // captured first: a self-delete empties CurrentUser
+
     
         if (m_RepositoryReference.IsAdmin(target))
         {
+            Logger::LogUser(Actor, Logger::Category::DeleteUser, Logger::Level::WARN, "", target.GetUsername());
             UserIsAdminMsg("Delete");
 
             return;
@@ -76,6 +79,7 @@ private:
         }
         case UserState::Successful:
         {
+            Logger::LogUser(Actor, Logger::Category::DeleteUser, Logger::Level::INFO, "", target.GetUsername());
             std::cout << "\nUser is deleted Successfully!\n";
             break;
             
@@ -87,6 +91,7 @@ private:
         }
         case UserState::SuccessfulSelfDelete:
         {
+            Logger::LogUser(Actor, Logger::Category::DeleteUser, Logger::Level::INFO, "", target.GetUsername());
             SelfEditMsg("deleted");
             break;
         }
@@ -136,6 +141,7 @@ private:
         }
         else 
         {
+            Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Delete User");
             NoAccessMsg();
         }
 

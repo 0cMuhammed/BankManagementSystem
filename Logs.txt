@@ -1,0 +1,18 @@
+[INFO / 2026-10-01 21:25:59] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-01 21:26:04] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-01 21:27:47] - Add Clients - USERNAME : Admin - Added a new client - Account Number : A909
+[INFO / 2026-10-01 21:28:09] - Delete Client - USERNAME : Admin - Deleted a client - Account Number : A909
+[INFO / 2026-10-01 21:28:50] - Update Client - USERNAME : Admin - Updated client data - Account Number : A202
+[INFO / 2026-10-01 21:29:18] - Deposit - USERNAME : Admin - Deposited 90.000000 - Account Number : 
+[INFO / 2026-10-01 21:29:50] - Withdraw - USERNAME : Admin - Withdrew 90.000000 - Account Number : 
+[INFO / 2026-10-01 21:30:12] - Show Total Balance - USERNAME : Admin - Viewed total balances
+[INFO / 2026-10-01 21:33:20] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-01 21:34:29] - Deposit - USERNAME : Admin - Deposited 90.000000 - Account Number : 
+[INFO / 2026-10-01 21:36:51] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-01 21:37:36] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-01 21:41:14] - Deposit - USERNAME : Admin - Deposited 200.000000 - Account Number : 
+[INFO / 2026-10-01 21:49:08] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-01 21:49:33] - Deposit - USERNAME : Admin - Deposited 900.000000 - Account Number : A202
+[INFO / 2026-10-01 21:50:27] - Withdraw - USERNAME : Admin - Withdrew 1280.000000 - Account Number : A202
+[INFO / 2026-10-01 21:51:17] - Show Total Balance - USERNAME : Admin - Viewed total balances
+[WARN / 2026-10-01 21:52:46] - Login Attempt - USERNAME : N - Failed login attempt - TARGET USER : 

@@ -34,7 +34,15 @@ private:
 			_ClearScreen();
 			PrintHeader(CurrentUser);
 
-			(Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::FindUser)) ? _PerformFind() : NoAccessMsg();
+			if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::FindUser))
+			{
+				_PerformFind(CurrentUser);
+			}
+			else
+			{
+				Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Find User");
+            NoAccessMsg();
+			}
 
 			isContinue = Validator::GetConfirmation('\n' + std::string (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
 
@@ -45,12 +53,13 @@ private:
 
 
 
-	void _PerformFind(const char* NotFoundMessage = nullptr) {
+	void _PerformFind(const User& CurrentUser, const char* NotFoundMessage = nullptr) {
 
 		_Message("Please enter a username : ");
 		std::string Username = Validator::ReadString();
 
 		User user = m_RepositoryReference.Find(Username);
+		Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::FindUser, Logger::Level::INFO, "", Username);
 
 		(!user.isEmpty()) ? UserRepository::PrintUser(user) : _Message(std::string ( ((NotFoundMessage != nullptr) ? NotFoundMessage : "User is not found.")));
 

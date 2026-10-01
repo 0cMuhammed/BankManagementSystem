@@ -6,6 +6,7 @@
 #include "FileHandler.h"
 #include "Validator.h"
 #include "Global.h"
+#include "Logger.h"
 
 
 

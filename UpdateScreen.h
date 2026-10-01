@@ -51,7 +51,7 @@ private:
         bool isConfirm = Validator::GetConfirmation('\n' + std::string ((((Message != nullptr) ? Message : "Are you sure you want to update this client?"))));
         return isConfirm;
     }
-    void _PrintUpdateStatus(Client& client, const std::string &ExistingAccountNumber) {
+    void _PrintUpdateStatus(const User& CurrentUser, Client& client, const std::string &ExistingAccountNumber) {
 
         client = ClientRepository::UpdateExistingClient(client,ExistingAccountNumber);
 
@@ -66,6 +66,7 @@ private:
         }
         case ClientRepository::OperationStates::Successful:
         {
+            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::UpdateClient, Logger::Level::INFO, "", ExistingAccountNumber);
             std::cout << "\nAccount is Updated Successfully!\n";
             break;
 
@@ -80,7 +81,7 @@ private:
         }
 
     }
-    void _Update(const std::string& AccountNumber) {
+    void _Update(const User& CurrentUser, const std::string& AccountNumber) {
 
         Client client = m_RepositoryReference.Find(AccountNumber);
 
@@ -92,7 +93,7 @@ private:
         }
         else
         {
-            (_PerformConfirmation(client)) ? _PrintUpdateStatus(client,AccountNumber) : _Message("Operation is cancelled.");
+            (_PerformConfirmation(client)) ? _PrintUpdateStatus(CurrentUser, client, AccountNumber) : _Message("Operation is cancelled.");
         }
         
     }
@@ -107,11 +108,12 @@ private:
             _Message("Please enter your account number : ");
             std::string AccountNumber = Validator::ReadString();
 
-            _Update(AccountNumber);
+            _Update(CurrentUser, AccountNumber);
 
         }
         else
         {
+            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Update Client");
             NoAccessMsg();
         }
 

@@ -57,12 +57,14 @@ private :
 			 std::string AccountNumber = Validator::ReadString();
 
 			 Client c = m_RepositoryReference.Find(AccountNumber);
+			 Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::FindClient, Logger::Level::INFO, "", AccountNumber);
 
 			 (!c.isEmpty()) ? ClientRepository::PrintClient(c) : _Message(std::string(((NotFoundMessage != nullptr) ? NotFoundMessage : "Account is not found.\n")));
 		 }
 		 else 
 		 {
-			 NoAccessMsg();
+			 Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Find Client");
+            NoAccessMsg();
 		 }
 
 		 

@@ -115,7 +115,7 @@ public :
 		case Category::AddUser:
 		{
 			
-			msg = Prefix + LOG_DELIMITER + "Created a new user";
+			msg = Prefix + LOG_DELIMITER + "Created a new user" + LOG_DELIMITER + Target;
 			break;
 		}
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "UI.h"
 #include "Service.h"
+#include "Logger.h"
 #include "Date.h"
 #include "time.h"
 

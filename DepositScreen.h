@@ -25,7 +25,9 @@ private :
 			return isConfirm;
 		}
 
-		void _PrintDepositStatus(Client &ExistingClient, double amount) {
+		void _PrintDepositStatus(const User& CurrentUser, Client &ExistingClient, double amount) {
+
+			std::string AccNum = ExistingClient.getAccountNumber();
 
 			switch (m_ServicesRef.Deposit(ExistingClient,amount))
 			{
@@ -37,6 +39,7 @@ private :
 			}
 			case ClientRepository::OperationStates::Successful:
 			{
+				Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::Deposit, Logger::Level::INFO, "", AccNum, amount);
 				std::cout << "\nAmount Deposited Sucessfully.\n";
 				_PrintAmount(ExistingClient);
 				break;
@@ -58,7 +61,7 @@ private :
 			return Validator::returnNumber();
 		}
 
-		void _Deposit(const std::string &AccountNumber) {
+		void _Deposit(const User& CurrentUser, const std::string &AccountNumber) {
 
 			
 			Client client = m_ServicesRef.AccessRepository().Find(AccountNumber);
@@ -67,7 +70,7 @@ private :
 			{
 				double amount = GetAmount(client);
 
-				(_PerformConfirmation(client)) ?  _PrintDepositStatus(client, amount) : _Message("\nOperations is Cancelled.\n");
+				(_PerformConfirmation(client)) ?  _PrintDepositStatus(CurrentUser, client, amount) : _Message("\nOperations is Cancelled.\n");
 				   
 			}
 			else 
@@ -92,12 +95,13 @@ private :
 					_Message("Please enter your account number : ");
 					std::string AccountNumber = Validator::ReadString();
 
-					_Deposit(AccountNumber);
+					_Deposit(CurrentUser, AccountNumber);
 
 		     	}
 				else 
 				{
-					NoAccessMsg();
+					Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Deposit");
+            NoAccessMsg();
 				}
 			
 

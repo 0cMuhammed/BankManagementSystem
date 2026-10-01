@@ -52,7 +52,7 @@ private :
         return isConfirm;
     }
 
-    void _PrintDeleteStatus(Client& client) {
+    void _PrintDeleteStatus(const User& CurrentUser, Client& client) {
  
         switch (m_RepositoryReference.DeleteClient(client))
         {
@@ -65,6 +65,7 @@ private :
         }
         case ClientRepository::OperationStates::Successful:
         {
+            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::DeleteClient, Logger::Level::INFO, "", client.getAccountNumber());
             std::cout << "Account is deleted Successfully!\n";
             break;
 
@@ -78,7 +79,7 @@ private :
 
         }
     }
-    void _Delete(const std::string& AccountNumber) {
+    void _Delete(const User& CurrentUser, const std::string& AccountNumber) {
 
         Client client = m_RepositoryReference.Find(AccountNumber);
          
@@ -90,7 +91,7 @@ private :
         }
         else 
         {
-            (_PerformConfirmation(client)) ? _PrintDeleteStatus(client) : _Message("\nOperation is cancelled.\n");
+            (_PerformConfirmation(client)) ? _PrintDeleteStatus(CurrentUser, client) : _Message("\nOperation is cancelled.\n");
         }
 
     }
@@ -106,10 +107,11 @@ private :
             _Message("Please enter your account number : ");
             std::string AccountNumber = Validator::ReadString();
 
-            _Delete(AccountNumber);
+            _Delete(CurrentUser, AccountNumber);
         }
         else 
         {
+            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Delete Client");
             NoAccessMsg();
         }
        

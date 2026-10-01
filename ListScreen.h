@@ -50,7 +50,16 @@ private:
    }
    void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
 
-       (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowClientList)) ? _List(CurrentUser) : NoAccessMsg();
+       if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowClientList))
+       {
+           Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::ShowClientList, Logger::Level::INFO);
+           _List(CurrentUser);
+       }
+       else
+       {
+           Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "List Clients");
+            NoAccessMsg();
+       }
 
    }
 

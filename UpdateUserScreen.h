@@ -63,8 +63,11 @@ private:
 
     void _PrintUpdateStatus(User& CurrentUser, User& target, const std::string& ExistingUsername) {
 
+        const std::string Actor = CurrentUser.GetUsername(); // captured first: a self-update can empty CurrentUser
+
         if (m_RepositoryReference.IsAdmin(target))
         {
+            Logger::LogUser(Actor, Logger::Category::UpdateUser, Logger::Level::WARN, "", ExistingUsername);
             UserIsAdminMsg("Update");
 
             return;
@@ -89,6 +92,7 @@ private:
         }
         case UserState::Successful :
         {
+            Logger::LogUser(Actor, Logger::Category::UpdateUser, Logger::Level::INFO, "", ExistingUsername);
             std::cout << "\nUser is Updated Successfully!\n";
             break;
 
@@ -100,6 +104,7 @@ private:
         }
         case UserState::SuccessfulSelfUpdate:
         {
+            Logger::LogUser(Actor, Logger::Category::UpdateUser, Logger::Level::INFO, "", ExistingUsername);
             SelfEditMsg("Updated");
             break;
         }
@@ -149,6 +154,7 @@ private:
         }
         else 
         {
+            Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Update User");
             NoAccessMsg();
         }
 

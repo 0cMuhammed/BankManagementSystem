@@ -39,7 +39,8 @@ private:
 		return isConfirm;
 	}
 
-	void _PrintWithdrawStatus(Client& ExistingClient, double amount) {
+	void _PrintWithdrawStatus(const User& CurrentUser, Client& ExistingClient, double amount) {
+		std::string AccNum = ExistingClient.getAccountNumber();
 
 		switch (m_ServicesRef.Withdraw(ExistingClient, amount))
 		{
@@ -51,6 +52,7 @@ private:
 		}
 		case ClientRepository::OperationStates::Successful:
 		{
+			Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::Withdraw, Logger::Level::INFO, "", AccNum, amount);
 			_Message("\nAmount Withdrawn Sucessfully.\n");
 			_PrintBalance(ExistingClient);
 			break;
@@ -78,7 +80,7 @@ private:
 		return Validator::returnNumber();
 	}
 
-	void _Withdraw(const std::string& AccountNumber) {
+	void _Withdraw(const User& CurrentUser, const std::string& AccountNumber) {
 
 
 		Client client = m_ServicesRef.AccessRepository().Find(AccountNumber);
@@ -87,7 +89,7 @@ private:
 		{
 			double amount = GetAmount(client);
 
-			(_PerformConfirmation(client)) ? _PrintWithdrawStatus(client, amount) : _Message("\nOperations is Cancelled.\n");
+			(_PerformConfirmation(client)) ? _PrintWithdrawStatus(CurrentUser, client, amount) : _Message("\nOperations is Cancelled.\n");
 
 		}
 		else
@@ -112,12 +114,13 @@ private:
 			_Message("Please enter your account number : ");
 			std::string AccountNumber = Validator::ReadString();
 
-			_Withdraw(AccountNumber);
+			_Withdraw(CurrentUser, AccountNumber);
 
 		 }
 		else 
 		{
-			NoAccessMsg();
+			Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Withdraw");
+            NoAccessMsg();
 		}
 
 

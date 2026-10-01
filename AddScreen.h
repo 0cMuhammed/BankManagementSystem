@@ -43,7 +43,7 @@ private :
     }
  
   
-    void _Add(Client& New, const std::string &AccountNumber = "Empty") {
+    void _Add(const User& CurrentUser, Client& New, const std::string &AccountNumber = "Empty") {
 
 
         switch (m_RepositoryReference.AddClient(New))
@@ -51,6 +51,7 @@ private :
 
         case ClientRepository::OperationStates::Successful :
         {
+            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::AddClient, Logger::Level::INFO, "", New.getAccountNumber());
             ClientRepository::PrintClient(New);
             std::cout << "Account is saved successfuly!\n";
 
@@ -86,10 +87,11 @@ private :
         {
             PrintHeader(CurrentUser);
             Client New = m_RepositoryReference.ReadClient();
-            _Add(New);
+            _Add(CurrentUser, New);
         }
         else 
         {
+            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Add Client");
             NoAccessMsg();
         }
         

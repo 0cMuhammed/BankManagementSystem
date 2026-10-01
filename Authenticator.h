@@ -28,7 +28,7 @@ private:
 			}
 		}
 
-		Logger::LogUser(username, Logger::Category::Attempt, Logger::Level::WARN);
+		Logger::LogUser(username, Logger::Category::LoginAttempt, Logger::Level::WARN);
 		return  nullptr;
 	}
 

@@ -91,7 +91,16 @@ private :
 
 	void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
 	
-		(Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions)) ? _ShowTotal(CurrentUser) : NoAccessMsg();
+		if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions))
+		{
+			Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::ShowTotalBalance, Logger::Level::INFO);
+			_ShowTotal(CurrentUser);
+		}
+		else
+		{
+			Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Total Balances");
+            NoAccessMsg();
+		}
 
 	}
 

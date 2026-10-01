@@ -118,6 +118,7 @@ private :
         }
         else 
         {
+            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Transactions");
             NoAccessMsg();
             _GetBackToMenu();
         }

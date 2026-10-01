@@ -131,13 +131,13 @@ private :
        
         if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ManageUsers)) 
         { 
-            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::ManageUsers, Logger::Level::INFO);
+            Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::ManageUsers, Logger::Level::INFO);
             _Menu(isInMainMenu);
         }
         else 
         {
             NoAccessMsg();
-            Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Managing Users");
+            Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Managing Users");
         }
        
     }

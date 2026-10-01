@@ -50,13 +50,14 @@ private :
 
 
 
-    void _Add(User& New) {
+    void _Add(const User& CurrentUser, User& New) {
 
         switch (m_RepositoryReference.AddUser(New))
         {
 
         case UserState::Successful:
         {
+            Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::AddUser, Logger::Level::INFO, "", New.GetUsername());
             UserRepository::PrintUser(New);
             std::cout << "\nAccount is saved successfuly!\n";
 
@@ -93,10 +94,11 @@ private :
         if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::AddUser)) 
         {
             User New = m_RepositoryReference.ReadUser(static_cast<int32_t>(Authorizer::ReadPermissions(CurrentUser)));
-            _Add(New);
+            _Add(CurrentUser, New);
         }
         else
         {
+            Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Add User");
             NoAccessMsg();
         }
 
