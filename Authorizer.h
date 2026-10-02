@@ -22,13 +22,14 @@ public :
 		UpdateClient = 1 << 3,
 		FindClient = 1 << 4,
 		Transactions = 1 << 5,
-		ManageUsers = 1 << 6,
+		ShowLogs = 1 << 6,
 
-		ShowUserList = 1 << 7,
-		AddUser = 1 << 8,
-		DeleteUser = 1 << 9,
-		UpdateUser = 1 << 10,
-		FindUser = 1 << 11,
+		ManageUsers = 1 << 7,
+		ShowUserList = 1 << 8,
+		AddUser = 1 << 9,
+		DeleteUser = 1 << 10,
+		UpdateUser = 1 << 11,
+		FindUser = 1 << 12,
 
 		AllPermissions = -1
 	};
@@ -103,6 +104,13 @@ private:
 			{
 				bits |= static_cast<int32_t>(Permissions::UpdateUser);
 				
+				count++;
+				std::cout << "\n";
+			}
+			if (HasAccess(CurrentUser, Permissions::ShowLogs) && Validator::GetConfirmation("\nShow Logs Activity? y/n : "))
+			{
+				bits |= static_cast<int32_t>(Permissions::ShowLogs);
+
 				count++;
 				std::cout << "\n";
 			}

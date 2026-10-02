@@ -26,3 +26,5 @@
 [INFO / 2026-10-01 21:59:43] - Update User - USERNAME : Admin - Updated user data / permissions - TARGET USER : N
 [INFO / 2026-10-02 18:19:25] - Login - USERNAME : Admin - Logged in successfully
 [INFO / 2026-10-02 18:19:29] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-02 18:44:15] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-02 18:44:19] - Manage Users - USERNAME : Admin - Opened user management

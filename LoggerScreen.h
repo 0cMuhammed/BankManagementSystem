@@ -59,7 +59,7 @@ private :
 
     void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
-        if (Authorizer::IsAdmin(CurrentUser)) // Only Admins
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowLogs)) // to whoever has access now
         {
             Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::ShowLogs, Logger::Level::INFO);
             _ShowLogs(CurrentUser);
