@@ -4,11 +4,11 @@
 #include "Session.h"
 #include "LoginScreen.h"
 #include "MainMenuScreen.h"
-
-
+#include "FileHandler.h"
+#include <vector>
 int main()
 {
-
+    
     Repository repository;
     Service service(repository);
 
@@ -27,8 +27,9 @@ int main()
        ui->StartMainMenu(session);
 
      } 
-  
     
+ 
+  
 
    
     return 0;

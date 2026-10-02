@@ -1,5 +1,6 @@
 #pragma once
 #include<vector>
+#include<string>
 
 
 class Client;
@@ -17,6 +18,7 @@ public :
 
 	static std::vector<Client> LoadClients();
 	static std::vector<User> LoadUsers();
+	static std::vector<std::string> LoadLogs();
 	static void SaveLog(const std::string &message);
 	static void SaveClients(const Client& client);
 	static void SaveClients(const std::vector<Client> &Clients);

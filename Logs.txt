@@ -16,3 +16,13 @@
 [INFO / 2026-10-01 21:50:27] - Withdraw - USERNAME : Admin - Withdrew 1280.000000 - Account Number : A202
 [INFO / 2026-10-01 21:51:17] - Show Total Balance - USERNAME : Admin - Viewed total balances
 [WARN / 2026-10-01 21:52:46] - Login Attempt - USERNAME : N - Failed login attempt - TARGET USER : 
+[INFO / 2026-10-01 21:57:11] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-01 21:57:13] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-01 21:57:14] - Show User List - USERNAME : Admin - Viewed the user list
+[INFO / 2026-10-01 21:58:01] - Add User - USERNAME : Admin - Created a new user - TARGET USER : sdasd
+[INFO / 2026-10-01 21:58:12] - Show User List - USERNAME : Admin - Viewed the user list
+[INFO / 2026-10-01 21:58:25] - Delete User - USERNAME : Admin - Deleted a user - TARGET USER : sdasd
+[WARN / 2026-10-01 21:58:41] - Update User - USERNAME : Admin - Updated user data / permissions - TARGET USER : Admin
+[INFO / 2026-10-01 21:59:43] - Update User - USERNAME : Admin - Updated user data / permissions - TARGET USER : N
+[INFO / 2026-10-02 18:19:25] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-02 18:19:29] - Show Logs - USERNAME : Admin - Viewed the activity logs

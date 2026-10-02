@@ -45,6 +45,7 @@ public :
 
 	static  Client LineToClient(std::string line);
 	static  User LineToUser(std::string line);	
+	static std::string LogtoLine(std::string line);
 
 
 	static std::string BalanceToText(int Number)

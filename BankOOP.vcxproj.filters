@@ -113,6 +113,9 @@
     <ClInclude Include="ListUserScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LoggerScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="AddUserScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>

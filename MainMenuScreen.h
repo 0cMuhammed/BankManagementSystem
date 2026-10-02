@@ -14,6 +14,7 @@
 #include "FindScreen.h"
 #include "TransactionsScreen.h"
 #include "ManageUsersScreen.h"
+#include "LoggerScreen.h"
 
 #include "Screen.h"
 
@@ -23,7 +24,7 @@ class MainMenuScreen : public Screen
 
 private :
 
-	enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUsers = 7, Logout = 8 };
+	enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUsers = 7, Logs = 8, Logout = 9 };
 
     Session& m_Session;
 	Service& m_ServicesRef;
@@ -52,15 +53,16 @@ private :
         std::cout << std::setw(37) << std::left << "" << "\t[5] Find Client.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[6] Transactions.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[7] Manage Users.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[8] Logout.\n";
+        std::cout << std::setw(37) << std::left << "" << "\t[8] Activity Logs.\n";
+        std::cout << std::setw(37) << std::left << "" << "\t[9] Logout.\n";
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
 
 
     }
 
-	 MainMenuComponents _NavigateUser(double from = 1, double to = 8)
+	 MainMenuComponents _NavigateUser(double from = 1, double to = 9)
 	{
-         _Message("Choose What do you want to do ? [1 to 8] : ");
+         _Message("Choose What do you want to do ? [1 to 9] : ");
 
 		return  (MainMenuComponents) Validator::returnValidatedNumber(from, to);
 	}
@@ -135,6 +137,13 @@ private :
             {
                 ManageUsersScreen ManageUsers(m_ServicesRef, m_Session);
                 ManageUsers.Start(m_Session.GetUser());
+                break;
+
+            }
+            case MainMenuComponents::Logs:
+            {
+                LoggerScreen Logs(m_ServicesRef);
+                Logs.Start(m_Session.GetUser());
                 break;
 
             }

@@ -1,6 +1,7 @@
 #include "Parser.h"
 #include "Client.h"
 #include "User.h"
+#include "Global.h"
 
 
 std::string Parser::ObjectToLine(const Client& client, const std::string& delimiter) {
@@ -40,3 +41,26 @@ User Parser::LineToUser(std::string line) {
 
 
 
+std::string Parser::LogtoLine(std::string line) {
+
+	std::vector<std::string> Tokens;
+	Tokens.reserve(5);
+
+	Tokens = Parser::TokensToVec(std::move(line), LOG_DELIMITER);
+
+	if (Tokens.size() < 4)
+		throw std::runtime_error("Malformed line: expected at least 4 fields, got " + std::to_string(Tokens.size()));
+
+	if (Tokens[0].find(" / ") == std::string::npos)
+		throw std::runtime_error("Malformed line: the level and date field is not valid");
+
+	std::string str = Tokens[0];
+
+	for (size_t i = 1; i < Tokens.size(); i++) 
+	{
+		str += DELIMITER;
+		str += Tokens[i];
+	}
+
+	return str;
+}

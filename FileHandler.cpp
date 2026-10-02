@@ -62,6 +62,34 @@ std::vector<User>  FileHandler::LoadUsers() {
 	return Users;
 }
 
+std::vector<std::string> FileHandler::LoadLogs() {
+	std::fstream file;
+	std::vector<std::string> logs;
+
+	file.open(LOGGER_FILE, std::ios::in);
+
+	if (file.is_open())
+	{
+		std::string dataline = "";
+
+		while (!(std::getline(file, dataline).fail()) && (!dataline.empty()))
+		{
+			try
+			{
+				logs.emplace_back(Parser::LogtoLine(std::move(dataline)));
+			}
+			catch (const std::runtime_error&) 
+			{
+				continue;
+			}
+		}
+
+		file.close();
+	}
+	
+
+	return logs;
+}
 void FileHandler::SaveLog(const std::string& message) {
 
 	std::fstream File;

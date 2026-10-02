@@ -63,7 +63,7 @@ private:
 
     void _PrintUpdateStatus(User& CurrentUser, User& target, const std::string& ExistingUsername) {
 
-        const std::string Actor = CurrentUser.GetUsername(); // captured first: a self-update can empty CurrentUser
+        const std::string Actor = CurrentUser.GetUsername(); 
 
         if (m_RepositoryReference.IsAdmin(target))
         {

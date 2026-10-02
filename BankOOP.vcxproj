@@ -168,6 +168,7 @@
     <ClInclude Include="FileHandler.h" />
     <ClInclude Include="ListUserScreen.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="LoggerScreen.h" />
     <ClInclude Include="LoginScreen.h" />
     <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="ManageUsersScreen.h" />

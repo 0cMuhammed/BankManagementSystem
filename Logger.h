@@ -29,6 +29,7 @@ public :
 		Login = 14,
 		LoginAttempt = 15,
 		NoAccsess = 16,
+		ShowLogs = 17,
 		
 
 	};
@@ -48,7 +49,7 @@ private :
 		
 		std::string table[] =
 		{
-			"Show Client List", "Add Clients", "Delete Client", "Update Client", "Find Client", "Deposit", "Withdraw", "Show Total Balance", "Manage Users", "Show User List", "Add User", "Delete User", "Update User", "Find User", "Login", "Login Attempt", "Operation Attempt"
+			"Show Client List", "Add Clients", "Delete Client", "Update Client", "Find Client", "Deposit", "Withdraw", "Show Total Balance", "Manage Users", "Show User List", "Add User", "Delete User", "Update User", "Find User", "Login", "Login Attempt", "Operation Attempt", "Show Logs"
 		};
 
 		return table[static_cast<uint8_t>(category)];
@@ -103,6 +104,11 @@ public :
 		case Category::ManageUsers:
 		{
 			msg = Prefix + LOG_DELIMITER + "Opened user management";
+			break;
+		}
+		case Category::ShowLogs:
+		{
+			msg = Prefix + LOG_DELIMITER + "Viewed the activity logs";
 			break;
 		}
 
