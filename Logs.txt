@@ -28,3 +28,33 @@
 [INFO / 2026-10-02 18:19:29] - Show Logs - USERNAME : Admin - Viewed the activity logs
 [INFO / 2026-10-02 18:44:15] - Login - USERNAME : Admin - Logged in successfully
 [INFO / 2026-10-02 18:44:19] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-04 16:06:28] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-04 16:06:47] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 16:06:51] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 16:09:01] - Transfer - USERNAME : Admin -  Transfer From User :  - A902 -  To User : A103 - Amount = 900.000000
+[INFO / 2026-10-04 16:10:24] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 16:11:36] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-04 16:11:38] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 16:13:49] - Transfer - USERNAME : Admin - Transfer From User :  - A902 -  To User : A103 - Amount = 9000.000000
+[INFO / 2026-10-04 16:13:59] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 16:28:15] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-04 16:28:18] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-04 16:29:10] - Transfer - USERNAME : Admin - Transfer From User : A102 Balance (999.900000) -  To User : A103 Balance (10455.000000) -  Transfer Amount = 999.900000 - New Balance for User : A102 = 0.000000, New Balance for User : A103 = 11454.900000
+[INFO / 2026-10-04 16:30:21] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-04 16:30:42] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 16:34:31] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-04 16:35:12] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-04 16:35:35] - Transfer - USERNAME : Admin - Transfer from User (A07) Balance = 123.000000 -  To User (A106) Balance = 8002.000000 -  Transfer Amount = 12.000000 - New Balance (A07) = 111.000000, New Balance (A106) = 8014.000000
+[INFO / 2026-10-04 16:36:43] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 16:38:55] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-04 16:38:57] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 16:43:41] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-04 16:43:43] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 16:43:50] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-04 16:43:56] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-04 16:44:26] - Transfer - USERNAME : Admin - Transfer | From: A103 | To: A102 | Amount: 1222.000000 | Balance: 10232.900000 -> 1222.000000
+[INFO / 2026-10-04 16:44:50] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-04 16:45:02] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 16:45:58] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-04 16:46:11] - Transfer - USERNAME : Admin - Transfer From: A102 To: A103 Amount: 200.000000 Balance: 1022.000000 -> 10432.900000
+[INFO / 2026-10-04 16:46:16] - Show Logs - USERNAME : Admin - Viewed the activity logs

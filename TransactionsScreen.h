@@ -9,6 +9,7 @@
 
 #include "DepositScreen.h"
 #include "WithdrawScreen.h"
+#include "TransferScreen.h"
 #include "TotalBalanceScreen.h"
 
 #include "Screen.h"
@@ -81,6 +82,8 @@ private :
              }
              case MenuComponents::Transfer:
              {
+                 TransferScreen Transfers(m_ServiceRef);
+                 Transfers.Start(m_Session.GetUser());
                  break;
              }
              case MenuComponents::TotalBalances:

@@ -91,7 +91,7 @@ public :
 
 		if (ExisitingClient.isEmpty())
 		{
-			return ClientState::AccountNumberNotFound;
+			return ClientRepository::OperationStates::AccountNumberNotFound;
 		}
 
 

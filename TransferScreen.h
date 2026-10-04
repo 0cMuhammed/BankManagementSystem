@@ -15,6 +15,14 @@ private:
 	ClientServices& m_ServicesRef;
 
 
+	void _PrintSenderBalance(const Client& client) {
+		_Message("New Balance for sender : ");
+		std::cout << client.getBalance() << "\n";
+	}
+	void _PrintReceiverBalance(const Client& client) {
+		_Message("New Balance for receiver : ");
+		std::cout << client.getBalance() << "\n";
+	}
 
 	void _PrintBalance(const Client& client) {
 		_Message("Your balance is : ");
@@ -31,17 +39,24 @@ private:
 
 	}
 
-	bool _PerformConfirmation(const Client& client, const char* Message = nullptr) {
+	bool _PerformConfirmation(const char* Message = nullptr) {
 
 
 		bool isConfirm = Validator::GetConfirmation('\n' + std::string((((Message != nullptr) ? Message : "Are you sure you want to perform this transaction?"))));
 		return isConfirm;
 	}
 
-	void _PrintWithdrawStatus(const User& CurrentUser, Client& ExistingClient, double amount) {
-		std::string AccNum = ExistingClient.getAccountNumber();
+	void _PrintTransferStatus(const User& CurrentUser, Client& ExistingClientFrom, Client& ExistingClientTo, double amount) {
 
-		switch (m_ServicesRef.AccessTransactions().Withdraw(ExistingClient, amount))
+		//for logging
+		std::string AccNumFrom = ExistingClientFrom.getAccountNumber(); 
+		std::string AccNumTo = ExistingClientTo.getAccountNumber();
+		double FromOldBalance = ExistingClientFrom.getBalance();
+		double ToOldBalance = ExistingClientTo.getBalance();
+
+		
+
+		switch (m_ServicesRef.AccessTransactions().Transfer(ExistingClientFrom,ExistingClientTo,amount))
 		{
 
 		case ClientRepository::OperationStates::AccountNumberNotFound:
@@ -51,15 +66,16 @@ private:
 		}
 		case ClientRepository::OperationStates::Successful:
 		{
-			Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::Withdraw, Logger::Level::INFO, "", AccNum, amount);
-			_Message("\nAmount Withdrawn Sucessfully.\n");
-			_PrintBalance(ExistingClient);
+			 Logger::LogTransfer(CurrentUser.GetUsername(), Logger::Category::Transfer, Logger::Level::INFO, AccNumFrom, AccNumTo, FromOldBalance, ToOldBalance,ExistingClientFrom.getBalance(),ExistingClientTo.getBalance(), amount);
+			_Message("\nAmount Transferred Sucessfully.\n");
+			_PrintSenderBalance(ExistingClientTo);
+			_PrintReceiverBalance(ExistingClientFrom);
 			break;
 		}
 		case ClientRepository::OperationStates::InsufficentBalance:
 		{
-			_Message("\nCannot Withdraw, Insufficent Balance !\n");
-			_PrintAmountAndBalance(ExistingClient, amount);
+			_Message("\nCannot Withdraw From User : " + AccNumFrom +", Insufficent Balance !\n");
+			_PrintAmountAndBalance(ExistingClientFrom, amount);
 			break;
 		}
 
@@ -72,33 +88,42 @@ private:
 		}
 	}
 
-	double GetAmount(const Client& client) {
-		ClientRepository::PrintClient(client);
-		_Message("Please enter Withdraw amount : ");
 
-		return Validator::returnNumber();
-	}
 
 	void _Transfer(const User& CurrentUser, const std::string& AccountNumberFrom, const std::string &AccountNumberTo) {
 
 
-		Client client = m_ServicesRef.AccessRepository().Find(AccountNumber);
+		Client From = m_ServicesRef.AccessRepository().Find(AccountNumberFrom);
 
-		if (!client.isEmpty())
+		if (From.isEmpty())
 		{
-			double amount = GetAmount(client);
+				_Message("\nAccount number is not found.\n");
+				return;
+	    }
 
-			(_PerformConfirmation(client)) ? _PrintWithdrawStatus(CurrentUser, client, amount) : _Message("\nOperations is Cancelled.\n");
+		Client To = m_ServicesRef.AccessRepository().Find(AccountNumberTo);
 
-		}
-		else
+		if (To.isEmpty())
 		{
 			_Message("\nAccount number is not found.\n");
+			return;
 		}
 
+		if ( !(From.isEmpty() && To.isEmpty()) )
+		{
+			_Message("Transfer From : ");
+			ClientRepository::PrintClient(From);
 
+			_Message("Transfer To : ");
+			ClientRepository::PrintClient(To);
 
+			_Message("Please enter Transfer amount : ");
+			double amount = Validator::returnNumber();
+			
+			(_PerformConfirmation()) ? _PrintTransferStatus(CurrentUser, From, To, amount) : _Message("\nOperations is Cancelled.\n");
 
+		}
+		
 	}
 
 	void _PerformTransfer(const User& CurrentUser) {
@@ -113,10 +138,10 @@ private:
 			_Message("Please enter account number to transfer from : ");
 			std::string AccNumFrom = Validator::ReadString();
 
-			_Message("Please enter account number to transfer to: ");
+			_Message("Please enter account number to transfer to : ");
 			std::string AccNumTo = Validator::ReadString();
 
-			_Withdraw(CurrentUser, AccNumFrom, AccNumTo);
+			_Transfer(CurrentUser, AccNumFrom, AccNumTo);
 
 		}
 		else
@@ -136,7 +161,7 @@ private:
 		do
 		{
 
-
+			_PerformTransfer(CurrentUser);
 			
 
 			IsContinueOperation = Validator::GetConfirmation('\n' + std::string(((Message != nullptr) ? Message : "Do you want to continue this operation?")));
@@ -164,7 +189,7 @@ public:
 		_GetBackToMenu("Press Enter to go back to Transactions Menu");
 	}
 
-};
-{
+
+
 };
 
