@@ -4,12 +4,11 @@
 #include<fstream>
 
 #include "Validator.h"
-#include "ClientServices.h"
+#include "Authorizer.h"
 
 #include "Screen.h"
 
-
-class WithdrawScreen : public Screen
+class TransferScreen : public Screen
 {
 private:
 
@@ -31,11 +30,11 @@ private:
 		_PrintBalance(client);
 
 	}
-	
+
 	bool _PerformConfirmation(const Client& client, const char* Message = nullptr) {
 
 
-		bool isConfirm = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Are you sure you want to perform this transaction?"))));
+		bool isConfirm = Validator::GetConfirmation('\n' + std::string((((Message != nullptr) ? Message : "Are you sure you want to perform this transaction?"))));
 		return isConfirm;
 	}
 
@@ -60,7 +59,7 @@ private:
 		case ClientRepository::OperationStates::InsufficentBalance:
 		{
 			_Message("\nCannot Withdraw, Insufficent Balance !\n");
-			_PrintAmountAndBalance(ExistingClient,amount);
+			_PrintAmountAndBalance(ExistingClient, amount);
 			break;
 		}
 
@@ -80,7 +79,7 @@ private:
 		return Validator::returnNumber();
 	}
 
-	void _Withdraw(const User& CurrentUser, const std::string& AccountNumber) {
+	void _Transfer(const User& CurrentUser, const std::string& AccountNumberFrom, const std::string &AccountNumberTo) {
 
 
 		Client client = m_ServicesRef.AccessRepository().Find(AccountNumber);
@@ -102,32 +101,35 @@ private:
 
 	}
 
-	void _PerformWithdraw(const User &CurrentUser) {
+	void _PerformTransfer(const User& CurrentUser) {
 
 
 		_ClearScreen();
 
-		if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions)) 
+		if ( Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions ))
 		{
 			PrintHeader(CurrentUser);
 
-			_Message("Please enter your account number : ");
-			std::string AccountNumber = Validator::ReadString();
+			_Message("Please enter account number to transfer from : ");
+			std::string AccNumFrom = Validator::ReadString();
 
-			_Withdraw(CurrentUser, AccountNumber);
+			_Message("Please enter account number to transfer to: ");
+			std::string AccNumTo = Validator::ReadString();
 
-		 }
-		else 
+			_Withdraw(CurrentUser, AccNumFrom, AccNumTo);
+
+		}
+		else
 		{
 			Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Withdraw");
-            NoAccessMsg();
+			NoAccessMsg();
 		}
 
 
 
 	}
 
-	void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
+	void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
 
 		bool IsContinueOperation = true;
 
@@ -135,17 +137,17 @@ private:
 		{
 
 
-			_PerformWithdraw(CurrentUser);
+			
 
-			IsContinueOperation = Validator::GetConfirmation('\n' +  std::string (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
+			IsContinueOperation = Validator::GetConfirmation('\n' + std::string(((Message != nullptr) ? Message : "Do you want to continue this operation?")));
 
 		} while (IsContinueOperation);
 
 	}
-	void PrintHeader(const User &CurrentUser,const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+	void PrintHeader(const User& CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 		std::cout << "\t\t\t\t\t______________________________________";
 
-		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Withdraw Screen"));
+		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Transfer Screen"));
 
 		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
 
@@ -155,7 +157,7 @@ private:
 
 public:
 
-	WithdrawScreen(Service& Ref) : Screen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
+	TransferScreen(Service& Ref) : Screen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
 
 	void Start(const User& CurrentUser) override {
 		PerformMenu(CurrentUser);
@@ -163,5 +165,6 @@ public:
 	}
 
 };
-
+{
+};
 

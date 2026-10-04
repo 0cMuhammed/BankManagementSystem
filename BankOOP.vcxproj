@@ -177,7 +177,9 @@
     <ClInclude Include="Service.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="TotalBalanceScreen.h" />
+    <ClInclude Include="Transactions.h" />
     <ClInclude Include="TransactionsScreen.h" />
+    <ClInclude Include="TransferScreen.h" />
     <ClInclude Include="UpdateScreen.h" />
     <ClInclude Include="UpdateUserScreen.h" />
     <ClInclude Include="User.h" />

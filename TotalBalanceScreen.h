@@ -52,7 +52,7 @@ private :
 	void _PrintTotalBalance() {
 		double total = m_ServicesRef.GetTotalBalances();
 		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t\t\t\t     Total Balances = " << total << '\n';
-		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t  ( " << Parser::BalanceToText(total) << ")\n\n"; // will get cut off to the an integer 
+		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t  ( " << Parser::BalanceToText(total) << ")\n\n"; // Rounded to nearest integer
 		
 	}
 

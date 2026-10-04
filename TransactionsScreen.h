@@ -16,7 +16,7 @@
 class TransactionsScreen : public Screen
 {
 private :
-	enum MenuComponents { Deposit = 1, Withdraw = 2, TotalBalances = 3, BackToMain = 4};
+	enum MenuComponents { Deposit = 1, Withdraw = 2, Transfer = 3, TotalBalances = 4, BackToMain = 5};
 
     Session& m_Session;
     Service & m_ServiceRef;
@@ -45,8 +45,9 @@ private :
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
         std::cout << std::setw(37) << std::left << "" << "\t[1] Deposit.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[2] Withdraw.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[3] Total Balances.\n";
-        std:: cout << std::setw(37) << std::left << "" << "\t[4] Main Menue.\n";
+        std::cout << std::setw(37) << std::left << "" << "\t[3] Transfer.\n";
+        std::cout << std::setw(37) << std::left << "" << "\t[4] Total Balances.\n";
+        std:: cout << std::setw(37) << std::left << "" << "\t[5] Main Menue.\n";
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
     }
 
@@ -78,6 +79,10 @@ private :
                  Withdraw.Start(m_Session.GetUser());
                  break;
              }
+             case MenuComponents::Transfer:
+             {
+                 break;
+             }
              case MenuComponents::TotalBalances:
              {
                  TotalBalanceScreen TotalBalances(m_ServiceRef);
@@ -101,9 +106,9 @@ private :
          } while (isInMainMenu);
      }
 
-	MenuComponents _NavigateUser(double from = 1, double to = 4)
+	MenuComponents _NavigateUser(double from = 1, double to = 5)
 	{
-		_Message("Choose What do you want to do ? [1 to 4] : ");
+		_Message("Choose What do you want to do ? [1 to 5] : ");
 
 		return  (MenuComponents)Validator::returnValidatedNumber(from, to);
 	}

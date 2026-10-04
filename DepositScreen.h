@@ -29,7 +29,7 @@ private :
 
 			std::string AccNum = ExistingClient.getAccountNumber();
 
-			switch (m_ServicesRef.Deposit(ExistingClient,amount))
+			switch (m_ServicesRef.AccessTransactions().Deposit(ExistingClient, amount))
 			{
 
 			case ClientRepository::OperationStates::AccountNumberNotFound:
