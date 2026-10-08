@@ -31,6 +31,7 @@ public:
 		LoginAttempt = 16,
 		NoAccsess = 17,
 		ShowLogs = 18,
+		ShowAuditLogs = 19,
 
 
 	};
@@ -50,7 +51,7 @@ private:
 
 		std::string table[] =
 		{
-			"Show Client List", "Add Clients", "Delete Client", "Update Client", "Find Client", "Deposit", "Withdraw", "Transfer", "Show Total Balance", "Manage Users", "Show User List", "Add User", "Delete User", "Update User", "Find User", "Login", "Login Attempt", "Operation Attempt", "Show Logs"
+			"Show Client List", "Add Clients", "Delete Client", "Update Client", "Find Client", "Deposit", "Withdraw", "Transfer", "Show Total Balance", "Manage Users", "Show User List", "Add User", "Delete User", "Update User", "Find User", "Login", "Login Attempt", "Operation Attempt", "Show Logs", "Show Audit Logs"
 		};
 
 		return table[static_cast<uint8_t>(category)];
@@ -75,7 +76,7 @@ private:
 
 
 public:
-	static void LogUser(const std::string& CurrentUsername, Category category, Level level, const std::string& op = "", const std::string& TargetUsername = "") {
+	static void LogUser(const std::string& CurrentUsername, Category category, Level level, const std::string &op = "", const std::string & TargetUsername = "") {
 
 
 
@@ -113,6 +114,12 @@ public:
 			break;
 		}
 
+		case Category::ShowAuditLogs:
+		{
+			msg = Prefix + LOG_DELIMITER + "Viewed the audit logs (transfers)";
+			break;
+		}
+
 		case Category::ShowUserList:
 		{
 			msg = Prefix + LOG_DELIMITER + "Viewed the user list";
@@ -141,6 +148,11 @@ public:
 		case Category::FindUser:
 		{
 			msg = Prefix + LOG_DELIMITER + "Searched for a user" + LOG_DELIMITER + Target;
+			break;
+		}
+		case Category::Transfer:
+		{
+			msg = Prefix + LOG_DELIMITER + "Transfer" + LOG_DELIMITER + Target;
 			break;
 		}
 
@@ -247,7 +259,7 @@ public:
 				" -> " + std::to_string(ToNewBalance);
 
 			std::string msg = Prefix + LOG_DELIMITER + TransferLog;
-			 
+
 			FileHandler::SaveLogTransfer(msg);
 		}
 

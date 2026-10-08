@@ -133,7 +133,7 @@ void FileHandler::SaveLog(const std::string& message) {
 
 }
 
-void SaveLogTransfer(const std::string& message) {
+void FileHandler::SaveLogTransfer(const std::string& message) {
 	std::fstream File;
 
 	File.open(LOGGER_TRANSFERS_FILE, std::ios::out | std::ios::app);

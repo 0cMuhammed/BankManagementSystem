@@ -22,14 +22,17 @@ public :
 		UpdateClient = 1 << 3,
 		FindClient = 1 << 4,
 		Transactions = 1 << 5,
-		ShowLogs = 1 << 6,
 
-		ManageUsers = 1 << 7,
-		ShowUserList = 1 << 8,
-		AddUser = 1 << 9,
-		DeleteUser = 1 << 10,
-		UpdateUser = 1 << 11,
-		FindUser = 1 << 12,
+		ShowLogs = 1 << 6,
+		ShowActivityLogs = 1 << 7,
+		ShowAuditLogs = 1 << 8,
+
+		ManageUsers = 1 << 9,
+		ShowUserList = 1 << 10,
+		AddUser = 1 << 11,
+		DeleteUser = 1 << 12,
+		UpdateUser = 1 << 13,
+		FindUser = 1 << 14,
 
 		AllPermissions = -1
 	};
@@ -44,7 +47,9 @@ private:
 	static bool _isEligibileClientPerm(const User& CurrentUser) {
 		return HasAccess(CurrentUser, Permissions::ShowClientList) || HasAccess(CurrentUser, Permissions::AddClient) || HasAccess(CurrentUser, Permissions::DeleteClient) || HasAccess(CurrentUser, Permissions::UpdateClient) || HasAccess(CurrentUser, Permissions::FindClient) || HasAccess(CurrentUser, Permissions::Transactions);
 	}
-
+	static bool _isEligibileLogs(const User& CurrentUser) {
+		return HasAccess(CurrentUser, Permissions::ShowActivityLogs) || HasAccess(CurrentUser, Permissions::ShowAuditLogs);
+	}
 
 
 
@@ -107,13 +112,7 @@ private:
 				count++;
 				std::cout << "\n";
 			}
-			if (HasAccess(CurrentUser, Permissions::ShowLogs) && Validator::GetConfirmation("\nShow Logs Activity? y/n : "))
-			{
-				bits |= static_cast<int32_t>(Permissions::ShowLogs);
-
-				count++;
-				std::cout << "\n";
-			}
+		
 			if (HasAccess(CurrentUser, Permissions::FindUser) && Validator::GetConfirmation("\nFind User ? y/n : "))
 			{
 				bits |= static_cast<int32_t>(Permissions::FindUser);
@@ -205,6 +204,49 @@ private:
 
 	}
 
+	static int32_t _SetLogPermissions(const User &CurrentUser) {
+
+
+		if (!_isEligibileLogs(CurrentUser))
+		{
+			std::cout << "\nYou have no permissions available to grant.\n";
+			return static_cast<int32_t>(Permissions::None);
+		}
+
+		int32_t bits = static_cast<int32_t> (Permissions::None);
+		int8_t count = 0;
+
+		do {
+			std::cout << "\nDo you want to give access to : \n";
+
+			if (HasAccess(CurrentUser, Permissions::ShowActivityLogs) && Validator::GetConfirmation("\nShow Activity Logs ? y/n : "))
+			{
+				bits |= static_cast<int32_t>(Permissions::ShowActivityLogs);
+
+				count++;
+				std::cout << "\n";
+			}
+			if (HasAccess(CurrentUser, Permissions::ShowAuditLogs) && Validator::GetConfirmation("\nShow Audit Logs ? y/n : "))
+			{
+				bits |= static_cast<int32_t>(Permissions::ShowAuditLogs);
+
+				count++;
+				std::cout << "\n";
+			}
+
+			if (count < 1)
+			{
+				std::cout << "\nAt least ONE permission is needed, try again : ";
+
+				bits = 0;
+			}
+
+		} while (count < 1);
+
+		return bits;
+
+
+	}
 	static int32_t _SetAllPermissions(const User& CurrentUser) {
 
 		int32_t bits = static_cast<int32_t>(Permissions::None);
@@ -219,6 +261,16 @@ private:
 			bits |= _SetUserPermissions(CurrentUser);
 			std::cout << "\n";
 		}
+
+		if ((IsAdmin(CurrentUser) || HasAccess(CurrentUser, Permissions::ShowLogs)) && Validator::GetConfirmation("\n Show Logs ? y/n : "))
+		{
+			bits |= static_cast<int32_t>(Permissions::ShowLogs);
+
+
+			bits |= _SetLogPermissions(CurrentUser);
+			std::cout << "\n";
+		}
+
 
 		
 		return (bits == FullPermisssionsInPositive ? FullPermissions : bits);

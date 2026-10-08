@@ -67,6 +67,8 @@ private:
 		case ClientRepository::OperationStates::Successful:
 		{
 			 Logger::LogTransfer(CurrentUser.GetUsername(), Logger::Category::Transfer, Logger::Level::INFO, AccNumFrom, AccNumTo, FromOldBalance, ToOldBalance,ExistingClientFrom.getBalance(),ExistingClientTo.getBalance(), amount);
+			 Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::Transfer, Logger::Level::INFO, "", AccNumTo);
+
 			_Message("\nAmount Transferred Sucessfully.\n");
 			_PrintSenderBalance(ExistingClientTo);
 			_PrintReceiverBalance(ExistingClientFrom);

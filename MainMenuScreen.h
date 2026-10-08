@@ -22,26 +22,26 @@
 class MainMenuScreen : public Screen
 {
 
-private :
+private:
 
-	enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUsers = 7, Logs = 8, Logout = 9 };
+    enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUsers = 7, Logs = 8, Logout = 9 };
 
     Session& m_Session;
-	Service& m_ServicesRef;
+    Service& m_ServicesRef;
 
-    
 
-  
-     void _MainMenuLayout()
+
+
+    void _MainMenuLayout()
     {
-        
+
         _ClearScreen();
 
-   
-      
+
+
 
         PrintHeader();
-        
+
 
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
         std::cout << std::setw(37) << std::left << "" << "\t\t\tMain Menue\n";
@@ -53,39 +53,39 @@ private :
         std::cout << std::setw(37) << std::left << "" << "\t[5] Find Client.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[6] Transactions.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[7] Manage Users.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[8] Activity Logs.\n";
+        std::cout << std::setw(37) << std::left << "" << "\t[8] Logs.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[9] Logout.\n";
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
 
 
     }
 
-	 MainMenuComponents _NavigateUser(double from = 1, double to = 9)
-	{
-         _Message("Choose What do you want to do ? [1 to 9] : ");
+    MainMenuComponents _NavigateUser(double from = 1, double to = 9)
+    {
+        _Message("Choose What do you want to do ? [1 to 9] : ");
 
-		return  (MainMenuComponents) Validator::returnValidatedNumber(from, to);
-	}
-    
-
-    
-	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) {
-		
-			std::cout << "\t\t\t\t\t______________________________________";
-
-			std::cout << "\n\n\t\t\t\t\t  \t\t" << (((ScreenName != nullptr) ? ScreenName : "  Main Menu"));
-            
-                if (SubTitle != nullptr) 
-                { 
-                    std::cout << "\n\t\t\t\t\t\t  " << SubTitle; 
-                }
-
-            std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-
-            ShowUserAndDate(m_Session.GetUser());
-          
+        return  (MainMenuComponents)Validator::returnValidatedNumber(from, to);
     }
-    void _Menu(bool &isInMainMenu) {
+
+
+
+    void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) {
+
+        std::cout << "\t\t\t\t\t______________________________________";
+
+        std::cout << "\n\n\t\t\t\t\t  \t\t" << (((ScreenName != nullptr) ? ScreenName : "  Main Menu"));
+
+        if (SubTitle != nullptr)
+        {
+            std::cout << "\n\t\t\t\t\t\t  " << SubTitle;
+        }
+
+        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+
+        ShowUserAndDate(m_Session.GetUser());
+
+    }
+    void _Menu(bool& isInMainMenu) {
         do
         {
             _MainMenuLayout();
@@ -142,7 +142,7 @@ private :
             }
             case MainMenuComponents::Logs:
             {
-                LoggerScreen Logs(m_ServicesRef);
+                LoggerScreen Logs(m_ServicesRef, m_Session);
                 Logs.Start(m_Session.GetUser());
                 break;
 
@@ -170,30 +170,30 @@ private :
 
         bool isInMainMenu = true;
 
-        if (CurrentUser.isActive()) 
+        if (CurrentUser.isActive())
         {
-           
+
 
             _Menu(isInMainMenu);
         }
-        else 
+        else
         {
             NoAccessMsg();
             CurrentUser.SetIsActive(false);
         }
-       
-        
+
+
     }
-    
-
-    
-
-public : 
-
-    MainMenuScreen(Service& Ref, Session &CurrentUser) : Screen(Ref), m_Session(CurrentUser), m_ServicesRef(Ref) {};
 
 
-    void StartMainMenu(Session &CurrentUser) override {
+
+
+public:
+
+    MainMenuScreen(Service& Ref, Session& CurrentUser) : Screen(Ref), m_Session(CurrentUser), m_ServicesRef(Ref) {};
+
+
+    void StartMainMenu(Session& CurrentUser) override {
         PerformMainMenu(CurrentUser);
     }
 

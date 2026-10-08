@@ -1,7 +1,38 @@
 [INFO / 2026-10-04 17:02:45] - Show Logs - USERNAME : Admin - Viewed the activity logs
 [INFO / 2026-10-04 17:03:16] - Show Logs - USERNAME : Admin - Viewed the activity logs
 [INFO / 2026-10-04 17:03:53] - Show Client List - USERNAME : Admin - Viewed the client list
-[INFO / 2026-10-04 17:04:18] - Transfer - USERNAME : Admin - Transfer From: A103, To: A102, Amount: 900.000000, Balance: 9532.900000 -> 1922.000000
 [INFO / 2026-10-04 17:04:26] - Show Logs - USERNAME : Admin - Viewed the activity logs
 [INFO / 2026-10-04 17:06:10] - Login - USERNAME : Admin - Logged in successfully
 [INFO / 2026-10-04 17:06:12] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-08 23:18:35] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:18:41] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-08 23:19:25] - Show Audit Logs - USERNAME : Admin - Viewed the audit logs (transfers)
+[INFO / 2026-10-08 23:19:32] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-08 23:20:52] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:23:08] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:23:55] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:24:22] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:24:47] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:25:09] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:25:27] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:38:08] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:39:44] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-08 23:42:16] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:42:21] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-08 23:44:28] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:44:38] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-08 23:46:20] - Add User - USERNAME : Admin - Created a new user - TARGET USER : A
+[INFO / 2026-10-08 23:47:26] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-08 23:47:39] - Show Audit Logs - USERNAME : Admin - Viewed the audit logs (transfers)
+[INFO / 2026-10-08 23:53:37] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-08 23:53:40] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-08 23:54:17] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-08 23:55:09] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-09 00:01:21] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-09 00:01:49] - Transfer - USERNAME : Admin - Transfer - TARGET USER : 
+[INFO / 2026-10-09 00:01:59] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-09 00:02:29] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-09 00:05:06] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-09 00:05:08] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-09 00:05:21] - Transfer - USERNAME : Admin - Transfer - TARGET USER : A102
+[INFO / 2026-10-09 00:05:27] - Show Logs - USERNAME : Admin - Viewed the activity logs

@@ -57,7 +57,7 @@ private:
     }
     void _PrintDeleteStatus(User &CurrentUser, const User& target) {
 
-        const std::string Actor = CurrentUser.GetUsername(); // captured first: a self-delete empties CurrentUser
+        const std::string Actor = CurrentUser.GetUsername(); 
 
     
         if (m_RepositoryReference.IsAdmin(target))
