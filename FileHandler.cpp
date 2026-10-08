@@ -36,7 +36,7 @@
 
 	return Clients;
 }
-std::vector<User>  FileHandler::LoadUsers() {
+std::vector<User>FileHandler::LoadUsers() {
 	std::fstream file;
 	std::vector<User> Users;
 
@@ -90,17 +90,59 @@ std::vector<std::string> FileHandler::LoadLogs() {
 
 	return logs;
 }
+std::vector<std::string> FileHandler::LoadAuditLogs() {
+	std::fstream file;
+	std::vector<std::string> logs;
+
+	file.open(LOGGER_TRANSFERS_FILE, std::ios::in);
+
+	if (file.is_open())
+	{
+		std::string dataline = "";
+
+		while (!(std::getline(file, dataline).fail()) && (!dataline.empty()))
+		{
+			try
+			{
+				logs.emplace_back(Parser::LogtoLine(std::move(dataline)));
+			}
+			catch (const std::runtime_error&)
+			{
+				continue;
+			}
+		}
+
+		file.close();
+	}
+
+
+	return logs;
+}
 void FileHandler::SaveLog(const std::string& message) {
 
 	std::fstream File;
+
 	File.open(LOGGER_FILE, std::ios::out | std::ios::app);
+
+	if (File.is_open())
+	{
+
+		File << message << '\n';
+	}
+	File.close();
+
+}
+
+void SaveLogTransfer(const std::string& message) {
+	std::fstream File;
+
+	File.open(LOGGER_TRANSFERS_FILE, std::ios::out | std::ios::app);
 
 	if (File.is_open())
 	{
 		File << message << '\n';
 	}
 	File.close();
-
 }
   void FileHandler::SaveClients(const Client& client) {
 

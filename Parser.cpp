@@ -48,8 +48,8 @@ std::string Parser::LogtoLine(std::string line) {
 
 	Tokens = Parser::TokensToVec(std::move(line), LOG_DELIMITER);
 
-	if (Tokens.size() < 4)
-		throw std::runtime_error("Malformed line: expected at least 4 fields, got " + std::to_string(Tokens.size()));
+	if (Tokens.size() < 3)
+		throw std::runtime_error("Malformed line: expected at least 3 fields, got " + std::to_string(Tokens.size()));
 
 	if (Tokens[0].find(" / ") == std::string::npos)
 		throw std::runtime_error("Malformed line: the level and date field is not valid");

@@ -163,8 +163,8 @@ private:
 
 			_PerformTransfer(CurrentUser);
 			
-
 			IsContinueOperation = Validator::GetConfirmation('\n' + std::string(((Message != nullptr) ? Message : "Do you want to continue this operation?")));
+
 
 		} while (IsContinueOperation);
 

@@ -241,14 +241,14 @@ public:
 			std::string Prefix = BuildPrefix(CurrentUsername, category, level);
 			std::string TransferLog =
 				"Transfer From: " + ClientFromAccNum +
-				" To: " + ClientToAccNum +
-				" Amount: " + std::to_string(amount) +
-				" Balance: " + std::to_string(FromNewBalance) +
+				", To: " + ClientToAccNum +
+				", Amount: " + std::to_string(amount) +
+				", Balance: " + std::to_string(FromNewBalance) +
 				" -> " + std::to_string(ToNewBalance);
 
 			std::string msg = Prefix + LOG_DELIMITER + TransferLog;
 			 
-			FileHandler::SaveLog(msg);
+			FileHandler::SaveLogTransfer(msg);
 		}
 
 

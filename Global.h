@@ -8,6 +8,7 @@ constexpr static const char* ADMIN_HASH = "$2a$12$a2xKBx8rpmBVyebnDaxyh.ydpOGVnS
 static constexpr const char* CLIENTS_FILE = "ClientsData.txt";
 static constexpr const char* USERS_FILE = "UsersData.txt";
 static constexpr const char* LOGGER_FILE = "Logs.txt";
+static constexpr const char* LOGGER_TRANSFERS_FILE = "AuditLogs.txt";
 
 static constexpr const char* DELIMITER = "#//#";
 static constexpr const char* LOG_DELIMITER = " - "; // FOR BOTH READABILITY AND LOADING IN VECTOR 

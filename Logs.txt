@@ -1,60 +1,7 @@
-[INFO / 2026-10-01 21:25:59] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-01 21:26:04] - Show Client List - USERNAME : Admin - Viewed the client list
-[INFO / 2026-10-01 21:27:47] - Add Clients - USERNAME : Admin - Added a new client - Account Number : A909
-[INFO / 2026-10-01 21:28:09] - Delete Client - USERNAME : Admin - Deleted a client - Account Number : A909
-[INFO / 2026-10-01 21:28:50] - Update Client - USERNAME : Admin - Updated client data - Account Number : A202
-[INFO / 2026-10-01 21:29:18] - Deposit - USERNAME : Admin - Deposited 90.000000 - Account Number : 
-[INFO / 2026-10-01 21:29:50] - Withdraw - USERNAME : Admin - Withdrew 90.000000 - Account Number : 
-[INFO / 2026-10-01 21:30:12] - Show Total Balance - USERNAME : Admin - Viewed total balances
-[INFO / 2026-10-01 21:33:20] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-01 21:34:29] - Deposit - USERNAME : Admin - Deposited 90.000000 - Account Number : 
-[INFO / 2026-10-01 21:36:51] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-01 21:37:36] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-01 21:41:14] - Deposit - USERNAME : Admin - Deposited 200.000000 - Account Number : 
-[INFO / 2026-10-01 21:49:08] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-01 21:49:33] - Deposit - USERNAME : Admin - Deposited 900.000000 - Account Number : A202
-[INFO / 2026-10-01 21:50:27] - Withdraw - USERNAME : Admin - Withdrew 1280.000000 - Account Number : A202
-[INFO / 2026-10-01 21:51:17] - Show Total Balance - USERNAME : Admin - Viewed total balances
-[WARN / 2026-10-01 21:52:46] - Login Attempt - USERNAME : N - Failed login attempt - TARGET USER : 
-[INFO / 2026-10-01 21:57:11] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-01 21:57:13] - Manage Users - USERNAME : Admin - Opened user management
-[INFO / 2026-10-01 21:57:14] - Show User List - USERNAME : Admin - Viewed the user list
-[INFO / 2026-10-01 21:58:01] - Add User - USERNAME : Admin - Created a new user - TARGET USER : sdasd
-[INFO / 2026-10-01 21:58:12] - Show User List - USERNAME : Admin - Viewed the user list
-[INFO / 2026-10-01 21:58:25] - Delete User - USERNAME : Admin - Deleted a user - TARGET USER : sdasd
-[WARN / 2026-10-01 21:58:41] - Update User - USERNAME : Admin - Updated user data / permissions - TARGET USER : Admin
-[INFO / 2026-10-01 21:59:43] - Update User - USERNAME : Admin - Updated user data / permissions - TARGET USER : N
-[INFO / 2026-10-02 18:19:25] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-02 18:19:29] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-02 18:44:15] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-02 18:44:19] - Manage Users - USERNAME : Admin - Opened user management
-[INFO / 2026-10-04 16:06:28] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-04 16:06:47] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-04 16:06:51] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-04 16:09:01] - Transfer - USERNAME : Admin -  Transfer From User :  - A902 -  To User : A103 - Amount = 900.000000
-[INFO / 2026-10-04 16:10:24] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-04 16:11:36] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-04 16:11:38] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-04 16:13:49] - Transfer - USERNAME : Admin - Transfer From User :  - A902 -  To User : A103 - Amount = 9000.000000
-[INFO / 2026-10-04 16:13:59] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-04 16:28:15] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-04 16:28:18] - Show Client List - USERNAME : Admin - Viewed the client list
-[INFO / 2026-10-04 16:29:10] - Transfer - USERNAME : Admin - Transfer From User : A102 Balance (999.900000) -  To User : A103 Balance (10455.000000) -  Transfer Amount = 999.900000 - New Balance for User : A102 = 0.000000, New Balance for User : A103 = 11454.900000
-[INFO / 2026-10-04 16:30:21] - Show Client List - USERNAME : Admin - Viewed the client list
-[INFO / 2026-10-04 16:30:42] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-04 16:34:31] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-04 16:35:12] - Show Client List - USERNAME : Admin - Viewed the client list
-[INFO / 2026-10-04 16:35:35] - Transfer - USERNAME : Admin - Transfer from User (A07) Balance = 123.000000 -  To User (A106) Balance = 8002.000000 -  Transfer Amount = 12.000000 - New Balance (A07) = 111.000000, New Balance (A106) = 8014.000000
-[INFO / 2026-10-04 16:36:43] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-04 16:38:55] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-04 16:38:57] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-04 16:43:41] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-04 16:43:43] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-04 16:43:50] - Show Client List - USERNAME : Admin - Viewed the client list
-[INFO / 2026-10-04 16:43:56] - Manage Users - USERNAME : Admin - Opened user management
-[INFO / 2026-10-04 16:44:26] - Transfer - USERNAME : Admin - Transfer | From: A103 | To: A102 | Amount: 1222.000000 | Balance: 10232.900000 -> 1222.000000
-[INFO / 2026-10-04 16:44:50] - Show Client List - USERNAME : Admin - Viewed the client list
-[INFO / 2026-10-04 16:45:02] - Show Logs - USERNAME : Admin - Viewed the activity logs
-[INFO / 2026-10-04 16:45:58] - Login - USERNAME : Admin - Logged in successfully
-[INFO / 2026-10-04 16:46:11] - Transfer - USERNAME : Admin - Transfer From: A102 To: A103 Amount: 200.000000 Balance: 1022.000000 -> 10432.900000
-[INFO / 2026-10-04 16:46:16] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 17:02:45] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 17:03:16] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 17:03:53] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-04 17:04:18] - Transfer - USERNAME : Admin - Transfer From: A103, To: A102, Amount: 900.000000, Balance: 9532.900000 -> 1922.000000
+[INFO / 2026-10-04 17:04:26] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-04 17:06:10] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-04 17:06:12] - Show Logs - USERNAME : Admin - Viewed the activity logs
