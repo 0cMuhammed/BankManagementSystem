@@ -145,6 +145,7 @@
     <ClCompile Include="bcrypt\crypt_gensalt.c" />
     <ClCompile Include="bcrypt\wrapper.c" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Currency.cpp" />
     <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="User.cpp" />
@@ -156,6 +157,8 @@
     <ClInclude Include="Authorizer.h" />
     <ClInclude Include="ClientServices.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="Currency.h" />
+    <ClInclude Include="CurrencyRepository.h" />
     <ClInclude Include="DeleteScreen.h" />
     <ClInclude Include="DeleteUserScreen.h" />
     <ClInclude Include="DepositScreen.h" />

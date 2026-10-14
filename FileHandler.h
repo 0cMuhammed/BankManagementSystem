@@ -5,7 +5,7 @@
 
 class Client;
 class User;
-
+class Currency;
 
 class FileHandler {
 
@@ -20,6 +20,9 @@ public :
 	static std::vector<User> LoadUsers();
 	static std::vector<std::string> LoadLogs();
 	static std::vector<std::string> LoadAuditLogs();
+	static std::vector<Currency> LoadCurrencies();
+	static void SaveCurrencies(std::vector<Currency> &Vec);
+	static void SaveCurrencies(Currency &c); //save currencies now and use it in CurrencyRepostiory UpdateObject
 
 	static void SaveLog(const std::string &message);
 	static void SaveLogTransfer(const std::string& message);

@@ -7,6 +7,8 @@
 
 class Client;
 class User;
+class Currency;
+
 
 class Parser  
 {
@@ -39,6 +41,36 @@ public :
 
 	}
 
+	static uint32_t _StringToCode(std::string code) {
+
+		std::string CurrencyCodes[] = {
+			"USD", "AFN", "ALL", "DZD", "EUR", "AOA", "XCD", "ARS", "AMD",
+			"AWG", "AUD", "AZN", "BSD", "BHD", "BDT", "BBD", "BYN", "BZD", "XOF",
+			"BMD", "BTN", "BOB", "BAM", "BWP", "BRL", "BND", "BGN", "BIF", "KHR",
+			"XAF", "CAD", "CVE", "KYD", "CLP", "CNY", "COP", "KMF", "CDF", "NZD",
+			"CRC", "HRK", "CUP", "CZK", "DKK", "DJF", "DOP", "EGP", "ERN", "SZL",
+			"ETB", "FJD", "XPF", "GMD", "GEL", "GHS", "GIP", "GTQ", "GNF", "GYD",
+			"HTG", "HNL", "HKD", "HUF", "ISK", "INR", "IDR", "IRR", "IQD", "ILS",
+			"JMD", "JPY", "JOD", "KZT", "KES", "KPW", "KRW", "KWD", "KGS", "LAK",
+			"LBP", "LSL", "LRD", "LYD", "CHF", "MOP", "MGA", "MWK", "MYR", "MVR",
+			"MRU", "MUR", "MXN", "MDL", "MNT", "MAD", "MZN", "MMK", "NAD", "NPR",
+			"ANG", "NIO", "NGN", "MKD", "NOK", "OMR", "PKR", "PAB", "PGK", "PYG",
+			"PEN", "PHP", "PLN", "QAR", "RON", "RUB", "RWF", "SHP", "WST", "STN",
+			"SAR", "RSD", "SCR", "SLE", "SGD", "SBD", "SOS", "ZAR", "SSP", "LKR",
+			"SDG", "SRD", "SEK", "SYP", "TJS", "TZS", "THB", "TOP", "TTD", "TND",
+			"TRY", "TMT", "UGX", "UAH", "AED", "GBP", "UYU", "UZS", "VUV", "VES",
+			"VND", "YER", "ZMW", "ZWL"
+		};
+
+		for (size_t i = 0; i < std::size(CurrencyCodes); i++) {
+			if (CurrencyCodes[i] == code) {
+				return static_cast<uint32_t>(i + 1);
+			}
+		}
+
+		return static_cast<uint32_t>(0);
+	}
+
 	static std::string ObjectToLine(const Client& client, const std::string& delimiter = "#//#");
 	static std::string ObjectToLine(const User& user, const std::string& delimiter = "#//#");
 
@@ -46,7 +78,8 @@ public :
 	static  Client LineToClient(std::string line);
 	static  User LineToUser(std::string line);	
 	static std::string LogtoLine(std::string line);
-
+	static Currency LinetoCurrency(std::string line);
+	static std::string CurrencyToLine(Currency &c, const std::string& delimiter = "#//#");
 
 	static std::string BalanceToText(int Number)
 	{

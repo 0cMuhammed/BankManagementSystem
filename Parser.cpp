@@ -1,7 +1,10 @@
+#pragma once
+#include "Global.h"
 #include "Parser.h"
 #include "Client.h"
 #include "User.h"
-#include "Global.h"
+#include "Currency.h"
+
 
 
 std::string Parser::ObjectToLine(const Client& client, const std::string& delimiter) {
@@ -38,6 +41,22 @@ User Parser::LineToUser(std::string line) {
 	return User(std::move(Tokens[0]), std::move(Tokens[1]), std::move(Tokens[2]), std::move(Tokens[3]), std::move(Tokens[4]), std::move(Tokens[5]), static_cast<int32_t>(stoi(Tokens[6])), User::ObjectMode::ExistingMode);
 
 }
+Currency Parser::LinetoCurrency(std::string line) {
+
+	std::vector<std::string> Tokens;
+	Tokens.reserve(4);
+
+	Tokens = Parser::TokensToVec(std::move(line));
+
+	if (Tokens.size() != 4)
+		throw std::runtime_error("Malformed line: expected 4 fields, got " + std::to_string(Tokens.size()));
+
+
+	return Currency(std::move(Tokens[0]), _StringToCode(Tokens[1]), std::move(Tokens[2]), std::stod(Tokens[3]), Currency::ObjectMode::ExistingMode);
+}
+std::string Parser::CurrencyToLine( Currency& c, const std::string& delimiter = "#//#") {
+	return c.GetCountry() + delimiter + c.GetCode() + delimiter + c.GetName() + delimiter + std::to_string(c.GetRate());
+}
 
 
 
@@ -64,3 +83,4 @@ std::string Parser::LogtoLine(std::string line) {
 
 	return str;
 }
+

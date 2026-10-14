@@ -214,7 +214,7 @@ private:
 		}
 
 		int32_t bits = static_cast<int32_t> (Permissions::None);
-		int8_t count = 0;
+		uint8_t count = 0;
 
 		do {
 			std::cout << "\nDo you want to give access to : \n";
@@ -262,7 +262,7 @@ private:
 			std::cout << "\n";
 		}
 
-		if ((IsAdmin(CurrentUser) || HasAccess(CurrentUser, Permissions::ShowLogs)) && Validator::GetConfirmation("\n Show Logs ? y/n : "))
+		if ((IsAdmin(CurrentUser) || HasAccess(CurrentUser, Permissions::ShowLogs)) && Validator::GetConfirmation("\nShow Logs ? y/n : "))
 		{
 			bits |= static_cast<int32_t>(Permissions::ShowLogs);
 

@@ -36,3 +36,20 @@
 [INFO / 2026-10-09 00:05:08] - Manage Users - USERNAME : Admin - Opened user management
 [INFO / 2026-10-09 00:05:21] - Transfer - USERNAME : Admin - Transfer - TARGET USER : A102
 [INFO / 2026-10-09 00:05:27] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-09 00:09:47] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-09 00:09:51] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-09 00:11:28] - Add User - USERNAME : Admin - Created a new user - TARGET USER : KADAS
+[WARN / 2026-10-09 00:11:47] - Login Attempt - USERNAME : KADSAD - Failed login attempt - TARGET USER : 
+[INFO / 2026-10-09 00:12:14] - Login - USERNAME : KADAS - Logged in successfully
+[INFO / 2026-10-09 00:12:17] - Show Logs - USERNAME : KADAS - Viewed the activity logs
+[WARN / 2026-10-09 00:12:19] - Operation Attempt - USERNAME : KADAS - No Access for Audit Logs - 
+[INFO / 2026-10-09 00:12:30] - Manage Users - USERNAME : KADAS - Opened user management
+[INFO / 2026-10-09 00:14:25] - Login - USERNAME : KADAS - Logged in successfully
+[INFO / 2026-10-09 00:14:32] - Manage Users - USERNAME : KADAS - Opened user management
+[INFO / 2026-10-09 00:19:04] - Login - USERNAME : KADAS - Logged in successfully
+[INFO / 2026-10-09 00:19:11] - Manage Users - USERNAME : KADAS - Opened user management
+[INFO / 2026-10-09 00:20:33] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-09 00:20:36] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-09 00:22:27] - Update User - USERNAME : Admin - Updated user data / permissions - TARGET USER : KADAS
+[INFO / 2026-10-09 00:23:17] - Login - USERNAME : KADAS - Logged in successfully
+[WARN / 2026-10-09 00:23:20] - Operation Attempt - USERNAME : KADAS - No Access for Activity Logs - 

@@ -1,10 +1,19 @@
+#pragma once
+#include<iostream>
 #include<fstream>
+#include <filesystem>
+#include <vector>
+
+#include "Global.h"
 #include "FileHandler.h"
 #include "Client.h"
 #include "User.h"
+#include "Currency.h"
+
 #include "Parser.h"
-#include "Global.h"
-#include <filesystem>
+
+
+
 
  bool FileHandler::_isNotToBeSaved(const Client& client) noexcept {
 	const Client::ObjectMode Mode = client.getMode();
@@ -32,6 +41,11 @@
 		}
 
 		file.close();
+	}
+	else
+	{
+		std::cout << "Failed to open "+ std::string(CLIENTS_FILE) + ".\n";
+		std::cout << "Path : " << std::filesystem::current_path() << "\n";
 	}
 
 	return Clients;
@@ -86,6 +100,11 @@ std::vector<std::string> FileHandler::LoadLogs() {
 
 		file.close();
 	}
+	else
+	{
+		std::cout << "Failed to open "+ std::string(LOGGER_FILE) + ".\n";
+		std::cout << "Path : " << std::filesystem::current_path() << "\n";
+	}
 	
 
 	return logs;
@@ -114,10 +133,45 @@ std::vector<std::string> FileHandler::LoadAuditLogs() {
 
 		file.close();
 	}
+	else
+	{
+		std::cout << "Failed to open " + std::string(LOGGER_TRANSFERS_FILE) + ".\n";
+		std::cout << "Path : " << std::filesystem::current_path() << "\n";
+	}
 
 
 	return logs;
 }
+std::vector<Currency>FileHandler::LoadCurrencies() {
+
+	std::fstream file;
+	std::vector<Currency> Currencies;
+
+	file.open(CURRENCY_FILE, std::ios::in);
+
+	if (file.is_open())
+	{
+		std::string dataline = "";
+
+		while (!(std::getline(file, dataline).fail()) && (!dataline.empty()))
+		{
+			
+		    Currencies.emplace_back(Parser::LinetoCurrency(std::move(dataline)));
+			
+		}
+
+		file.close();
+	}
+	else
+	{
+		std::cout << "Failed to open " + std::string(CURRENCY_FILE) + ".\n";
+		std::cout << "Path : " << std::filesystem::current_path() << "\n";
+	}
+
+
+	return Currencies;
+}
+
 void FileHandler::SaveLog(const std::string& message) {
 
 	std::fstream File;
@@ -176,7 +230,34 @@ void FileHandler::SaveLogTransfer(const std::string& message) {
 
 
 }
+  void FileHandler::SaveCurrencies(std::vector<Currency> &Vec) {
 
+	  std::fstream File;
+	  File.open(CURRENCY_FILE, std::ios::out | std::ios::app);
+
+	  if (File.is_open())
+	  {
+		  for (Currency &C : Vec) 
+		  {
+			  File << Parser::CurrencyToLine(C,DELIMITER)<< '\n';
+		  }
+		 
+	  }
+	  File.close();
+
+ }
+  void FileHandler::SaveCurrencies(Currency& c) {
+
+	  std::fstream File;
+	  File.open(CURRENCY_FILE, std::ios::out | std::ios::app);
+
+	  if (File.is_open())
+	  {
+		  File << Parser::CurrencyToLine(c, DELIMITER);
+	  }
+	  File.close();
+
+  }
  void FileHandler::SaveUsers(const User& user) {
 
 	std::fstream File;

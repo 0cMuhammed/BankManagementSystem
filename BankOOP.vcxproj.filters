@@ -42,6 +42,9 @@
     <ClCompile Include="bcrypt\wrapper.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Currency.cpp">
+      <Filter>Header Files\Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Person.h">
@@ -165,6 +168,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TransferScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Currency.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CurrencyRepository.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
