@@ -7,7 +7,7 @@
 #include "UserRepository.h"
 
 
-// Wrapper Class for future User features, link this with the screens, ClientServices and UserServices shall be merged into one Services Class
+
 using UserState = UserRepository::OperationStates;
 
 class UserServices

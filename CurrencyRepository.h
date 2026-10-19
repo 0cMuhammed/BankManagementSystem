@@ -73,6 +73,7 @@ private :
 	}
 
 	bool _UpdateRate(const std::string&Code, double NewRate) {
+
 		for (Currency& currency : m_List)
 		{
 			if (IgnoreCase(currency.GetCode(), Code))
@@ -130,8 +131,6 @@ public :
 			return OperationStates::Successful;
 	}
 			
-
-	  
 	OperationStates UpdateRate(const std::string& Code, double newRate) {
 
 		Currency toUpdate = _FindObjectByCode(Code);

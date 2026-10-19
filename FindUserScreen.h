@@ -41,7 +41,7 @@ private:
 			else
 			{
 				Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Find User");
-            NoAccessMsg();
+                 NoAccessMsg();
 			}
 
 			isContinue = Validator::GetConfirmation('\n' + std::string (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
