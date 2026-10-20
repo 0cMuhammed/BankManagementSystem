@@ -172,9 +172,6 @@ private:
     std::string m_Country;
     Code m_Code;
     std::string m_Name;
-
-
-
     double m_Rate;
     ObjectMode m_mode;
 
@@ -237,58 +234,7 @@ private:
 
         return CurrencyNames[(static_cast<size_t>(code) - 1)];
     }
-    std::string _CodeToCountry(Code code) {
-
-        std::string CountryNames[] = {
-            "United States of America", "Afghanistan", "Albania", "Algeria", "American Samoa",
-            "France", "Angola", "Anguilla", "Antigua and Barbuda", "Argentina",
-            "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan",
-            "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus",
-            "Belgium", "Belize", "Benin", "Bermuda", "Bhutan",
-            "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei",
-            "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon",
-            "Canada", "Canary Islands", "Cape Verde", "Cayman Islands", "Central African Republic",
-            "Chad", "Chile", "China", "Colombia", "Comoros",
-            "Congo", "Congo, Dem. Rep.", "Cook Islands", "Costa Rica", "Cote d'Ivoire",
-            "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark",
-            "Djibouti", "Dominica", "Dominican Republic", "East Timor", "Ecuador",
-            "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia",
-            "Eswatini, Kingdom of", "Ethiopia", "Fiji", "Finland", "French Guiana",
-            "French Polynesia", "Gabon", "Gambia", "Georgia", "Germany",
-            "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada",
-            "Guadeloupe", "Guam", "Guatemala", "Guinea", "Guinea-Bissau",
-            "Guyana", "Haiti", "Honduras", "Hong Kong", "Hungary",
-            "Iceland", "India", "Indonesia", "Iran", "Iraq",
-            "Ireland", "Israel", "Italy", "Jamaica", "Japan",
-            "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea, D.P.R. of",
-            "Korea, Republic of", "Kuwait", "Kyrgyzstan", "Lao, People's Dem. Rep.", "Latvia",
-            "Lebanon", "Lesotho", "Liberia", "Libyan Arab Jamahiriya", "Liechtenstein",
-            "Lithuania", "Luxembourg", "Macao", "Madagascar", "Malawi",
-            "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands",
-            "Martinique", "Mauritania", "Mauritius", "Mexico", "Micronesia",
-            "Moldova, Republic of", "Monaco", "Mongolia", "Montenegro", "Montserrat",
-            "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru",
-            "Nepal", "Netherlands", "Netherlands Antilles", "New Caledonia", "New Zealand",
-            "Nicaragua", "Niger", "Nigeria", "Niue", "North Macedonia, Rep. of",
-            "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau, Republic of",
-            "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines",
-            "Poland", "Portugal", "Puerto Rico", "Qatar", "Reunion",
-            "Romania", "Russian Federation", "Rwanda", "Saint Helena", "Saint Kitts and Nevis",
-            "Saint Lucia", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia",
-            "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore",
-            "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa",
-            "South Sudan", "Spain", "Sri Lanka", "St. Vincent and the Grena", "Sudan",
-            "Suriname", "Sweden", "Switzerland", "Syrian Arab Republic", "Tajikistan",
-            "Tanzania, United Rep. of", "Thailand", "Togo", "Tokelau Islands", "Tonga",
-            "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks and Caicos Island",
-            "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom",
-            "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Viet Nam",
-            "Virgin Islands (UK)", "Virgin Islands (USA)", "Wallis and Futuna Islands", "Yemen, Republic of", "Zambia",
-            "Zimbabwe"
-        };
-
-        return CountryNames[(static_cast<size_t>(code) - 1)];
-    }
+   
 
     //using FileHandler
     void _SaveExistingObject();
@@ -300,8 +246,9 @@ public:
     Currency(std::string country, uint32_t code, std::string name, double rate, ObjectMode mode) : m_Country(std::move(country)), m_Code(static_cast<Code>(code)), m_Name(std::move(name)), m_Rate(rate), m_mode(mode) {};
 
 
-    std::string GetCountry() {
-        return _CodeToCountry(m_Code);
+   
+    const std::string &GetCountry() const noexcept {
+        return m_Country;
     }
 
     std::string GetCode() {

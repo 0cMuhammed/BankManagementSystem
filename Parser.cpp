@@ -52,9 +52,10 @@ Currency Parser::LinetoCurrency(std::string line) {
 		throw std::runtime_error("Malformed line: expected 4 fields, got " + std::to_string(Tokens.size()));
 
 
-	return Currency(std::move(Tokens[0]), _StringToCode(Tokens[1]), std::move(Tokens[2]), std::stod(Tokens[3]), Currency::ObjectMode::ExistingMode);
+	return Currency(_StripQuotes(std::move(Tokens[0])), _StringToCode(Tokens[1]), _StripQuotes(std::move(Tokens[2])), std::stod(Tokens[3]), Currency::ObjectMode::ExistingMode);
 }
-std::string Parser::CurrencyToLine( Currency& c, const std::string& delimiter = "#//#") {
+
+std::string Parser::CurrencyToLine(Currency& c, const std::string& delimiter) {
 	return c.GetCountry() + delimiter + c.GetCode() + delimiter + c.GetName() + delimiter + std::to_string(c.GetRate());
 }
 

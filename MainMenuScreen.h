@@ -5,8 +5,6 @@
 #include <string>
 #include "Validator.h"
 #include "Service.h"
-
-
 #include "ListScreen.h"
 #include "AddScreen.h"
 #include "DeleteScreen.h"
@@ -15,7 +13,7 @@
 #include "TransactionsScreen.h"
 #include "ManageUsersScreen.h"
 #include "LoggerScreen.h"
-
+#include "CurrencyExchangeMainScreen.h"
 #include "Screen.h"
 
 
@@ -24,11 +22,10 @@ class MainMenuScreen : public Screen
 
 private:
 
-    enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUsers = 7, Logs = 8, Logout = 9 };
+    enum MainMenuComponents { List = 1, Add = 2, Delete = 3, Update = 4, Find = 5, Transactions = 6, ManageUsers = 7, Logs = 8, CurrencyExchange = 9, Logout = 10 };
 
     Session& m_Session;
     Service& m_ServicesRef;
-
 
 
 
@@ -54,15 +51,16 @@ private:
         std::cout << std::setw(37) << std::left << "" << "\t[6] Transactions.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[7] Manage Users.\n";
         std::cout << std::setw(37) << std::left << "" << "\t[8] Logs.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[9] Logout.\n";
+        std::cout << std::setw(37) << std::left << "" << "\t[9] Currency Exchange.\n";
+        std::cout << std::setw(37) << std::left << "" << "\t[10] Logout.\n";
         std::cout << std::setw(37) << std::left << "" << "===========================================\n";
 
 
     }
 
-    MainMenuComponents _NavigateUser(double from = 1, double to = 9)
+    MainMenuComponents _NavigateUser(double from = 1, double to = 10)
     {
-        _Message("Choose What do you want to do ? [1 to 9] : ");
+        _Message("Choose What do you want to do ? [1 to 10] : ");
 
         return  (MainMenuComponents)Validator::returnValidatedNumber(from, to);
     }
@@ -146,6 +144,12 @@ private:
                 Logs.Start(m_Session.GetUser());
                 break;
 
+            }
+            case MainMenuComponents::CurrencyExchange:
+            {
+                CurrencyExchangeMainScreen CurrencyExchange(m_ServicesRef, m_Session);
+                CurrencyExchange.Start(m_Session.GetUser());
+                break;
             }
             case MainMenuComponents::Logout:
             {

@@ -6,6 +6,7 @@
 #include "MainMenuScreen.h"
 #include "FileHandler.h"
 #include <vector>
+
 int main()
 {
     
@@ -19,9 +20,6 @@ int main()
       while (true) {
           
        session = LoginScreen(service).Login();
-
-      
-
        std::unique_ptr<UI> ui = std::make_unique<MainMenuScreen>(service, session);
 
        ui->StartMainMenu(session);

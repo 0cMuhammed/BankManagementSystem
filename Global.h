@@ -1,5 +1,5 @@
 #pragma once
-
+#include <stdint.h>
 constexpr static const char* ADMIN_USERNAME = "Admin";
 constexpr static int32_t  FullPermissions = -1;
 constexpr static size_t FullPermisssionsInPositive = 32767; // found in debug mode, matches -1 

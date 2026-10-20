@@ -72,21 +72,29 @@ private :
 		return _GetEmptyObject();
 	}
 
-	bool _UpdateRate(const std::string&Code, double NewRate) {
 
-		for (Currency& currency : m_List)
-		{
-			if (IgnoreCase(currency.GetCode(), Code))
+
+    bool _UpdateRate(const std::string & Code, double NewRate) {
+
+			bool Updated = false;
+
+			for (Currency& currency : m_List)
 			{
-				currency.SetRate(NewRate);                // modifes in vector
-				FileHandler::SaveCurrencies(m_List);     // save in file 
-				return true;
-
+				if (IgnoreCase(currency.GetCode(), Code))
+				{
+					currency.SetRate(NewRate);   // modifies every row sharing this code
+					Updated = true;
+				}
 			}
-		}
 
-		return false;
-	}
+			if (Updated)
+			{
+				FileHandler::SaveCurrencies(m_List);   // save in file once, after all rows are changed
+			}
+
+			return Updated;
+		}
+	
 
 public :
 
@@ -99,15 +107,24 @@ public :
 		return m_List;
 	}
 
-	OperationStates FindByCode(const std::string& Code) {
+
+	OperationStates FindByCode(const std::string& Code, Currency &Result) {
+		
 		Currency c = _FindObjectByCode(Code);
 
-		return (c.isEmpty()) ? OperationStates::NotFound : OperationStates::Successful;
-	}
-	OperationStates FindByCountry(const std::string& Country) {
-		Currency c = _FindObjectByCountry(Country);
+		if (c.isEmpty())
+			return OperationStates::NotFound;
 
-		return (c.isEmpty()) ? OperationStates::NotFound : OperationStates::Successful;
+		Result = c;
+		return OperationStates::Successful;
+	}
+	OperationStates FindByCountry(const std::string& Country, Currency& Result) {
+		Currency c = _FindObjectByCountry(Country);
+		if (c.isEmpty())
+			return OperationStates::NotFound;
+
+		Result = c;
+		return OperationStates::Successful;
 	}
 
 	OperationStates CalculateExchangeRate(const std::string& FromCode, const std::string& ToCode, double &Price) {
@@ -122,13 +139,12 @@ public :
 			return OperationStates::Failed;
 		}
 			
-	
-			
 
-			double p = Price / From.GetRate();
-			Price = p * To.GetRate();
 
-			return OperationStates::Successful;
+		double p = Price / From.GetRate();
+		Price = p * To.GetRate();
+
+		return OperationStates::Successful;
 	}
 			
 	OperationStates UpdateRate(const std::string& Code, double newRate) {
@@ -142,7 +158,6 @@ public :
 
 		return OperationStates::Failed;
 	}
-
 
 
 

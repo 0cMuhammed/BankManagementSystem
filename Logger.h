@@ -33,6 +33,11 @@ public:
 		ShowLogs = 18,
 		ShowAuditLogs = 19,
 
+		ListCurrencies = 20,
+		FindCurrency = 21,
+		UpdateCurrencyRate = 22,
+		CurrencyCalculator = 23
+
 
 	};
 	enum class Level : uint8_t
@@ -49,13 +54,18 @@ private:
 
 	static std::string CategoryToString(Category category) {
 
-		std::string table[] =
+		static const std::string table[] =
 		{
-			"Show Client List", "Add Clients", "Delete Client", "Update Client", "Find Client", "Deposit", "Withdraw", "Transfer", "Show Total Balance", "Manage Users", "Show User List", "Add User", "Delete User", "Update User", "Find User", "Login", "Login Attempt", "Operation Attempt", "Show Logs", "Show Audit Logs"
+			"Show Client List", "Add Clients", "Delete Client", "Update Client", "Find Client",
+			"Deposit", "Withdraw", "Transfer", "Show Total Balance", "Manage Users",
+			"Show User List", "Add User", "Delete User", "Update User", "Find User",
+			"Login", "Login Attempt", "Operation Attempt", "Show Logs", "Show Audit Logs",
+			"List Currencies", "Find Currency", "Update Currency Rate", "Currency Calculator"
 		};
 
 		return table[static_cast<uint8_t>(category)];
 	}
+
 	static std::string LevelToString(Level level) {
 
 		std::string table[] =
@@ -65,6 +75,7 @@ private:
 
 		return table[static_cast<uint8_t>(level)];
 	}
+
 	static std::string BuildPrefix(const std::string& Username, Category category, Level level) {
 		time_t now = time(nullptr);
 		char buf[32];
@@ -264,6 +275,54 @@ public:
 		}
 
 
+	}
+
+	static void LogCurrency(const std::string& CurrentUsername, Category category, Level level, const std::string& CurrencyCode = "", double OldRate = 0, double NewRate = 0, const std::string& op = "")
+	{
+		std::string Prefix = BuildPrefix(CurrentUsername, category, level);
+		std::string Target = "CURRENCY : " + CurrencyCode;
+		std::string msg;
+
+		switch (category)
+		{
+		case Category::ListCurrencies:
+		{
+			msg = Prefix + LOG_DELIMITER + "Viewed the currency list";
+			break;
+		}
+
+		case Category::FindCurrency:
+		{
+			msg = Prefix + LOG_DELIMITER + "Searched for a currency by " + op + LOG_DELIMITER + Target;
+			break;
+		}
+
+		case Category::UpdateCurrencyRate:
+		{
+			msg = Prefix + LOG_DELIMITER + "Updated currency rate" + LOG_DELIMITER + Target +
+				LOG_DELIMITER + "Rate: " + std::to_string(OldRate) + " -> " + std::to_string(NewRate);
+			break;
+		}
+
+		case Category::CurrencyCalculator:
+		{
+			msg = Prefix + LOG_DELIMITER + "Used the currency calculator" + LOG_DELIMITER + op;
+			break;
+		}
+
+		case Category::NoAccsess:
+		{
+			msg = Prefix + LOG_DELIMITER + "No Access for " + op + LOG_DELIMITER;
+			break;
+		}
+
+		default:
+		{
+			return;
+		}
+		}
+
+		FileHandler::SaveLog(msg);
 	}
 
 };

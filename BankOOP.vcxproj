@@ -158,14 +158,19 @@
     <ClInclude Include="ClientServices.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Currency.h" />
+    <ClInclude Include="CurrencyCalculatorScreen.h" />
+    <ClInclude Include="CurrencyExchangeMainScreen.h" />
     <ClInclude Include="CurrencyRepository.h" />
+    <ClInclude Include="CurrencyServices.h" />
     <ClInclude Include="DeleteScreen.h" />
     <ClInclude Include="DeleteUserScreen.h" />
     <ClInclude Include="DepositScreen.h" />
+    <ClInclude Include="FindCurrencyScreen.h" />
     <ClInclude Include="FindScreen.h" />
     <ClInclude Include="FindUserScreen.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="Hasher.h" />
+    <ClInclude Include="ListCurrenciesScreen.h" />
     <ClInclude Include="ListScreen.h" />
     <ClInclude Include="Date.h" />
     <ClInclude Include="FileHandler.h" />
@@ -183,6 +188,7 @@
     <ClInclude Include="Transactions.h" />
     <ClInclude Include="TransactionsScreen.h" />
     <ClInclude Include="TransferScreen.h" />
+    <ClInclude Include="UpdateRateScreen.h" />
     <ClInclude Include="UpdateScreen.h" />
     <ClInclude Include="UpdateUserScreen.h" />
     <ClInclude Include="User.h" />

@@ -40,7 +40,11 @@ public :
 		return vTokens;
 
 	}
-
+	static std::string _StripQuotes(std::string s) {
+		if (s.size() >= 2 && s.front() == '"' && s.back() == '"')
+			return s.substr(1, s.size() - 2);
+		return s;
+	}
 	static uint32_t _StringToCode(std::string code) {
 
 		std::string CurrencyCodes[] = {
@@ -79,6 +83,7 @@ public :
 	static  User LineToUser(std::string line);	
 	static std::string LogtoLine(std::string line);
 	static Currency LinetoCurrency(std::string line);
+
 	static std::string CurrencyToLine(Currency &c, const std::string& delimiter = "#//#");
 
 	static std::string BalanceToText(int Number)

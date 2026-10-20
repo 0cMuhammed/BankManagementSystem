@@ -89,7 +89,18 @@ class Screen : public UI {
             ShowDate();
         }
   
+        static void _PrintCurrency(Currency &c)
+        {
+            std::cout << "\nCurrency Card:\n";
+            std::cout << "_____________________________\n";
+            std::cout << "\nCountry    : " << c.GetCountry();
+            std::cout << "\nCode       : " << c.GetCode(); 
+            std::cout << "\nName       : " << c.GetName();
+            std::cout << "\nRate(1$) = : " << c.GetRate();
 
+            std::cout << "\n_____________________________\n";
+
+        }
     public:
 
        Screen(Service& ref) : m_ServiceRef(ref) {}

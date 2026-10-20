@@ -53,3 +53,19 @@
 [INFO / 2026-10-09 00:22:27] - Update User - USERNAME : Admin - Updated user data / permissions - TARGET USER : KADAS
 [INFO / 2026-10-09 00:23:17] - Login - USERNAME : KADAS - Logged in successfully
 [WARN / 2026-10-09 00:23:20] - Operation Attempt - USERNAME : KADAS - No Access for Activity Logs - 
+[INFO / 2026-10-20 13:03:48] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-20 13:04:12] - Find Currency - USERNAME : Admin - Searched for a currency by Code - CURRENCY : MYR
+[INFO / 2026-10-20 13:08:55] - Find Currency - USERNAME : Admin - Searched for a currency by Code - CURRENCY : MYR
+[INFO / 2026-10-20 13:10:44] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-20 13:11:02] - Find Currency - USERNAME : Admin - Searched for a currency by Code - CURRENCY : myr
+[INFO / 2026-10-20 13:14:57] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-20 13:15:43] - Find Currency - USERNAME : Admin - Searched for a currency by Code - CURRENCY : MYR
+[INFO / 2026-10-20 13:16:26] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-20 13:16:46] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-20 13:16:53] - Find Currency - USERNAME : Admin - Searched for a currency by Code - CURRENCY : myr
+[INFO / 2026-10-20 13:17:01] - Find Currency - USERNAME : Admin - Searched for a currency by Country - CURRENCY : malaysia
+[INFO / 2026-10-20 13:17:11] - Find Currency - USERNAME : Admin - Searched for a currency by Country - CURRENCY : Malaysia
+[INFO / 2026-10-20 13:17:18] - Find Currency - USERNAME : Admin - Searched for a currency by Country - CURRENCY : Saudi Arabia
+[INFO / 2026-10-20 13:17:39] - Update Currency Rate - USERNAME : Admin - Updated currency rate - CURRENCY : MYR - Rate: 4.085580 -> 4.085580
+[INFO / 2026-10-20 13:17:55] - Currency Calculator - USERNAME : Admin - Used the currency calculator - 100.000000 USD -> MYR
+[INFO / 2026-10-20 13:18:26] - Currency Calculator - USERNAME : Admin - Used the currency calculator - 100.000000 MYR -> USD
