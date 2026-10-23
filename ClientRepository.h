@@ -51,18 +51,19 @@ private :
 
 
 	static void _Message(const std::string& Message) {
-		std::cout << '\n' << Message;
+		term::Prompt(Message);   // NEW: prompts coming from the repository use the same style as the screens
 	}
 
 
 	std::string  _ReadAccountNumber() {
 
-		_Message("Enter your account number : ");
+		_Message("ACCOUNT NUMBER");
 		std::string AccountNumber = Validator::ReadString();
 
 		while (IsExists(AccountNumber) || Validator::IsInvalid(AccountNumber)) {
 
-			_Message("Account Number is already used/invalid, Please enter another account number : \n");
+			term::Error("Account number is already used or invalid.");
+			_Message("ACCOUNT NUMBER");
 
 			AccountNumber = Validator::ReadString();
 		}
@@ -172,41 +173,27 @@ public :
 		 return m_List;
 	 }
 
-	 static void PrintClient(const Client& client) {
 
-		 std::cout << "\nClient Card:";
-		 std::cout << "\n___________________";
-		 std::cout << "\nFirstName   : " << client.GetFirstName();
-		 std::cout << "\nLastName    : " << client.GetLastName();
-		 std::cout << "\nFull Name   : " << client.GetFullName();
-		 std::cout << "\nEmail       : " << client.GetEmail();
-		 std::cout << "\nPhone       : " << client.GetPhoneNumber();
-		 std::cout << "\nAcc. Number : " << client.getAccountNumber();
-		 std::cout << "\nBalance     : " << client.getBalance();
-		 std::cout << "\n___________________\n";
-
-
-	 }
 	 static Client ReadNewClient()
 	 {
 		 
-		 _Message("Enter your account number : ");
+		 _Message("ACCOUNT NUMBER");
 		 std::string AccountNumber = Validator::ReadString();
 		 
-		 _Message("Enter first name : ");
+		 _Message("FIRST NAME");
 		 std::string FirstName = Validator::ReadString();
 
-		 _Message("Enter last name : ");
+		 _Message("LAST NAME");
 		 std::string LastName = Validator::ReadString();
 
-		 _Message("Enter Email : ");
+		 _Message("EMAIL");
 		 std::string Email = Validator::ReadString();
 
 		 std::string Phone = Validator::ReadPhoneNumber();
 
 		 std::string PinCode = Hasher::GetHash(Validator::ReadPincode());
 
-		 _Message("Enter Account Balance :");
+		 _Message("ACCOUNT BALANCE");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
 
 		 return Client(FirstName, LastName, Email, Phone, AccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
@@ -214,13 +201,13 @@ public :
 	 static Client ReadClient(const std::string& ExistingAccountNumber)
 	 {
 
-		 _Message("Enter first name : ");
+		 _Message("FIRST NAME");
 		 std::string FirstName = Validator::ReadString();
 
-		 _Message("Enter last name : ");
+		 _Message("LAST NAME");
 		 std::string LastName = Validator::ReadString();
 
-		 _Message("Enter Email : ");
+		 _Message("EMAIL");
 		 std::string Email = Validator::ReadString();
 
 		
@@ -228,7 +215,7 @@ public :
 
 		 std::string PinCode = Hasher::GetHash(Validator::ReadPincode());
 
-		 _Message("Enter Account Balance : ");
+		 _Message("ACCOUNT BALANCE");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
 
 		 return Client(FirstName, LastName, Email, Phone, ExistingAccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
@@ -237,13 +224,13 @@ public :
 
 		 std::string AccountNumber = _ReadAccountNumber();
 
-		 _Message("Enter first name : ");
+		 _Message("FIRST NAME");
 		 std::string FirstName = Validator::ReadString();
 
-		 _Message("Enter last name : ");
+		 _Message("LAST NAME");
 		 std::string LastName = Validator::ReadString();
 
-		 _Message("Enter Email : ");
+		 _Message("EMAIL");
 		 std::string Email = Validator::ReadString();
 
 		 
@@ -252,7 +239,7 @@ public :
 		
 		 std::string PinCode = Hasher::GetHash(Validator::ReadPincode());
 
-		 _Message("Enter Account Balance : ");
+		 _Message("ACCOUNT BALANCE");
 		 double Balance = Validator::returnNumber("Invalid Number, Enter again");
 
 		 return Client(FirstName, LastName, Email, Phone, AccountNumber, PinCode, Balance, Client::ObjectMode::newMode);
@@ -279,7 +266,7 @@ public :
 		{
 
 
-			_Message("Enter your new first name : \n");
+			_Message("NEW FIRST NAME");
 			FirstName = Validator::ReadNames("First");
 		}
 		else
@@ -290,7 +277,7 @@ public :
 		{
 
 
-			_Message("Enter your new last name : \n");
+			_Message("NEW LAST NAME");
 			LastName = Validator::ReadNames("Last");
 		}
 		else
@@ -301,7 +288,7 @@ public :
 		{
 
 
-			_Message("Enter your new email name : \n");
+			_Message("NEW EMAIL");
 			email = Validator::ReadEmails();
 		}
 		else
@@ -313,7 +300,7 @@ public :
 		{
 
 
-			_Message("Enter your new phone number : \n");
+			_Message("NEW PHONE NUMBER");
 			phone = Validator::ReadPhoneNumber();
 		}
 		else
@@ -326,7 +313,7 @@ public :
 		{
 
 
-			_Message("Enter your new pincode : ");
+			_Message("NEW PINCODE");
 			pincode = Hasher::GetHash(Validator::ReadPincode());
 		}
 		else

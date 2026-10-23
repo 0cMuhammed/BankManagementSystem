@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include <iomanip>
 #include <string>
 #include "Validator.h"
 #include "Session.h"
@@ -22,34 +21,32 @@ private:
     Session& m_Session;
     Service& m_ServicesRef;
 
-
-    void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-
-        std::cout << "\t\t\t\t\t______________________________________";
-
-        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Currency Exchange Main Screen"));
-
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-        ShowUserAndDate(m_Session.GetUser());
-
-    }
+    int m_LastIndex = 0;   // NEW: remembers the highlighted row
 
     void _PrintLayout() {
 
         _ClearScreen();
-        PrintHeader();
+        term::Header("CURRENCY EXCHANGE", "", m_Session.GetUser().GetUsername());   // NEW: replaces PrintHeader override + hand-printed menu box
+        term::Section("MENU", std::string(term::g::Up) + term::g::Down + " move  " + term::g::Mid + "  Enter open  " + term::g::Mid + "  Esc back");
+    }
 
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t\t Currency Exchange Menue\n";
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[1] List Currencies.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[2] Find Currency.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[3] Update Rate.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[4] Currency Calculator.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[5] Main Menu.\n";
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
+    MenuComponents _NavigateUser()
+    {
+        // NEW: row order = enum order
+        static const std::vector<term::MenuItem> items = {
+            { "LIST CURRENCIES",    "every currency and its rate" },
+            { "FIND CURRENCY",      "by code or by country" },
+            { "UPDATE RATE",        "change a currency's rate" },
+            { "CALCULATOR",         "convert between two currencies" },
+            { "BACK",               "return to the main menu" }
+        };
+
+        int choice = term::Menu(items, m_LastIndex);
+
+        if (choice < 0) return MenuComponents::Exit;           // Esc = go back
+
+        m_LastIndex = choice;
+        return static_cast<MenuComponents>(choice + 1);
     }
 
     void _Menu(bool& isInMainMenu) {
@@ -58,7 +55,11 @@ private:
         {
             _PrintLayout();
 
-            switch (_NavigateUser())
+            const MenuComponents choice = _NavigateUser();
+
+            if (choice != MenuComponents::Exit) _ClearScreen();
+
+            switch (choice)
             {
             case MenuComponents::List:
             {
@@ -86,7 +87,7 @@ private:
             }
             case MenuComponents::Exit:
             {
-                _ExitMenu(isInMainMenu);
+                isInMainMenu = false;
                 break;
             }
             default: //for later enum choices
@@ -98,25 +99,11 @@ private:
         } while (isInMainMenu);
     }
 
-    static void _ExitMenu(bool& isInMainMenu, const char* message = "\nGetting Back to Main Menu...")
-    {
-        std::cout << message << "\n\n";
-
-        isInMainMenu = false;
-    }
-
-    MenuComponents _NavigateUser(double from = 1, double to = 5)
-    {
-        _Message("Choose What do you want to do ? [1 to 5] : ");
-
-        return  (MenuComponents)Validator::returnValidatedNumber(from, to);
-    }
-
     void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
 
         bool isInMainMenu = true;
 
-        _Menu(isInMainMenu); 
+        _Menu(isInMainMenu);
     }
 
 public:
@@ -126,7 +113,5 @@ public:
     void Start(const User& CurrentUser) override
     {
         PerformMenu(CurrentUser);
-        _GetBackToMenu();
     }
 };
-

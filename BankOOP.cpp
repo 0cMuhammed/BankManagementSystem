@@ -5,11 +5,14 @@
 #include "LoginScreen.h"
 #include "MainMenuScreen.h"
 #include "FileHandler.h"
+#include "Terminal.h"   // NEW
 #include <vector>
 
 int main()
 {
-    
+    term::Init();   // NEW: UTF-8 output + color support + black window. Must run BEFORE anything is printed.
+
+
     Repository repository;
     Service service(repository);
 

@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 
 #include "Client.h"
 #include "Validator.h"
@@ -14,42 +13,28 @@ class UpdateScreen : public Screen
 private:
     ClientRepository& m_RepositoryReference;
 
-
-    void PrintHeader(const User &CurrentUser,const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-        std::cout << "\t\t\t\t\t______________________________________";
-
-        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Update Client Screen"));
-
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-
-        ShowUserAndDate(CurrentUser);
-    }
     void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
 
-        do
+        while (IsContinueOperation)
         {
+            if (!_PerformUpdate(CurrentUser))
+            {
+                _GetBackToMenu();
+                return;
+            }
 
-
-            _PerformUpdate(CurrentUser);
-
-            IsContinueOperation = Validator::GetConfirmation('\n' + std::string( ( (Message != nullptr) ? Message : "Do you want to continue this operation?") ));
-
-        } while (IsContinueOperation);
+            term::Blank();
+            IsContinueOperation = term::Confirm((Message != nullptr) ? Message : "Update another client?");
+        }
 
     }
-   
-
- 
 
     //exclusive
     static bool _PerformConfirmation(const Client& client, const char* Message = nullptr) {
-        ClientRepository::PrintClient(client);
-        bool isConfirm = Validator::GetConfirmation('\n' + std::string ((((Message != nullptr) ? Message : "Are you sure you want to update this client?"))));
-        return isConfirm;
+        _PrintClientCard(client);                                // NEW: replaces ClientRepository::PrintClient
+        return term::Confirm((Message != nullptr) ? Message : "Do you want to update this client?");
     }
     void _PrintUpdateStatus(const User& CurrentUser, Client& client, const std::string &ExistingAccountNumber) {
 
@@ -60,14 +45,15 @@ private:
 
         case ClientRepository::OperationStates::Failed: // for some reason....
         {
-            std::cout << "\nOperation Failed, Try again Later...\n";
+            term::Error("Operation failed, try again later.");
             break;
 
         }
         case ClientRepository::OperationStates::Successful:
         {
             Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::UpdateClient, Logger::Level::INFO, "", ExistingAccountNumber);
-            std::cout << "\nAccount is Updated Successfully!\n";
+            term::Blank();
+            term::Success("Account updated successfully.");
             break;
 
         }
@@ -85,41 +71,40 @@ private:
 
         Client client = m_RepositoryReference.Find(AccountNumber);
 
-
         if (client.isEmpty())
         {
-            std::cout << "Account Number is not found.\n";
+            term::Error("Account number was not found.");
 
         }
         else
         {
-            (_PerformConfirmation(client)) ? _PrintUpdateStatus(CurrentUser, client, AccountNumber) : _Message("Operation is cancelled.");
+            (_PerformConfirmation(client)) ? _PrintUpdateStatus(CurrentUser, client, AccountNumber) : term::Warn("Operation cancelled.");
         }
-        
+
     }
-    void _PerformUpdate(const User & CurrentUser) {
+    bool _PerformUpdate(const User & CurrentUser) {
 
         _ClearScreen();
-        
+
         if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::UpdateClient))
         {
-            PrintHeader(CurrentUser);
+            _Header(CurrentUser, "UPDATE CLIENT");
 
-            _Message("Please enter your account number : ");
+            term::Prompt("ACCOUNT NUMBER");
             std::string AccountNumber = Validator::ReadString();
 
             _Update(CurrentUser, AccountNumber);
-
+            return true;
         }
         else
         {
             Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Update Client");
+            _Header(CurrentUser, "UPDATE CLIENT");
             NoAccessMsg();
+            return false;
         }
 
     }
-   
-
 
 public:
 
@@ -127,7 +112,5 @@ public:
 
     void Start(const User & CurrentUser) override {
         PerformMenu(CurrentUser);
-        _GetBackToMenu();
     }
 };
-

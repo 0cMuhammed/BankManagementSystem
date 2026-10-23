@@ -1,11 +1,9 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 #include "ClientRepository.h"
 #include "Validator.h"
 #include "Screen.h"
-
 
 class DeleteScreen : public Screen
 {
@@ -14,59 +12,44 @@ private :
 
     ClientRepository& m_RepositoryReference;
 
-
-    void PrintHeader(const User &CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-        std::cout << "\t\t\t\t\t______________________________________";
-
-        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Delete Client Screen"));
-
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-        ShowUserAndDate(CurrentUser);
-    }
-
     void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
 
-        do
+        while (IsContinueOperation)
         {
+            if (!_PerformDelete(CurrentUser))
+            {
+                _GetBackToMenu();
+                return;
+            }
 
-
-            _PerformDelete(CurrentUser);
-
-            IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Do you want to continue this operation?"))));
-
-        } while (IsContinueOperation);
+            term::Blank();
+            IsContinueOperation = term::Confirm((Message != nullptr) ? Message : "Delete another client?");
+        }
 
     }
-   
 
-
-
-   
     static bool _PerformConfirmation(const Client &client, const char* Message = nullptr) {
-        ClientRepository::PrintClient(client);
-        bool isConfirm =  Validator::GetConfirmation('\n' + std::string ((((Message != nullptr) ? Message : "Are you sure you want to delete this client?"))));
-        return isConfirm;
+        _PrintClientCard(client);
+        return term::Confirm((Message != nullptr) ? Message : "Are you sure you want to delete this client?");
     }
 
     void _PrintDeleteStatus(const User& CurrentUser, Client& client) {
- 
+
         switch (m_RepositoryReference.DeleteClient(client))
         {
 
         case ClientRepository::OperationStates::Failed : // for some reason....
         {
-            std::cout << "Operation Failed, Try again Later...\n";
+            term::Error("Operation failed, try again later.");
             break;
 
         }
         case ClientRepository::OperationStates::Successful:
         {
             Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::DeleteClient, Logger::Level::INFO, "", client.getAccountNumber());
-            std::cout << "Account is deleted Successfully!\n";
+            term::Success("Account deleted successfully.");
             break;
 
         }
@@ -82,45 +65,41 @@ private :
     void _Delete(const User& CurrentUser, const std::string& AccountNumber) {
 
         Client client = m_RepositoryReference.Find(AccountNumber);
-         
 
         if (client.isEmpty())
         {
-            std::cout << "Account Number is not found.\n";
+            term::Error("Account number was not found.");
 
         }
-        else 
+        else
         {
-            (_PerformConfirmation(client)) ? _PrintDeleteStatus(CurrentUser, client) : _Message("\nOperation is cancelled.\n");
+            (_PerformConfirmation(client)) ? _PrintDeleteStatus(CurrentUser, client) : term::Warn("Operation cancelled.");
         }
 
     }
-    void _PerformDelete(const User &CurrentUser) {
+    bool _PerformDelete(const User &CurrentUser) {
 
         _ClearScreen();
-      
 
-        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::DeleteClient)) 
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::DeleteClient))
         {
-            PrintHeader(CurrentUser);
+            _Header(CurrentUser, "DELETE CLIENT");
 
-            _Message("Please enter your account number : ");
+            term::Prompt("ACCOUNT NUMBER");
             std::string AccountNumber = Validator::ReadString();
 
             _Delete(CurrentUser, AccountNumber);
+            return true;
         }
-        else 
+        else
         {
             Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Delete Client");
+            _Header(CurrentUser, "DELETE CLIENT");
             NoAccessMsg();
+            return false;
         }
-       
-      
-            
+
     }
-
-	
-
 
     public :
 
@@ -128,8 +107,6 @@ private :
 
         void Start(const User &CurrentUser) override {
             PerformMenu(CurrentUser);
-            _GetBackToMenu();
         }
 
 };
-

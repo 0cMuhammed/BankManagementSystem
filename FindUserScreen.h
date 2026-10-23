@@ -1,10 +1,8 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 
 #include "Validator.h"
-
 
 #include "Screen.h"
 
@@ -14,25 +12,13 @@ private:
 
 	UserRepository& m_RepositoryReference;
 
-
-
-	void PrintHeader(const User &CurrentUser,const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-		std::cout << "\t\t\t\t\t______________________________________";
-
-		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Find User Screen"));
-
-		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-		ShowUserAndDate(CurrentUser);
-	}
-
 	void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
 		bool isContinue = true;
-		do
+
+		while (isContinue)
 		{
 			_ClearScreen();
-			PrintHeader(CurrentUser);
+			_Header(CurrentUser, "FIND USER");
 
 			if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::FindUser))
 			{
@@ -41,39 +27,35 @@ private:
 			else
 			{
 				Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Find User");
-                 NoAccessMsg();
+				NoAccessMsg();
+				_GetBackToMenu("Press any key to go back to the Manage Users menu");
+				return;
 			}
 
-			isContinue = Validator::GetConfirmation('\n' + std::string (((Message != nullptr) ? Message : "Do you want to continue this operation?")));
-
-		} while (isContinue);
+			term::Blank();
+			isContinue = term::Confirm((Message != nullptr) ? Message : "Find another user?");
+		}
 
 	}
 
-
-
-
 	void _PerformFind(const User& CurrentUser, const char* NotFoundMessage = nullptr) {
 
-		_Message("Please enter a username : ");
+		term::Prompt("USERNAME");
 		std::string Username = Validator::ReadString();
 
 		User user = m_RepositoryReference.Find(Username);
 		Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::FindUser, Logger::Level::INFO, "", Username);
 
-		(!user.isEmpty()) ? UserRepository::PrintUser(user) : _Message(std::string ( ((NotFoundMessage != nullptr) ? NotFoundMessage : "User is not found.")));
+		if (!user.isEmpty()) _PrintUserCard(user);
+		else term::Error((NotFoundMessage != nullptr) ? NotFoundMessage : "User was not found.");
 
 	}
-
 
 public:
 
 	FindUserScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessUserServices().AccessRepository()) {};
 
-	//well obviously
 	void Start(const User& CurrentUser) override {
 		PerformMenu(CurrentUser);
-		_GetBackToMenu("Press Enter to go back to Manage Users Menu");
 	}
 };
-

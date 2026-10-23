@@ -2,95 +2,78 @@
 #include <iostream>
 #include<vector>
 #include<fstream>
-#include<iomanip>
 
 #include "Parser.h"
 #include "ClientServices.h"
 
-
 #include "Screen.h"
-
-
 
 class TotalBalanceScreen : public Screen
 {
 private :
 	const ClientServices& m_ServicesRef; // read only dependency injection
 
-
-	static void _PrintLine() {
-		std::cout << std::setw(25) << std::left << "" << "\n\t\t_______________________________________________________";
-		std::cout << "__________________________\n" <<'\n';
-	}
+	// NEW: column titles + thin line (widths must match _PrintRow: 8 + 30 + 16 + 2 gaps of 2 + 2 left = 60)
 	static void _PrintLayout() {
-
-		_PrintLine();
-		std::cout << std::setw(25) << std::left << "" << "| " << std::left << std::setw(15) << "Account Number";
-		std::cout << "| " << std::left << std::setw(40) << "Client Name";
-		std::cout << "| " << std::left << std::setw(12) << "Balance";
-		_PrintLine();
+		term::Print(std::string(term::col::Muted) + "  " + term::Pad("ACCOUNT", 8) + "  " + term::Pad("NAME", 30) + "  " + term::PadLeft("BALANCE", 16));
+		term::Rule();
 	}
-	static void _PrintFormattedClient(const Client& client)
+
+	static void _PrintRow(const Client& client)
 	{
-
-		std::cout << std::setw(25) << std::left << "" << "| " << std::setw(15) << std::left << client.getAccountNumber();
-		std::cout << "| " << std:: setw(40) << std::left << client.GetFullName();
-		std::cout << "| " << std::setw(12) << std::left << client.getBalance();
-
+		term::Print(std::string("  ") + term::col::Cyan + term::Pad(client.getAccountNumber(), 8)
+		            + term::col::Base + "  " + term::Pad(term::Fit(client.GetFullName(), 30), 30)
+		            + term::col::Green + "  " + term::PadLeft(term::Money(client.getBalance()), 16));
 	}
 
-	void _PrintAll() {
-		for (const Client& client : m_ServicesRef.AccessRepository().GetList())
-		{
-
-			_PrintFormattedClient(client);
-			std::cout << std::endl;
+	// NEW: splits long text into lines of at most 'width' characters, breaking between words
+	static std::vector<std::string> _Wrap(const std::string& text, size_t width) {
+		std::vector<std::string> lines;
+		std::string line, word;
+		for (size_t i = 0; i <= text.size(); ++i) {
+			if (i == text.size() || text[i] == ' ') {                  // end of a word
+				if (!line.empty() && line.size() + 1 + word.size() > width) { lines.push_back(line); line.clear(); }
+				line += (line.empty() ? "" : " ") + word;
+				word.clear();
+			} else word += text[i];
 		}
-		_PrintLine();
-
+		if (!line.empty()) lines.push_back(line);
+		return lines;
 	}
+
 	void _PrintTotalBalance() {
 		double total = m_ServicesRef.GetTotalBalances();
-		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t\t\t\t     Total Balances = " << total << '\n';
-		std::cout << std::setw(8) << std::left << "" << "\t\t\t\t  ( " << Parser::BalanceToText(total) << ")\n\n"; // Rounded to nearest integer
-		
-	}
-
-	void PrintHeader(const User &CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-
-		std::cout << "\t\t\t\t\t______________________________________";
-
-		std::cout << "\n\n\t\t\t\t\t\t   " << (((ScreenName != nullptr) ? ScreenName : "Balances List Screen"));
-
-		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-		ShowUserAndDate(CurrentUser);
-
-	}
-	void _ShowTotal(const User &CurrentUser) 
-	{
-		if (m_ServicesRef.AccessRepository().GetList().size() == 0)
+		term::Rule();
+		term::Print(std::string(term::col::Muted) + "  TOTAL" + term::col::Cyan + term::col::Bold + term::PadLeft(term::Money(total), term::kW - 4 - 5));
+		term::Blank();
+		bool first = true;
+		for (const std::string& l : _Wrap(Parser::BalanceToText(total), 56))   // the total spelled out in words, wrapped to fit
 		{
+			term::Print(std::string(term::col::Muted) + "  " + (first ? "IN WORDS  " : "          ") + term::col::Base + l);
+			first = false;
+		}
+	}
 
-			_Message("\t\t\t\tNo Clients Available In the System!");
+	void _ShowTotal(const User &CurrentUser)
+	{
+		const std::vector<Client>& clients = m_ServicesRef.AccessRepository().GetList();
 
-
+		if (clients.empty())
+		{
+			_Header(CurrentUser, "TOTAL BALANCES", "0 RECORDS");
+			term::Warn("No clients available in the system.");
 		}
 		else
 		{
-			const std::string SubTitle = "\t    (" + std::to_string(m_ServicesRef.AccessRepository().GetList().size()) + ") Client(s).";
-
-			PrintHeader(CurrentUser,nullptr, SubTitle.c_str());
+			_Header(CurrentUser, "TOTAL BALANCES", std::to_string(clients.size()) + " RECORDS");
 			_PrintLayout();
-			_PrintAll();
+			for (const Client& c : clients) _PrintRow(c);
 			_PrintTotalBalance();
-
 		}
 	}
 
 	void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
-	
+
 		if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions))
 		{
 			Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::ShowTotalBalance, Logger::Level::INFO);
@@ -99,6 +82,7 @@ private :
 		else
 		{
 			Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Total Balances");
+			_Header(CurrentUser, "TOTAL BALANCES");
             NoAccessMsg();
 		}
 
@@ -110,8 +94,7 @@ public :
 
 	void Start(const User & CurrentUser) override {
 		PerformMenu(CurrentUser);
-		_GetBackToMenu("Press Enter to go back to Transactions Menu");
+		_GetBackToMenu("Press any key to go back to the Transactions menu");
 	}
 
 };
-

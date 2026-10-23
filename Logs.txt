@@ -69,3 +69,64 @@
 [INFO / 2026-10-20 13:17:39] - Update Currency Rate - USERNAME : Admin - Updated currency rate - CURRENCY : MYR - Rate: 4.085580 -> 4.085580
 [INFO / 2026-10-20 13:17:55] - Currency Calculator - USERNAME : Admin - Used the currency calculator - 100.000000 USD -> MYR
 [INFO / 2026-10-20 13:18:26] - Currency Calculator - USERNAME : Admin - Used the currency calculator - 100.000000 MYR -> USD
+[INFO / 2026-10-20 22:50:41] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-20 22:50:44] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-20 22:51:08] - Add Clients - USERNAME : Admin - Added a new client - Account Number : a02
+[INFO / 2026-10-21 22:07:38] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-21 22:07:45] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-21 22:07:53] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-21 22:08:06] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-21 22:08:11] - Show User List - USERNAME : Admin - Viewed the user list
+[INFO / 2026-10-21 22:08:22] - Find User - USERNAME : Admin - Searched for a user - TARGET USER : A101
+[INFO / 2026-10-21 22:08:24] - Find User - USERNAME : Admin - Searched for a user - TARGET USER : A202
+[INFO / 2026-10-21 22:08:28] - Find User - USERNAME : Admin - Searched for a user - TARGET USER : A931
+[INFO / 2026-10-21 22:08:31] - Find User - USERNAME : Admin - Searched for a user - TARGET USER : ASDA
+[INFO / 2026-10-21 22:08:34] - Show User List - USERNAME : Admin - Viewed the user list
+[INFO / 2026-10-21 22:08:43] - Find User - USERNAME : Admin - Searched for a user - TARGET USER : ADS
+[INFO / 2026-10-21 22:09:09] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-21 22:09:29] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-21 22:13:40] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-21 22:16:01] - Show Client List - USERNAME : Admin - Viewed the client list
+[WARN / 2026-10-23 19:40:07] - Login Attempt - USERNAME : Admin - Failed login attempt - TARGET USER : 
+[INFO / 2026-10-23 19:40:12] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-23 19:40:15] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-23 19:40:36] - Add Clients - USERNAME : Admin - Added a new client - Account Number : A101
+[INFO / 2026-10-23 19:41:00] - Add Clients - USERNAME : Admin - Added a new client - Account Number : N
+[INFO / 2026-10-23 19:41:09] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-23 19:42:18] - Delete Client - USERNAME : Admin - Deleted a client - Account Number : A101
+[INFO / 2026-10-23 19:42:54] - Update Client - USERNAME : Admin - Updated client data - Account Number : A202
+[INFO / 2026-10-23 19:43:08] - Find Client - USERNAME : Admin - Searched for a client - Account Number : A202
+[INFO / 2026-10-23 19:43:15] - Show Total Balance - USERNAME : Admin - Viewed total balances
+[INFO / 2026-10-23 19:43:56] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-23 19:43:57] - Show User List - USERNAME : Admin - Viewed the user list
+[INFO / 2026-10-23 19:44:27] - Add User - USERNAME : Admin - Created a new user - TARGET USER : 12EAWD
+[INFO / 2026-10-23 19:44:32] - Show User List - USERNAME : Admin - Viewed the user list
+[INFO / 2026-10-23 19:44:39] - Show Logs - USERNAME : Admin - Viewed the activity logs
+[INFO / 2026-10-23 19:45:17] - Find Currency - USERNAME : Admin - Searched for a currency by Code - CURRENCY : usd
+[WARN / 2026-10-23 19:45:22] - Find Currency - USERNAME : Admin - Searched for a currency by Code - CURRENCY : rm
+[INFO / 2026-10-23 19:45:29] - Find Currency - USERNAME : Admin - Searched for a currency by Country - CURRENCY : China
+[INFO / 2026-10-23 19:45:38] - Find Currency - USERNAME : Admin - Searched for a currency by Code - CURRENCY : MYR
+[INFO / 2026-10-23 19:45:47] - Currency Calculator - USERNAME : Admin - Used the currency calculator - 900.000000 USD -> MYR
+[INFO / 2026-10-23 19:46:11] - Manage Users - USERNAME : Admin - Opened user management
+[WARN / 2026-10-23 19:46:18] - Delete User - USERNAME : Admin - Deleted a user - TARGET USER : Admin
+[WARN / 2026-10-23 19:59:14] - Login Attempt - USERNAME : admin - Failed login attempt - TARGET USER : 
+[INFO / 2026-10-23 19:59:19] - Login - USERNAME : Admin - Logged in successfully
+[INFO / 2026-10-23 19:59:27] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-23 19:59:37] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-23 19:59:38] - Show User List - USERNAME : Admin - Viewed the user list
+[INFO / 2026-10-23 20:00:47] - Show Client List - USERNAME : Admin - Viewed the client list
+[INFO / 2026-10-23 20:00:58] - Manage Users - USERNAME : Admin - Opened user management
+[WARN / 2026-10-23 20:01:03] - Update User - USERNAME : Admin - Updated user data / permissions - TARGET USER : Admin
+[INFO / 2026-10-23 20:01:08] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-23 20:01:27] - Add User - USERNAME : Admin - Created a new user - TARGET USER : iki
+[INFO / 2026-10-23 20:01:36] - Manage Users - USERNAME : Admin - Opened user management
+[INFO / 2026-10-23 20:02:08] - Add User - USERNAME : Admin - Created a new user - TARGET USER : hi
+[INFO / 2026-10-23 20:02:19] - Login - USERNAME : hi - Logged in successfully
+[INFO / 2026-10-23 20:02:20] - Show Client List - USERNAME : hi - Viewed the client list
+[WARN / 2026-10-23 20:02:22] - Operation Attempt - USERNAME : hi - No Access for Delete Client - 
+[WARN / 2026-10-23 20:02:24] - Operation Attempt - USERNAME : hi - No Access for Update Client - 
+[WARN / 2026-10-23 20:02:25] - Operation Attempt - USERNAME : hi - No Access for Find Client - 
+[WARN / 2026-10-23 20:02:27] - Operation Attempt - USERNAME : hi - No Access for Transactions - 
+[WARN / 2026-10-23 20:02:30] - Operation Attempt - USERNAME : hi - No Access for Managing Users - 
+[WARN / 2026-10-23 20:02:31] - Operation Attempt - USERNAME : hi - No Access for Show Logs - 
+[INFO / 2026-10-23 20:02:52] - Currency Calculator - USERNAME : hi - Used the currency calculator - 150.000000 SAR -> MYR

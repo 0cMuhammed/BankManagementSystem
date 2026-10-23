@@ -13,44 +13,31 @@ private:
 
 	CurrencyRepository& m_RepositoryReference;
 
-	void PrintHeader(const User& CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-		std::cout << "\t\t\t\t\t______________________________________";
-
-		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Currency Calculator Screen"));
-
-		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-		ShowUserAndDate(CurrentUser);
-	}
-
 	void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
 
 		bool IsContinueOperation = true;
 
-		do
+		while (IsContinueOperation)
 		{
 			_PerformCalculation(CurrentUser);
 
-			IsContinueOperation = Validator::GetConfirmation('\n' + std::string(((Message != nullptr) ? Message : "Do you want to continue this operation?")));
-
-		} while (IsContinueOperation);
+			term::Blank();
+			IsContinueOperation = term::Confirm((Message != nullptr) ? Message : "Make another calculation?");
+		}
 	}
-
-
 
 	double _ReadAmount() {
-		_Message("Enter the amount to exchange : ");
-		return Validator::returnNumber("Invalid amount, Please enter a number greater than 0 : ");
+		term::Prompt("AMOUNT");
+		return Validator::returnNumber("Invalid amount. Please enter a number greater than 0.");
 	}
 
-	bool _ReadCurrency(const char* Message, Currency& Result) {
-		_Message(Message);
+	bool _ReadCurrency(const char* Label, Currency& Result) {
+		term::Prompt(Label);
 		std::string Code = Validator::ReadString();
 
 		if (m_RepositoryReference.FindByCode(Code, Result) != CurrencyRepository::OperationStates::Successful)
 		{
-			std::cout << "Currency is not found.\n";
+			term::Error("Currency was not found.");
 			return false;
 		}
 
@@ -66,32 +53,34 @@ private:
 
 		if (m_RepositoryReference.CalculateExchangeRate(FromCode, ToCode, Price) != CurrencyRepository::OperationStates::Successful)
 		{
-			std::cout << "\nOperation Failed, Try again Later...\n";
+			term::Error("Operation failed, try again later.");
 			return;
 		}
 
 		Logger::LogCurrency(CurrentUser.GetUsername(), Logger::Category::CurrencyCalculator, Logger::Level::INFO, "", 0, 0,
 			std::to_string(Amount) + " " + FromCode + " -> " + ToCode);
 
-		_Message("Convert From :");
-		_PrintCurrency(From);
+		term::Blank();
+		term::Field("FROM", FromCode + "  " + term::Fit(From.GetName(), 36), term::col::Base);   // NEW: two short lines instead of two full currency cards
+		term::Field("TO",   ToCode   + "  " + term::Fit(To.GetName(), 36),   term::col::Base);
+		term::Blank();
 
-		_Message("Convert To :");
-		_PrintCurrency(To);
-
-		std::cout << "\n" << Amount << " " << FromCode << " = " << Price << " " << ToCode << "\n";
+		// NEW: the answer in one big line:  100.00 USD --> 447.35 MYR
+		term::Print(std::string("  ") + term::col::White + term::col::Bold + term::Fixed(Amount, 2) + " " + FromCode
+		            + term::col::Cyan + "  " + term::g::Rule + term::g::Play + "  "
+		            + term::col::Green + term::col::Bold + term::Fixed(Price, 2) + " " + ToCode);
 	}
 
 	void _PerformCalculation(const User& CurrentUser) {
 
 		_ClearScreen();
-		PrintHeader(CurrentUser);
+		_Header(CurrentUser, "CURRENCY CALCULATOR");
 
 		Currency From("", 0, "", 0, Currency::ObjectMode::EmptyMode); // filled by the repository on success
 		Currency To("", 0, "", 0, Currency::ObjectMode::EmptyMode);
 
-		if (!_ReadCurrency("Please enter currency 1 code (convert from) : ", From)) { return; }
-		if (!_ReadCurrency("Please enter currency 2 code (convert to) : ", To)) { return; }
+		if (!_ReadCurrency("FROM CODE", From)) { return; }
+		if (!_ReadCurrency("TO CODE", To)) { return; }
 
 		double Amount = _ReadAmount();
 
@@ -104,10 +93,7 @@ public:
 
 	void Start(const User& CurrentUser) override {
 
-		PerformMenu(CurrentUser, "Do you want to perform another calculation?");
-
-		_GetBackToMenu("Press Enter to go back to Currency Exchange Menu");
+		PerformMenu(CurrentUser, "Make another calculation?");
 
 	}
 };
-

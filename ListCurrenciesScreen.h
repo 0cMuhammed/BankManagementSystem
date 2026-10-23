@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 #include <limits>
 #include "Session.h"
 #include "Screen.h"
@@ -12,96 +11,57 @@ private:
 
      CurrencyRepository& m_RepositoryReference; //hmm since the getters depends on a private function i thinks its what causing this, it should be const
 
-    void _ShowList(const User& CurrentUser) {
+    static constexpr int W = 94;          // NEW: table width (2 + 28+2+6+2+36+2+12 = 90, plus margin)
+    static constexpr size_t PAGE = 18;    // NEW: rows per page. The list has 200+ currencies, far more than fits in a window, so it is shown page by page.
 
-
-
-        _ClearScreen();
-        if (m_RepositoryReference.GetList().size() == 0)
-        {
-
-            _Message("\t\t\t\tNo currencies available in the system!.\n");
-
-        }
-
-        else
-        {
-            const std::string SubTitle = "\t    (" + std::to_string(m_RepositoryReference.GetList().size()) + ") Currencies.";
-
-             PrintHeader(CurrentUser, nullptr, SubTitle.c_str());
-            _PrintLayout();
-            _PrintAll(CurrentUser.GetUsername(), m_RepositoryReference.GetMutableList());
-
-        }
+    // NEW: column titles + thin line (widths must match _PrintRow)
+    static void _PrintLayout() {
+        term::Print(std::string(term::col::Muted) + "  " + term::Pad("COUNTRY", 28) + "  " + term::Pad("CODE", 6) + "  " + term::Pad("NAME", 36)
+                    + "  " + term::PadLeft("RATE / 1$", 12), W);
+        term::Rule(W);
     }
 
-    void PrintHeader(const User& CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
+    static void _PrintRow(Currency& c) {
+        term::Print(std::string("  ") + term::col::Base + term::Pad(term::Fit(c.GetCountry(), 28), 28)
+                    + term::col::Cyan + "  " + term::Pad(c.GetCode(), 6)
+                    + term::col::Base + "  " + term::Pad(term::Fit(c.GetName(), 36), 36)
+                    + term::col::Green + "  " + term::PadLeft(term::Fixed(c.GetRate(), 4), 12), W);
+    }
 
-        std::cout << "\t\t\t\t\t______________________________________";
+    void _ShowList(const User& CurrentUser) {
 
-        std::cout << "\n\n\t\t\t\t\t\t  " << (((ScreenName != nullptr) ? ScreenName : "Currencies List Screen"));
+        std::vector<Currency>& list = m_RepositoryReference.GetMutableList();
 
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
+        _ClearScreen();
 
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
+        if (list.empty())
+        {
+            _Header(CurrentUser, "CURRENCIES", "0 RECORDS", W);
+            term::Warn("No currencies available in the system.", W);
+            _GetBackToMenu("Press any key to go back to the Currency Exchange menu");
+            return;
+        }
 
-        ShowUserAndDate(CurrentUser);
+        Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::ListCurrencies, Logger::Level::INFO);   // (was inside _PrintAll)
+
+        // NEW: term::Paginate does the page loop and the keys. We only say how to print the header, the column titles, and row number i.
+        term::Paginate(list.size(), PAGE, W,
+            [&](const std::string& info) { _Header(CurrentUser, "CURRENCIES", info, W); },
+            []() { _PrintLayout(); },
+            [&](size_t i) { _PrintRow(list[i]); });
     }
 
     void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
             _ShowList(CurrentUser);
     }
 
-    //exclusive
-    static void _PrintFormattedCurrency(Currency& c)
-    {
-
-        std::cout << std::setw(8) << std::left << "" << "| " << std::setw(30) << std::left << c.GetCountry();
-        std::cout << "| " << std::setw(8) << std::left << c.GetCode();
-        std::cout << "| " << std::setw(45) << std::left << c.GetName();
-        std::cout << "| " << std::setw(10) << std::left << c.GetRate();
-
-    }
-    static void _PrintLine() {
-        std::cout << std::setw(8) << std::left << "" << "\n\t_______________________________________________________";
-        std::cout << "_________________________________________\n" << std::endl;
-    }
-    static void _PrintLayout() {
-
-        _PrintLine();
-        std::cout << std::setw(8) << std::left << "" << "| " << std::left << std::setw(30) << "Country";
-        std::cout << "| " << std::left << std::setw(8) << "Code";
-        std::cout << "| " << std::left << std::setw(45) << "Name";
-        std::cout << "| " << std::left << std::setw(10) << "Rate/(1$)";
-        _PrintLine();
-    }
-    static void _PrintAll(const std::string& CurrentUser, std::vector<Currency>& Currencies) {
-
-        Logger::LogUser(CurrentUser, Logger::Category::ListCurrencies, Logger::Level::INFO);
-
-        for (Currency& c: Currencies)
-        {
-
-            _PrintFormattedCurrency(c);
-            std::cout << std::endl;
-        }
-        _PrintLine();
-
-    }
-
-
 public:
-
 
     ListCurrenciesScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessCurrencyServices().AccessRepository()) {};
 
     void Start(const User& CurrentUser) override {
 
-
-
-        PerformMenu(CurrentUser);
-        _GetBackToMenu("Press Enter to go back to Currency Exchange Menu");
+        PerformMenu(CurrentUser);   // NEW: no extra "press any key" afterwards, the pager already ends with Esc / Enter
 
     }
 };
-

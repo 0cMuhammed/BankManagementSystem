@@ -61,12 +61,13 @@ private:
 
 	std::string  _ReadUsername() {
 
-		_Message("Enter your username : ");
+		_Message("USERNAME");
 		std::string Username = Validator::ReadString(); 
 
 			while (IsExists(Username) || Validator::IsInvalid(Username)) {
 
-				_Message("Username is already used/invalid, Please choose another username : ");
+				term::Error("Username is already used or invalid.");
+				_Message("USERNAME");
 
 				Username = Validator::ReadString();
 			}
@@ -79,12 +80,13 @@ private:
 
 	static std::string  s_ReadUsername() {
 
-		_Message("Enter your username : ");
+		_Message("USERNAME");
 		std::string Username = Validator::ReadString();
 
 		while (IsExistsInFile(Username) || Validator::IsInvalid(Username) ) {
 
-			_Message("Username is Already Used, Please choose another username : \n");
+			term::Error("Username is already used or invalid.");
+				_Message("USERNAME");
 
 			Username = Validator::ReadString();
 		}
@@ -93,7 +95,7 @@ private:
 	}
 
 	static void _Message(const std::string & Message) {
-		std::cout << '\n' + Message;
+		term::Prompt(Message);   // NEW: prompts coming from the repository use the same style as the screens
 	}
 
 	bool _DeleteObject(const std::string& username, const std::string &password) {
@@ -218,21 +220,7 @@ public:
 		return m_List; 
 	}
 
-	static void PrintUser(const User& user) {
 
-		std::cout << "\nUser Card:";
-		std::cout << "\n___________________";
-		std::cout << "\nFirstName   : " << user.GetFirstName();
-		std::cout << "\nLastName    : " << user.GetLastName();
-		std::cout << "\nFull Name   : " << user.GetFullName();
-		std::cout << "\nEmail       : " << user.GetEmail();
-		std::cout << "\nPhone       : " << user.GetPhoneNumber();
-		std::cout << "\nUsername    : " << user.GetUsername();
-		std::cout << "\nPermissions : " << std::to_string(user.GetPermissions());
-		std::cout << "\n___________________\n";
-
-
-	}
 
 	static bool IsPasswordsChanged(const User& Old, const std::string &NewHash) {
 		return Old.GetPassword() != NewHash;
@@ -268,8 +256,7 @@ public:
 
 		std::string Phone = Validator::ReadPhoneNumber();
 
-		_Message("Enter Password : ");
-		std::string Password = Hasher::GetHash(Validator::ReadString());
+		std::string Password = Hasher::GetHash(term::ReadPassword("PASSWORD"));   // NEW: masked input
 
 
 		
@@ -293,8 +280,7 @@ public:
 
 		std::string Phone = Validator::ReadPhoneNumber();
 
-		_Message("Enter Password : ");
-		std::string Password = Hasher::GetHash(Validator::ReadString());
+		std::string Password = Hasher::GetHash(term::ReadPassword("PASSWORD"));   // NEW: masked input
 
 
 
@@ -316,7 +302,7 @@ public:
 		{
 
 
-			_Message("Enter your new first name : \n");
+			_Message("NEW FIRST NAME");
 			FirstName = Validator::ReadNames("First");
 		}
 		else
@@ -327,7 +313,7 @@ public:
 		{
 
 
-			_Message("Enter your new last name : \n");
+			_Message("NEW LAST NAME");
 			LastName = Validator::ReadNames("Last");
 		}
 		else
@@ -338,7 +324,7 @@ public:
 		{
 
 
-			_Message("Enter your new email name : \n");
+			_Message("NEW EMAIL");
 			email = Validator::ReadEmails();
 		}
 		else
@@ -350,7 +336,7 @@ public:
 		{
 
 
-			_Message("Enter your new phone number : \n");
+			_Message("NEW PHONE NUMBER");
 			phone = Validator::ReadPhoneNumber();
 		}
 		else
@@ -362,7 +348,7 @@ public:
 		{
 
 
-			_Message("Enter your new username: \n");
+			_Message("NEW USERNAME");
 			Username = s_ReadUsername();
 		}
 		else
@@ -374,8 +360,7 @@ public:
 		{
 
 
-			_Message("Enter your new Password : ");
-			Password = Hasher::GetHash(Validator::ReadString());
+			Password = Hasher::GetHash(term::ReadPassword("NEW PASSWORD"));   // NEW: masked input
 		}
 		else
 		{

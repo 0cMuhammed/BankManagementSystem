@@ -5,6 +5,7 @@
 #include "Date.h"
 #include <limits>
 #include "Global.h"
+#include "Terminal.h"   // NEW: so prompts and error messages use the same look as the screens
 
 #define PINCODE_LENGTH 4
 
@@ -39,14 +40,15 @@
 			std::string PhoneNumber = "";
 			PhoneNumber.reserve(PHONE_LENGTH);
 
-			std::cout << "\nEnter phone number : ";
+			term::Prompt("PHONE");
 			PhoneNumber = Validator::ReadString();
 
 
 			while (!isAllDigits(PhoneNumber))
 			{
 				PhoneNumber.clear();
-				std::cout << "\nInvalid phone number. Please enter exactly " << PHONE_LENGTH << " digits : ";
+				term::Error("Invalid phone number. Please enter exactly " + std::to_string(PHONE_LENGTH) + " digits.");
+				term::Prompt("PHONE");
 				PhoneNumber = ReadString();
 			}
 
@@ -61,10 +63,10 @@
 			std::string pincode;
 			pincode.resize(PINCODE_LENGTH);
 
-			std::cout << "\n Enter pincode : \n";
+			term::Info("Enter the pincode, one digit at a time.");
 			for (size_t i = 0; i < PINCODE_LENGTH; i++)
 			{
-				std::cout << "\nEnter your " + std::to_string(i + 1) + "th  digit : ";
+				term::Prompt("DIGIT " + std::to_string(i + 1));
 
 				pincode[i] = static_cast<char>('0' + (size_t)Validator::returnValidatedNumber(0, 9)); // shifts form 48 (offset in ascii table) 
 
@@ -80,7 +82,7 @@
 		}
 
 
-		static double returnValidatedNumber(double from = 0, double to = 0, const std::string& invalidMessage = "Invalid Number, Please enter a valid number : ")
+		static double returnValidatedNumber(double from = 0, double to = 0, const std::string& invalidMessage = "Invalid number. Please enter a valid number.")
 		{
 
 			double number = 0;
@@ -93,7 +95,8 @@
 			{
 				std::cin.clear();
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cout << "\n" << invalidMessage;
+				term::Error(invalidMessage);
+				term::Prompt("TRY AGAIN");
 				std::cin >> number;
 
 			}
@@ -112,7 +115,8 @@
 			{
 				std::cin.clear();
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cout << "\n" << invalidMessage << "\n";
+				term::Error(invalidMessage);
+				term::Prompt("TRY AGAIN");
 				std::cin >> number;
 
 			}
@@ -166,7 +170,20 @@
 		}
 
 		static bool GetConfirmation(const std::string& msg) {
-			return (toupper(returnValidatedChar(msg + " y / n : ", "YyNn")) == 'Y');
+			// NEW: every old call site now gets the single-key Y/N question automatically.
+			// Old callers pass messages like "\nDo you want to change your email ? y/n : " - we clean them:
+			std::string m = msg;
+			size_t first = m.find_first_not_of('\n');                      // cut leading newlines
+			m = (first == std::string::npos) ? std::string() : m.substr(first);
+			for (;;) {                                                     // cut trailing decoration: spaces, ':' and "y/n"
+				while (!m.empty() && (m.back() == ' ' || m.back() == '\n')) m.pop_back();
+				if (m.size() >= 3 && m.compare(m.size() - 3, 3, "y/n") == 0) { m.erase(m.size() - 3); continue; }
+				if (!m.empty() && m.back() == ':') { m.pop_back(); continue; }
+				break;
+			}
+			if (m.size() >= 2 && m.compare(m.size() - 2, 2, " ?") == 0) m.erase(m.size() - 2, 1);   // "name ?" -> "name?"
+			term::Blank();
+			return term::Confirm(m);
 		}
 		static bool IsInvalid(const std::string& any) {
 			return any.find_first_of(DELIMITER) != std::string::npos; // so nothing can intervene with the delimiter in the file and cause a File I/O error
@@ -174,12 +191,13 @@
 	
 		static std::string ReadNames(const std::string& Order) {
 
-			std::cout << "Enter your " + Order + " name : ";
+			term::Prompt(term::Upper(Order) + " NAME");
 			std::string name = Validator::ReadString();
 
 			while (IsInvalid(name)) {
 
-				std::cout <<"\n" + Order + " name is invalid, try again  : ";
+				term::Error("Invalid " + Order + " name (it contains a reserved character).");
+				term::Prompt(term::Upper(Order) + " NAME");
 
 				name = Validator::ReadString();
 			}
@@ -190,12 +208,13 @@
 
 		static std::string  ReadEmails() {
 
-			std::cout << "\nEnter your email : ";
+			term::Prompt("EMAIL");
 			std::string email = Validator::ReadString();
 
 			while (IsInvalid(email)) {
 
-				std::cout << "\nEmail is invalid, try again  : ";
+				term::Error("Invalid email (it contains a reserved character).");
+				term::Prompt("EMAIL");
 
 				email = Validator::ReadString();
 			}

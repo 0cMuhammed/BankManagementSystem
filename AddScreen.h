@@ -1,11 +1,9 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 #include "Validator.h"
 #include "ClientRepository.h"
 #include "Screen.h"
-
 
 class AddScreen : public Screen
 {
@@ -13,38 +11,25 @@ private :
 
     ClientRepository& m_RepositoryReference;
 
-
-
-    void PrintHeader(const User &CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-
-
-        std::cout << "\t\t\t\t\t______________________________________";
-
-        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Add New Client Screen"));
-
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-
-        ShowUserAndDate(CurrentUser);
-    }
-
     void PerformMenu(const User & CurrentUser, const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
 
-        do 
+        while (IsContinueOperation)
         {
-            _PerformAdding(CurrentUser);
-            IsContinueOperation = Validator::GetConfirmation('\n' + std::string( (((Message != nullptr) ? Message : "Do you want to continue this operation?")) ));
+            if (!_PerformAdding(CurrentUser))                  // NEW: stop (instead of asking "continue?") when access is denied
+            {
+                _GetBackToMenu();
+                return;
+            }
 
-        } while (IsContinueOperation);
+            term::Blank();
+            IsContinueOperation = term::Confirm((Message != nullptr) ? Message : "Add another client?");
+        }
 
     }
- 
-  
-    void _Add(const User& CurrentUser, Client& New, const std::string &AccountNumber = "Empty") {
 
+    void _Add(const User& CurrentUser, Client& New, const std::string &AccountNumber = "Empty") {
 
         switch (m_RepositoryReference.AddClient(New))
         {
@@ -52,21 +37,20 @@ private :
         case ClientRepository::OperationStates::Successful :
         {
             Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::AddClient, Logger::Level::INFO, "", New.getAccountNumber());
-            ClientRepository::PrintClient(New);
-            std::cout << "Account is saved successfuly!\n";
-
+            _PrintClientCard(New);                             // NEW: replaces ClientRepository::PrintClient
+            term::Success("Account saved successfully.");
             break;
 
         }
         case ClientRepository::OperationStates::AccountNumberAlreadyExists :
         {
-            std::cout << "Account Number is Already Used.\n";
+            term::Error("Account number is already used.");
             break;
 
         }
         case ClientRepository::OperationStates::Failed : // for some reason....
-        { 
-            std::cout << "Operation Failed, Try again Later...\n";
+        {
+            term::Error("Operation failed, try again later.");
             break;
 
         }
@@ -78,39 +62,35 @@ private :
         }
         }
     }
-    void _PerformAdding(const User & CurrentUser) {
+
+    bool _PerformAdding(const User & CurrentUser) {
 
         _ClearScreen();
-     
-       
+
         if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::AddClient))
         {
-            PrintHeader(CurrentUser);
+            _Header(CurrentUser, "ADD CLIENT");                // NEW: replaces the PrintHeader override
             Client New = m_RepositoryReference.ReadClient();
             _Add(CurrentUser, New);
+            return true;
         }
-        else 
+        else
         {
             Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Add Client");
+            _Header(CurrentUser, "ADD CLIENT");
             NoAccessMsg();
+            return false;
         }
-        
-        
-        
-    }
 
-   
+    }
 
     public :
 
         AddScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
 
-    void Start(const User &CurrentUser) override 
+    void Start(const User &CurrentUser) override
     {
         PerformMenu(CurrentUser);
-        _GetBackToMenu();
     }
- 	
 
 };
-

@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 #include "Validator.h"
 #include "Screen.h"
 
@@ -11,55 +10,38 @@ private:
 
     UserRepository& m_RepositoryReference;
 
-    void PrintHeader(const User &CurrentUser,const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-        std::cout << "\t\t\t\t\t______________________________________";
-
-        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Delete User Screen"));
-
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-
-        ShowUserAndDate(CurrentUser);
-    }
-
     void PerformMenu(User& CurrentUser,const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
 
-        do
+        while (IsContinueOperation)
         {
-            _PerformDelete(CurrentUser);
-
-            if (!CurrentUser.isEmpty()) 
-            { 
-                IsContinueOperation = Validator::GetConfirmation('\n' + std::string((((Message != nullptr) ? Message : "Do you want to continue this operation?")))); 
-            }
-
-            else 
+            if (!_PerformDelete(CurrentUser))
             {
-                IsContinueOperation = false;
-
+                _GetBackToMenu("Press any key to go back to the Manage Users menu");
+                return;
             }
 
-        } while (IsContinueOperation);
+            if (CurrentUser.isEmpty())   // the user deleted THEIR OWN account: show the message, then leave
+            {
+                _GetBackToMenu("Press any key to go back to the Manage Users menu");
+                return;
+            }
+
+            term::Blank();
+            IsContinueOperation = term::Confirm((Message != nullptr) ? Message : "Delete another user?");
+        }
 
     }
 
-
-
-
-
     static bool _PerformConfirmation(const User& user, const char* Message = nullptr) {
-        UserRepository::PrintUser(user);
-        bool isConfirm = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Are you sure you want to delete this user?"))));
-        return isConfirm;
+        _PrintUserCard(user);
+        return term::Confirm((Message != nullptr) ? Message : "Are you sure you want to delete this user?");
     }
     void _PrintDeleteStatus(User &CurrentUser, const User& target) {
 
-        const std::string Actor = CurrentUser.GetUsername(); 
+        const std::string Actor = CurrentUser.GetUsername();
 
-    
         if (m_RepositoryReference.IsAdmin(target))
         {
             Logger::LogUser(Actor, Logger::Category::DeleteUser, Logger::Level::WARN, "", target.GetUsername());
@@ -73,16 +55,16 @@ private:
 
         case UserState::Failed: // for some reason....
         {
-            std::cout << "Operation Failed, Try again Later...\n";
+            term::Error("Operation failed, try again later.");
             break;
 
         }
         case UserState::Successful:
         {
             Logger::LogUser(Actor, Logger::Category::DeleteUser, Logger::Level::INFO, "", target.GetUsername());
-            std::cout << "\nUser is deleted Successfully!\n";
+            term::Success("User deleted successfully.");
             break;
-            
+
         }
         case UserState::UserIsAdmin:
         {
@@ -105,50 +87,43 @@ private:
         }
     }
 
-    void _Delete(User &CurrentUser,const std::string& Username, const std::string &Password) {
+    // NOTE: the old version also asked for a password here and then never used it, so the prompt was removed.
+    void _Delete(User &CurrentUser,const std::string& Username) {
 
         User user = m_RepositoryReference.Find(Username);
 
-
         if (user.isEmpty())
         {
-            std::cout << "\nUser is not found.\n";
+            term::Error("User was not found.");
 
         }
         else
         {
-            ( _PerformConfirmation(user) ) ? _PrintDeleteStatus(CurrentUser, user) : _Message("Operation is cancelled");
+            ( _PerformConfirmation(user) ) ? _PrintDeleteStatus(CurrentUser, user) : term::Warn("Operation cancelled.");
         }
-
 
     }
-    void _PerformDelete(User &CurrentUser) {
+    bool _PerformDelete(User &CurrentUser) {
 
         _ClearScreen();
-        PrintHeader(CurrentUser);
+        _Header(CurrentUser, "DELETE USER");
 
-
-        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::DeleteUser)) 
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::DeleteUser))
         {
-            _Message("Please enter your username : ");
+            term::Prompt("USERNAME");
             std::string username = Validator::ReadString();
 
-            _Message("Please enter your password : ");
-            std::string password = Validator::ReadString();
-     
-            _Delete(CurrentUser,username, password);
-
+            _Delete(CurrentUser, username);
+            return true;
         }
-        else 
+        else
         {
             Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Delete User");
             NoAccessMsg();
+            return false;
         }
 
     }
-
-
-
 
 public:
 
@@ -156,7 +131,5 @@ public:
 
     void Start(User &CurrentUser) override {
          PerformMenu(CurrentUser);
-        _GetBackToMenu("Press Enter to go back to Manage Users Menu");
     }
 };
-

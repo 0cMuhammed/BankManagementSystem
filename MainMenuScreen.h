@@ -27,68 +27,88 @@ private:
     Session& m_Session;
     Service& m_ServicesRef;
 
+    int m_LastIndex = 0;   // NEW: remembers which menu row was highlighted, so coming back from a screen puts the highlight where you left it
 
+
+    // NEW: the three numbers at the top of the dashboard.
+    // They are real values from your services. A user WITHOUT permission sees "---" instead (a dashboard must not leak what a screen would refuse to show).
+    void _PrintStats()
+    {
+        const User& user = m_Session.GetUser();                                                    // who is logged in
+
+        const bool canSeeClients = Authorizer::HasAccess(user, Authorizer::Permissions::ShowClientList); // same permission ListScreen checks
+        const bool canSeeUsers   = Authorizer::HasAccess(user, Authorizer::Permissions::ShowUserList);   // same permission ListUserScreen checks
+
+        std::string balance = "---";                                                               // default text when the user may not see it
+        std::string clients = "---";
+        std::string team    = "---";
+
+        if (canSeeClients)
+        {
+            balance = term::Money(m_ServicesRef.AccessClientServices().GetTotalBalances());        // sum of all balances, formatted as $104,601.25
+            clients = std::to_string(m_ServicesRef.AccessClientServices().AccessRepository().GetList().size()); // number of clients, as text
+        }
+        if (canSeeUsers)
+        {
+            team = std::to_string(m_ServicesRef.AccessUserServices().AccessRepository().GetList().size());      // number of staff users, as text
+        }
+
+        term::Print(std::string(term::col::Muted) + "  " + term::Pad("TOTAL BALANCE", 24) + term::Pad("CLIENTS", 18) + "TEAM"); // grey labels; Pad() makes each label exactly N columns wide so the numbers below line up
+        term::Print(std::string(term::col::Cyan) + "  " + term::Pad(balance, 24)                                                  // cyan balance
+                    + term::col::Magenta + term::Pad(clients, 18)                                                                // magenta client count
+                    + term::col::Amber + team);                                                                                  // amber team count
+        term::Blank();
+    }
 
     void _MainMenuLayout()
     {
+        _ClearScreen();                                              // black, instantly
 
-        _ClearScreen();
+        term::Header("BankManagementSystem", "", m_Session.GetUser().GetUsername()); // title + status + "admin . date" line (replaces the old PrintHeader override + ShowUserAndDate)
 
+        _PrintStats();                                               // the 3 dashboard numbers
 
-
-
-        PrintHeader();
-
-
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t\t\tMain Menue\n";
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[1] Show Client List.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[2] Add New Client.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[3] Delete Client.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[4] Update Client.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[5] Find Client.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[6] Transactions.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[7] Manage Users.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[8] Logs.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[9] Currency Exchange.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[10] Logout.\n";
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-
-
+        term::Section("MODULES", std::string(term::g::Up) + term::g::Down + " move  " + term::g::Mid + "  Enter open  " + term::g::Mid + "  1-9 / 0 jump"); // small title + key hints
     }
 
-    MainMenuComponents _NavigateUser(double from = 1, double to = 10)
+    MainMenuComponents _NavigateUser()
     {
-        _Message("Choose What do you want to do ? [1 to 10] : ");
+        // NEW: the old code printed "[1] Show Client List." ten times by hand and read a number.
+        // Now the menu is DATA (a list of label + hint) and term::Menu draws it and handles the keyboard.
+        // The ORDER matters: row 1 = enum value 1 (List), row 2 = 2 (Add) ... row 10 = 10 (Logout).
+        static const std::vector<term::MenuItem> items = {
+            { "SHOW CLIENTS",      "view every account" },
+            { "ADD CLIENT",        "open a new account" },
+            { "DELETE CLIENT",     "close an account" },
+            { "UPDATE CLIENT",     "edit account details" },
+            { "FIND CLIENT",       "look up one account" },
+            { "TRANSACTIONS",      "deposit, withdraw, transfer" },
+            { "MANAGE USERS",      "staff accounts and permissions" },
+            { "LOGS",              "activity and audit history" },
+            { "CURRENCY EXCHANGE", "rates and converter" },
+            { "LOGOUT",            "sign out of this session" }
+        };
 
-        return  (MainMenuComponents)Validator::returnValidatedNumber(from, to);
+        int choice = term::Menu(items, m_LastIndex);                 // draws the menu, waits for Enter (returns 0-9) or Esc (returns -1)
+
+        if (choice < 0)                                              // Esc pressed
+            return static_cast<MainMenuComponents>(0);               // 0 matches no case in the switch below, so nothing happens and the menu is redrawn
+
+        m_LastIndex = choice;                                        // remember the highlighted row
+        return static_cast<MainMenuComponents>(choice + 1);          // row index 0-9 -> enum value 1-10 (what your switch already expects)
     }
 
-
-
-    void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) {
-
-        std::cout << "\t\t\t\t\t______________________________________";
-
-        std::cout << "\n\n\t\t\t\t\t  \t\t" << (((ScreenName != nullptr) ? ScreenName : "  Main Menu"));
-
-        if (SubTitle != nullptr)
-        {
-            std::cout << "\n\t\t\t\t\t\t  " << SubTitle;
-        }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-
-        ShowUserAndDate(m_Session.GetUser());
-
-    }
     void _Menu(bool& isInMainMenu) {
         do
         {
             _MainMenuLayout();
 
-            switch (_NavigateUser())
+            const MainMenuComponents choice = _NavigateUser();       // NEW: stored first so we can clear the screen BEFORE opening the chosen screen
+
+            if (choice != static_cast<MainMenuComponents>(0))        // a real choice (not Esc)
+                _ClearScreen();                                      // NEW: every screen now starts on a clean black page, even the ones not converted yet
+
+            switch (choice)
             {
             case MainMenuComponents::List:
             {
@@ -157,7 +177,7 @@ private:
                 break;
 
             }
-            default: //for later enum choices
+            default: //Esc (0) or later enum choices
             {
                 break;
 

@@ -1,11 +1,9 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 
 #include "ClientRepository.h"
 #include "Validator.h"
-
 
 #include "Screen.h"
 
@@ -13,72 +11,58 @@ class FindScreen : public Screen
 {
 private :
 
-	ClientRepository& m_RepositoryReference; 
-	
-	//universal 
-	
+	ClientRepository& m_RepositoryReference;
 
-	void PrintHeader(const User &CurrentUser,const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-		std::cout << "\t\t\t\t\t______________________________________";
-
-		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Find Client Screen"));
-
-		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-		ShowUserAndDate(CurrentUser);
-	}
 	void PerformMenu(const User &CurrentUser, const char * Message = nullptr) override {
 
 		bool isContinue = true;
-		
-		do
+
+		while (isContinue)
 		{
-			_PerformFind(CurrentUser);
+			if (!_PerformFind(CurrentUser))
+			{
+				_GetBackToMenu();
+				return;
+			}
 
-			isContinue = Validator::GetConfirmation('\n' + std::string ( ( (Message != nullptr) ? Message : "Do you want to continue this operation?") ));
-
-		} while (isContinue);
+			term::Blank();
+			isContinue = term::Confirm((Message != nullptr) ? Message : "Find another client?");
+		}
 
 	}
-	
 
-	
-
-	 void _PerformFind(const User &CurrentUser, const char* NotFoundMessage = nullptr) {
+	 bool _PerformFind(const User &CurrentUser, const char* NotFoundMessage = nullptr) {
 
 		 _ClearScreen();
 
-		 if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::FindClient)) 
+		 if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::FindClient))
 		 {
-			 PrintHeader(CurrentUser);
+			 _Header(CurrentUser, "FIND CLIENT");
 
-			 _Message("Please enter your account number : ");
+			 term::Prompt("ACCOUNT NUMBER");
 			 std::string AccountNumber = Validator::ReadString();
 
 			 Client c = m_RepositoryReference.Find(AccountNumber);
 			 Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::FindClient, Logger::Level::INFO, "", AccountNumber);
 
-			 (!c.isEmpty()) ? ClientRepository::PrintClient(c) : _Message(std::string(((NotFoundMessage != nullptr) ? NotFoundMessage : "Account is not found.\n")));
+			 if (!c.isEmpty()) _PrintClientCard(c);
+			 else term::Error((NotFoundMessage != nullptr) ? NotFoundMessage : "Account was not found.");
+			 return true;
 		 }
-		 else 
+		 else
 		 {
 			 Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Find Client");
-            NoAccessMsg();
+			 _Header(CurrentUser, "FIND CLIENT");
+			 NoAccessMsg();
+			 return false;
 		 }
 
-		 
-
 	}
-
 
 public:
 	FindScreen(Service& Ref) : Screen(Ref), m_RepositoryReference(Ref.AccessClientServices().AccessRepository()) {};
-	
-	//well obviously
+
 	void Start(const User &CurrentUser) override {
 		PerformMenu(CurrentUser);
-		_GetBackToMenu();
 	}
 };
-

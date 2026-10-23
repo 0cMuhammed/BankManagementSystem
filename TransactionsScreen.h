@@ -1,11 +1,9 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 #include <string>
 
 #include "Validator.h"
-
 
 #include "DepositScreen.h"
 #include "WithdrawScreen.h"
@@ -21,51 +19,45 @@ private :
 
     Session& m_Session;
     Service & m_ServiceRef;
-   
 
-     void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-
-        std::cout << "\t\t\t\t\t______________________________________";
-
-        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Transactions Screen"));
-
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-        ShowUserAndDate(m_Session.GetUser());
-
-    }
+    int m_LastIndex = 0;                          // NEW: remembers the highlighted row
 
      void _TransactionsLayout() {
-         
-        _ClearScreen();
-        PrintHeader();
 
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t\t  Transactions Menue\n";
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[1] Deposit.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[2] Withdraw.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[3] Transfer.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[4] Total Balances.\n";
-        std:: cout << std::setw(37) << std::left << "" << "\t[5] Main Menue.\n";
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
+        _ClearScreen();
+        term::Header("TRANSACTIONS", "", m_Session.GetUser().GetUsername());   // NEW: replaces PrintHeader override + the hand-printed menu box
+        term::Section("MENU", std::string(term::g::Up) + term::g::Down + " move  " + term::g::Mid + "  Enter open  " + term::g::Mid + "  Esc back");
     }
 
-     static void _ExitMenu(bool& isInMainMenu, const char* message = "\nLogging Out...")
-     {
-         std::cout << message << "\n\n";
+	MenuComponents _NavigateUser()
+	{
+		// NEW: the menu is data. Row order = enum order (row 1 = Deposit ... row 5 = BackToMain).
+		static const std::vector<term::MenuItem> items = {
+			{ "DEPOSIT",         "add money to an account" },
+			{ "WITHDRAW",        "take money out of an account" },
+			{ "TRANSFER",        "move money between accounts" },
+			{ "TOTAL BALANCES",  "every account, summed up" },
+			{ "BACK",            "return to the main menu" }
+		};
 
-         isInMainMenu = false;
+		int choice = term::Menu(items, m_LastIndex);
 
-     }
+		if (choice < 0) return MenuComponents::BackToMain;   // Esc = go back
+
+		m_LastIndex = choice;
+		return static_cast<MenuComponents>(choice + 1);
+	}
 
      void _Menu(bool& isInMainMenu) {
          do
          {
              _TransactionsLayout();
 
-             switch (_NavigateUser())
+             const MenuComponents choice = _NavigateUser();
+
+             if (choice != MenuComponents::BackToMain) _ClearScreen();   // every screen starts on a clean black page
+
+             switch (choice)
              {
              case MenuComponents::Deposit:
              {
@@ -94,8 +86,7 @@ private :
              }
              case MenuComponents::BackToMain:
              {
-                 _GetBackToMenu();
-                 _ExitMenu(isInMainMenu, "\nGetting Back to Main Menu....");
+                 isInMainMenu = false;        // NEW: leave the loop right away (the old "wait + Getting back..." message is gone)
                  break;
 
              }
@@ -109,24 +100,18 @@ private :
          } while (isInMainMenu);
      }
 
-	MenuComponents _NavigateUser(double from = 1, double to = 5)
-	{
-		_Message("Choose What do you want to do ? [1 to 5] : ");
-
-		return  (MenuComponents)Validator::returnValidatedNumber(from, to);
-	}
-
     void PerformMenu(const User &CurrentUser, const char* Message = nullptr) override {
 
         bool isInMainMenu = true;
 
-        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions)) 
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions))
         {
             _Menu(isInMainMenu);
         }
-        else 
+        else
         {
             Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Transactions");
+            _Header(CurrentUser, "TRANSACTIONS");
             NoAccessMsg();
             _GetBackToMenu();
         }
@@ -139,8 +124,7 @@ public :
 
     void Start(const User &CurrentUser) override {
         PerformMenu(CurrentUser);
-       
+
     }
 
 };
-

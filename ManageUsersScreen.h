@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 #include <string>
 #include "Validator.h"
 
@@ -23,46 +22,47 @@ private :
 
     Session& m_Session;
     Service& m_ServicesRef;
-    
- 
-    void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
 
-        std::cout << "\t\t\t\t\t______________________________________";
-
-        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Manage Users Screen"));
-
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-        ShowUserAndDate(m_Session.GetUser());
-
-    }
+    int m_LastIndex = 0;   // NEW: remembers the highlighted row
 
     void _PrintLayout() {
 
         _ClearScreen();
-        PrintHeader();
+        term::Header("MANAGE USERS", "", m_Session.GetUser().GetUsername());   // NEW: replaces PrintHeader override + hand-printed menu box
+        term::Section("MENU", std::string(term::g::Up) + term::g::Down + " move  " + term::g::Mid + "  Enter open  " + term::g::Mid + "  Esc back");
+    }
 
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t\t Manage Users Menue\n";
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[1] List Users.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[2] Add New User.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[3] Delete User.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[4] Update User.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[5] Find User.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[6] Main Menu.\n";
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
+    MenuComponents _NavigateUser()
+    {
+        // NEW: row order = enum order (row 1 = List ... row 6 = Exit)
+        static const std::vector<term::MenuItem> items = {
+            { "LIST USERS",   "every staff account" },
+            { "ADD USER",     "create a staff account" },
+            { "DELETE USER",  "remove a staff account" },
+            { "UPDATE USER",  "edit details and permissions" },
+            { "FIND USER",    "look up one account" },
+            { "BACK",         "return to the main menu" }
+        };
+
+        int choice = term::Menu(items, m_LastIndex);
+
+        if (choice < 0) return MenuComponents::Exit;           // Esc = go back
+
+        m_LastIndex = choice;
+        return static_cast<MenuComponents>(choice + 1);
     }
 
     void _Menu(bool &isInMainMenu) {
 
-       
         do
         {
             _PrintLayout();
 
-            switch (_NavigateUser())
+            const MenuComponents choice = _NavigateUser();
+
+            if (choice != MenuComponents::Exit) _ClearScreen();   // every screen starts on a clean black page
+
+            switch (choice)
             {
             case MenuComponents::List:
             {
@@ -97,7 +97,7 @@ private :
             }
             case MenuComponents::Exit:
             {
-                _ExitMenu(isInMainMenu);
+                isInMainMenu = false;     // NEW: leave right away (the old "Getting Back..." text is gone)
                 break;
 
             }
@@ -110,47 +110,32 @@ private :
         } while (isInMainMenu);
     }
 
-    static void _ExitMenu(bool& isInMainMenu, const char* message = "\nGetting Back to Main Menu...")
-    {
-        std::cout << message << "\n\n";
-
-        isInMainMenu = false;
-
-    }
-
-    MenuComponents _NavigateUser(double from = 1, double to = 6)
-    {
-        _Message("Choose What do you want to do ? [1 to 6] : ");
-
-        return  (MenuComponents)Validator::returnValidatedNumber(from, to);
-    }
-
     void PerformMenu(const User& CurrentUser,const char* Message = nullptr) override {
 
         bool isInMainMenu = true;
-       
-        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ManageUsers)) 
-        { 
+
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ManageUsers))
+        {
             Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::ManageUsers, Logger::Level::INFO);
             _Menu(isInMainMenu);
         }
-        else 
+        else
         {
+            _Header(CurrentUser, "MANAGE USERS");
             NoAccessMsg();
             Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Managing Users");
+            _GetBackToMenu();     // NEW: only wait when there is a message to read (the menu itself no longer needs a wait)
         }
-       
+
     }
 
 public:
 
     ManageUsersScreen(Service& Ref, Session &CurrentUser) : Screen(Ref), m_Session(CurrentUser), m_ServicesRef(Ref) {};
 
-    void Start(const User & CurrentUser) override 
+    void Start(const User & CurrentUser) override
     {
         PerformMenu(CurrentUser);
-        _GetBackToMenu();
-     
+
     }
 };
-

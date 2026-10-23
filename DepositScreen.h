@@ -10,38 +10,31 @@
 class DepositScreen : public Screen
 {
 private :
-	   
+
 	    ClientServices & m_ServicesRef;
 
-
-		void _PrintAmount(const Client &client) {
-			_Message("New Balance = ");
-			std::cout << client.getBalance() << "\n";
-
-		}
-
 	    bool _PerformConfirmation(const Client& client,  const char* Message = nullptr) {
-			bool isConfirm = Validator::GetConfirmation('\n' +std::string ( (((Message != nullptr) ? Message : "Are you sure you want to perform this transaction?"))));
-			return isConfirm;
+			return term::Confirm((Message != nullptr) ? Message : "Are you sure you want to perform this transaction?"); // NEW: single-key Y/N
 		}
 
 		void _PrintDepositStatus(const User& CurrentUser, Client &ExistingClient, double amount) {
 
 			std::string AccNum = ExistingClient.getAccountNumber();
+			std::string Name = ExistingClient.GetFullName();          // NEW: capture BEFORE Deposit(): it empties the Client object
+			double OldBalance = ExistingClient.getBalance();          // NEW: needed for the "old --> new" line
 
 			switch (m_ServicesRef.AccessTransactions().Deposit(ExistingClient, amount))
 			{
 
 			case ClientRepository::OperationStates::AccountNumberNotFound:
 			{
-				std::cout << "\nAccount Number is not found.\n";
+				term::Error("Account number was not found.");
 				break;
 			}
 			case ClientRepository::OperationStates::Successful:
 			{
 				Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::Deposit, Logger::Level::INFO, "", AccNum, amount);
-				std::cout << "\nAmount Deposited Sucessfully.\n";
-				_PrintAmount(ExistingClient);
+				_PrintMoneyReceipt("DEPOSIT COMPLETE", Name, AccNum, OldBalance, ExistingClient.getBalance(), amount, term::col::Green); // NEW: shared receipt (green = money arrived)
 				break;
 			}
 
@@ -55,55 +48,53 @@ private :
 		}
 
 		double GetAmount(const Client &client) {
-			ClientRepository::PrintClient(client);
-			_Message("Please enter Deposit amount : ");
+			_PrintClientCard(client);                                 // NEW: replaces ClientRepository::PrintClient
+			term::Prompt("DEPOSIT AMOUNT");
 
 			return Validator::returnNumber();
 		}
 
 		void _Deposit(const User& CurrentUser, const std::string &AccountNumber) {
 
-			
 			Client client = m_ServicesRef.AccessRepository().Find(AccountNumber);
-			
-			if (!client.isEmpty()) 
+
+			if (!client.isEmpty())
 			{
 				double amount = GetAmount(client);
 
-				(_PerformConfirmation(client)) ?  _PrintDepositStatus(CurrentUser, client, amount) : _Message("\nOperations is Cancelled.\n");
-				   
+				term::Blank();
+				(_PerformConfirmation(client)) ?  _PrintDepositStatus(CurrentUser, client, amount) : term::Warn("Operation cancelled.");
+
 			}
-			else 
+			else
 			{
-				_Message("\nAccount number is not found.\n");
+				term::Error("Account number was not found.");
 			}
-		   
-
-
 
 	    }
 
-		void _PerformDeposit(const User &CurrentUser)  {
+		// NEW: returns false when the user has no access, so PerformMenu can stop instead of asking "continue?" after a denial
+		bool _PerformDeposit(const User &CurrentUser)  {
 
-			
 			    _ClearScreen();
 
-				if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions)) 
+				if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions))
 				{
-					PrintHeader(CurrentUser);
+					_Header(CurrentUser, "DEPOSIT");
 
-					_Message("Please enter your account number : ");
+					term::Prompt("ACCOUNT NUMBER");
 					std::string AccountNumber = Validator::ReadString();
 
 					_Deposit(CurrentUser, AccountNumber);
-
+					return true;
 		     	}
-				else 
+				else
 				{
 					Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Deposit");
-            NoAccessMsg();
+					_Header(CurrentUser, "DEPOSIT");
+					NoAccessMsg();
+					return false;
 				}
-			
 
 		}
 
@@ -111,24 +102,18 @@ private :
 
 			bool IsContinueOperation = true;
 
-			do
+			while (IsContinueOperation)
 			{
-				_PerformDeposit(CurrentUser);
+				if (!_PerformDeposit(CurrentUser))
+				{
+					_GetBackToMenu("Press any key to go back to the Transactions menu");
+					return;
+				}
 
-				IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( ((Message != nullptr) ? Message : "Do you want to continue this operation?")));
+				term::Blank();
+				IsContinueOperation = term::Confirm((Message != nullptr) ? Message : "Make another deposit?");
+			}
 
-			} while (IsContinueOperation);
-
-		}
-		void PrintHeader(const User &CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-			std::cout << "\t\t\t\t\t______________________________________";
-
-			std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Deposit Screen"));
-
-			if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-			std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-			ShowUserAndDate(CurrentUser);
 		}
 
 		public :
@@ -137,8 +122,6 @@ private :
 
 			void Start(const User& CurrentUser) override {
 				PerformMenu(CurrentUser);
-				_GetBackToMenu("Press Enter to go back to Transactions Menu");
 			}
 
 };
-

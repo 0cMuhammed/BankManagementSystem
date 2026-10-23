@@ -1,10 +1,10 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 #include <limits>
 #include <string>
 #include <sstream>
+#include <iomanip>
 #include "Validator.h"
 #include "Session.h"
 #include "Authorizer.h"
@@ -12,7 +12,6 @@
 #include "Parser.h"
 #include "Logger.h"
 #include "Screen.h"
-
 
 class LoggerScreen : public Screen
 {
@@ -22,7 +21,7 @@ public:
 
 private:
 
-    enum LogFields { Prefix = 0, Category = 1, Username = 2, Message = 3, Target = 4 }; 
+    enum LogFields { Prefix = 0, Category = 1, Username = 2, Message = 3, Target = 4 };
     static constexpr const char* USERNAME_LABEL = "USERNAME : ";
     static constexpr const char* LEVEL_DATE_DELIMITER = " / ";
     static constexpr const char* TRANSFER_FROM_KEY = "Transfer From: ";
@@ -31,53 +30,38 @@ private:
     static constexpr const char* TRANSFER_BALANCE_KEY = ", Balance: ";
     static constexpr const char* TRANSFER_BALANCE_DELIMITER = " -> ";
 
-    static constexpr size_t ACTIVITY_LINE_WIDTH = 116;
-    static constexpr size_t AUDIT_LINE_WIDTH = 114;
+    static constexpr int ACTIVITY_W = 116;   // NEW: widths of the two tables (the old ACTIVITY_LINE_WIDTH / AUDIT_LINE_WIDTH were for the underscore lines)
+    static constexpr int AUDIT_W = 112;
+    static constexpr size_t PAGE = 18;       // NEW: rows per page (logs grow forever, so they are shown page by page)
 
     Session& m_Session;
     Service& m_ServiceRef;
 
-    void PrintHeader(const User& CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-
-        std::cout << "\t\t\t\t\t______________________________________";
-
-        std::cout << "\n\n\t\t\t\t\t\t  " << (((ScreenName != nullptr) ? ScreenName : "Logger Screen"));
-
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-
-        ShowUserAndDate(CurrentUser);
-    }
+    int m_LastIndex = 0;   // NEW: remembers the highlighted row
 
     // ------------------------------------------------ Menu
 
     void _MenuLayout() {
 
         _ClearScreen();
-        PrintHeader(m_Session.GetUser());
-
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t\t     Logger Menue\n";
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[1] Activity Logs.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[2] Audit Logs.\n";
-        std::cout << std::setw(37) << std::left << "" << "\t[3] Main Menu.\n";
-        std::cout << std::setw(37) << std::left << "" << "===========================================\n";
+        term::Header("LOGS", "", m_Session.GetUser().GetUsername());   // NEW: replaces PrintHeader override + hand-printed menu box
+        term::Section("MENU", std::string(term::g::Up) + term::g::Down + " move  " + term::g::Mid + "  Enter open  " + term::g::Mid + "  Esc back");
     }
 
-    static void _ExitMenu(bool& isInMainMenu, const char* message = "\nGetting Back to Main Menu...")
+    MenuComponents _NavigateUser()
     {
-        std::cout << message << "\n\n";
+        static const std::vector<term::MenuItem> items = {
+            { "ACTIVITY LOGS",  "everything users did, newest first" },
+            { "AUDIT LOGS",     "every transfer with balances" },
+            { "BACK",           "return to the main menu" }
+        };
 
-        isInMainMenu = false;
-    }
+        int choice = term::Menu(items, m_LastIndex);
 
-    MenuComponents _NavigateUser(double from = 1, double to = 3)
-    {
-        _Message("Choose What do you want to do ? [1 to 3] : ");
+        if (choice < 0) return MenuComponents::Exit;           // Esc = go back
 
-        return  (MenuComponents)Validator::returnValidatedNumber(from, to);
+        m_LastIndex = choice;
+        return static_cast<MenuComponents>(choice + 1);
     }
 
     void _Menu(bool& isInMainMenu, const User& CurrentUser) {
@@ -86,27 +70,25 @@ private:
         {
             _MenuLayout();
 
-            switch (_NavigateUser())
+            const MenuComponents choice = _NavigateUser();
+
+            if (choice != MenuComponents::Exit) _ClearScreen();
+
+            switch (choice)
             {
             case MenuComponents::Activity:
             {
-                
-
                 _ShowLogs(CurrentUser);
-                _GetBackToMenu("Press Enter to go back to Logger Menu");
                 break;
             }
             case MenuComponents::Audits:
             {
-               
-
                 _ShowAuditLogs(CurrentUser);
-                _GetBackToMenu("Press Enter to go back to Logger Menu");
                 break;
             }
             case MenuComponents::Exit:
             {
-                _ExitMenu(isInMainMenu);
+                isInMainMenu = false;
                 break;
             }
             default: //for later enum choices
@@ -118,12 +100,11 @@ private:
         } while (isInMainMenu);
     }
 
-
+    // NEW: a message-only page (no logs / no access) waits for a key, a paged list does not (it ends with Esc)
     void _ShowLogs(const User& CurrentUser) {
 
-        if(Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowActivityLogs)) 
+        if(Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowActivityLogs))
         {
-
 
             Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::ShowLogs, Logger::Level::INFO);
             _ClearScreen();
@@ -132,36 +113,33 @@ private:
 
             if (Logs.size() == 0)
             {
-
-                _Message("\t\t\t\tNo Logs Available In the System!.\n");
-
+                _Header(CurrentUser, "ACTIVITY LOGS", "0 RECORDS", ACTIVITY_W);
+                term::Warn("No logs available in the system.", ACTIVITY_W);
+                _GetBackToMenu("Press any key to go back to the Logs menu");
             }
-
             else
             {
-                const std::string SubTitle = "\t    (" + std::to_string(Logs.size()) + ") Log(s), newest first.";
-
-                PrintHeader(CurrentUser, "Activity Logs Screen", SubTitle.c_str());
-                _PrintLayout();
-                _PrintAll(Logs);
-
+                // newest first: row i shows Logs[size - 1 - i]
+                term::Paginate(Logs.size(), PAGE, ACTIVITY_W,
+                    [&](const std::string& info) { _Header(CurrentUser, "ACTIVITY LOGS", info, ACTIVITY_W); },
+                    []() { _PrintLayout(); },
+                    [&](size_t i) { _PrintFormattedLog(Logs[Logs.size() - 1 - i]); });
             }
 
         }
-        else 
+        else
         {
             Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Activity Logs");
+            _Header(CurrentUser, "ACTIVITY LOGS");
             NoAccessMsg();
-
+            _GetBackToMenu("Press any key to go back to the Logs menu");
         }
-       
+
     }
-
-
 
     void _ShowAuditLogs(const User& CurrentUser) {
 
-        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowAuditLogs)) 
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowAuditLogs))
         {
             _ClearScreen();
 
@@ -169,25 +147,24 @@ private:
 
             if (Logs.size() == 0)
             {
-
-                _Message("\t\t\t\tNo Audit Logs Available In the System!.\n");
-
+                _Header(CurrentUser, "AUDIT LOGS", "0 RECORDS", AUDIT_W);
+                term::Warn("No audit logs available in the system.", AUDIT_W);
+                _GetBackToMenu("Press any key to go back to the Logs menu");
             }
-
             else
             {
-                const std::string SubTitle = "\t    (" + std::to_string(Logs.size()) + ") Transfer(s), newest first.";
-
-                PrintHeader(CurrentUser, "Audit Logs Screen (Transfers)", SubTitle.c_str());
-                _PrintAuditLayout();
-                _PrintAllAudits(Logs);
-
+                term::Paginate(Logs.size(), PAGE, AUDIT_W,
+                    [&](const std::string& info) { _Header(CurrentUser, "AUDIT LOGS", info, AUDIT_W); },
+                    []() { _PrintAuditLayout(); },
+                    [&](size_t i) { _PrintFormattedAuditLog(Logs[Logs.size() - 1 - i]); });
             }
         }
-        else 
+        else
         {
             Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Audit Logs");
+            _Header(CurrentUser, "AUDIT LOGS");
             NoAccessMsg();
+            _GetBackToMenu("Press any key to go back to the Logs menu");
         }
     }
 
@@ -195,19 +172,21 @@ private:
 
         bool isInMainMenu = true;
 
-        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowLogs)) 
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::ShowLogs))
         {
             _Menu(isInMainMenu, CurrentUser);
         }
         else
         {
             Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Show Logs");
+            _Header(CurrentUser, "LOGS");
             NoAccessMsg();
+            _GetBackToMenu();
         }
 
     }
 
-    //exclusive
+    //exclusive  (the parsing helpers below are unchanged)
     static std::string _GetLevel(const std::string& Prefix) {
 
         const size_t pos = Prefix.find(LEVEL_DATE_DELIMITER);
@@ -244,7 +223,6 @@ private:
         return Details;
     }
 
-  
     static std::string _GetTransferField(const std::string& TransferMessage, const std::string& Key, const std::string& EndDelimiter) {
 
         const size_t start = TransferMessage.find(Key);
@@ -278,10 +256,7 @@ private:
 
         try
         {
-            std::ostringstream Out;
-            Out << std::fixed << std::setprecision(2) << std::stod(Number);
-
-            return Out.str();
+            return term::Money(std::stod(Number));   // NEW: "$1,250.00" like everywhere else (was fixed 2 decimals without $ or commas)
         }
         catch (const std::exception&)
         {
@@ -289,45 +264,37 @@ private:
         }
     }
 
-   
+    // NEW: color by log level: INFO grey, WARN amber, ERROR red, FATAL magenta
+    static const char* _LevelColor(const std::string& Level) {
+        if (Level == "WARN")  return term::col::Amber;
+        if (Level == "ERROR") return term::col::Red;
+        if (Level == "FATAL") return term::col::Magenta;
+        return term::col::Muted;
+    }
+
+    // ------------------------------------------------ Printing : Activity
+    // widths: 20 + 7 + 14 + 20 + 44 details, with 2-space gaps and 2 on the left = 115
 
     static void _PrintFormattedLog(const std::string& Line)
     {
         const std::vector<std::string> Tokens = Parser::TokensToVec(Line);
 
-        std::cout << std::setw(8) << std::left << "" << "| " << std::setw(20) << std::left << _GetDate(Tokens[LogFields::Prefix]);
-        std::cout << "| " << std::setw(7) << std::left << _GetLevel(Tokens[LogFields::Prefix]);
-        std::cout << "| " << std::setw(15) << std::left << _GetUsername(Tokens[LogFields::Username]);
-        std::cout << "| " << std::setw(20) << std::left << Tokens[LogFields::Category];
-        std::cout << "| " << std::left << _GetDetails(Tokens);
+        const std::string Level = _GetLevel(Tokens[LogFields::Prefix]);
 
-    }
-    static void _PrintLine(size_t Width = ACTIVITY_LINE_WIDTH) {
-        std::cout << std::setw(8) << std::left << "" << "\n\t" << std::string(Width, '_') << "\n" << std::endl;
+        term::Print(std::string("  ") + term::col::Muted + term::Pad(_GetDate(Tokens[LogFields::Prefix]), 20)
+                    + "  " + _LevelColor(Level) + term::Pad(Level, 7)
+                    + term::col::Cyan + "  " + term::Pad(term::Fit(_GetUsername(Tokens[LogFields::Username]), 14), 14)
+                    + term::col::Base + "  " + term::Pad(term::Fit(Tokens[LogFields::Category], 20), 20)
+                    + term::col::Muted + "  " + term::Fit(_GetDetails(Tokens), 44), ACTIVITY_W);
     }
     static void _PrintLayout() {
-
-        _PrintLine();
-        std::cout << std::setw(8) << std::left << "" << "| " << std::left << std::setw(20) << "Date & Time";
-        std::cout << "| " << std::left << std::setw(7) << "Level";
-        std::cout << "| " << std::left << std::setw(15) << "Username";
-        std::cout << "| " << std::left << std::setw(20) << "Category";
-        std::cout << "| " << std::left << "Details";
-        _PrintLine();
-    }
-    static void _PrintAll(const std::vector<std::string>& Logs) {
-
-        for (size_t i = Logs.size(); i > 0; i--)
-        {
-
-            _PrintFormattedLog(Logs[i - 1]);
-            std::cout << std::endl;
-        }
-        _PrintLine();
-
+        term::Print(std::string(term::col::Muted) + "  " + term::Pad("DATE & TIME", 20) + "  " + term::Pad("LEVEL", 7) + "  " + term::Pad("USER", 14)
+                    + "  " + term::Pad("CATEGORY", 20) + "  " + "DETAILS", ACTIVITY_W);
+        term::Rule(ACTIVITY_W);
     }
 
     // ------------------------------------------------ Printing : Audits
+    // widths: 20 + 7 + 12 + 8 + 8 + 12 + 12 + 12 = 91, plus 7 gaps of 2 and 2 on the left = 107
 
     static void _PrintFormattedAuditLog(const std::string& Line)
     {
@@ -335,52 +302,29 @@ private:
 
         const std::string TransferMessage = (Tokens.size() > LogFields::Message) ? Tokens[LogFields::Message] : "";
 
-        std::cout << std::setw(8) << std::left << "" << "| " << std::setw(20) << std::left << _GetDate(Tokens[LogFields::Prefix]);
-        std::cout << "| " << std::setw(7) << std::left << _GetLevel(Tokens[LogFields::Prefix]);
-        std::cout << "| " << std::setw(15) << std::left << _GetUsername(Tokens[LogFields::Username]);
-        std::cout << "| " << std::setw(8) << std::left << _GetTransferFrom(TransferMessage);
-        std::cout << "| " << std::setw(8) << std::left << _GetTransferTo(TransferMessage);
-        std::cout << "| " << std::setw(14) << std::left << _FormatMoney(_GetTransferAmount(TransferMessage));
-        std::cout << "| " << std::setw(14) << std::left << _FormatMoney(_GetFromNewBalance(TransferMessage));
-        std::cout << "| " << std::left << _FormatMoney(_GetToNewBalance(TransferMessage));
-
+        term::Print(std::string("  ") + term::col::Muted + term::Pad(_GetDate(Tokens[LogFields::Prefix]), 20)
+                    + "  " + _LevelColor(_GetLevel(Tokens[LogFields::Prefix])) + term::Pad(_GetLevel(Tokens[LogFields::Prefix]), 7)
+                    + term::col::Cyan + "  " + term::Pad(term::Fit(_GetUsername(Tokens[LogFields::Username]), 12), 12)
+                    + term::col::Base + "  " + term::Pad(_GetTransferFrom(TransferMessage), 8)
+                    + "  " + term::Pad(_GetTransferTo(TransferMessage), 8)
+                    + term::col::White + "  " + term::PadLeft(_FormatMoney(_GetTransferAmount(TransferMessage)), 12)
+                    + term::col::Amber + "  " + term::PadLeft(_FormatMoney(_GetFromNewBalance(TransferMessage)), 12)
+                    + term::col::Green + "  " + term::PadLeft(_FormatMoney(_GetToNewBalance(TransferMessage)), 12), AUDIT_W);
     }
     static void _PrintAuditLayout() {
-
-        _PrintLine(AUDIT_LINE_WIDTH);
-        std::cout << std::setw(8) << std::left << "" << "| " << std::left << std::setw(20) << "Date & Time";
-        std::cout << "| " << std::left << std::setw(7) << "Level";
-        std::cout << "| " << std::left << std::setw(15) << "Username";
-        std::cout << "| " << std::left << std::setw(8) << "From";
-        std::cout << "| " << std::left << std::setw(8) << "To";
-        std::cout << "| " << std::left << std::setw(14) << "Amount";
-        std::cout << "| " << std::left << std::setw(14) << "From Balance";
-        std::cout << "| " << std::left << "To Balance";
-        _PrintLine(AUDIT_LINE_WIDTH);
+        term::Print(std::string(term::col::Muted) + "  " + term::Pad("DATE & TIME", 20) + "  " + term::Pad("LEVEL", 7) + "  " + term::Pad("USER", 12)
+                    + "  " + term::Pad("FROM", 8) + "  " + term::Pad("TO", 8) + "  " + term::PadLeft("AMOUNT", 12)
+                    + "  " + term::PadLeft("FROM BAL.", 12) + "  " + term::PadLeft("TO BAL.", 12), AUDIT_W);
+        term::Rule(AUDIT_W);
     }
-    static void _PrintAllAudits(const std::vector<std::string>& Logs) {
-
-        for (size_t i = Logs.size(); i > 0; i--)
-        {
-
-            _PrintFormattedAuditLog(Logs[i - 1]);
-            std::cout << std::endl;
-        }
-        _PrintLine(AUDIT_LINE_WIDTH);
-
-    }
-
 
 public:
-
 
     LoggerScreen(Service& Ref, Session& SessionRef) : Screen(Ref), m_Session(SessionRef), m_ServiceRef(Ref) {};
 
     void Start(const User& CurrentUser) override {
 
         PerformMenu(CurrentUser);
-        _GetBackToMenu();
 
     }
 };
-

@@ -15,35 +15,50 @@ private:
 	ClientServices& m_ServicesRef;
 
 
-	void _PrintSenderBalance(const Client& client) {
-		_Message("New Balance for sender : ");
-		std::cout << client.getBalance() << "\n";
-	}
-	void _PrintReceiverBalance(const Client& client) {
-		_Message("New Balance for receiver : ");
-		std::cout << client.getBalance() << "\n";
-	}
-
-	void _PrintBalance(const Client& client) {
-		_Message("Your balance is : ");
-		std::cout << client.getBalance() << "\n";
-	}
-	void _PrintWithdrawAmount(double amount) {
-		_Message("Amount to withdraw : ");
-		std::cout << amount << "\n";
+	// NEW: one line describing one side of the transfer:  FROM  Ahmed Ali   A1001   $12,450.00
+	void _PrintParty(const char* label, const Client& client) {
+		term::Print(std::string(term::col::Muted) + "  " + term::Pad(label, 6)                              // "FROM" / "TO" in grey
+		            + term::col::Base + term::Pad(term::Fit(client.GetFullName(), 20), 22)                  // client name
+		            + term::col::Cyan + term::Pad(client.getAccountNumber(), 10)                            // account number in cyan
+		            + term::col::Muted + term::PadLeft(term::Money(client.getBalance()), 14));              // current balance
 	}
 
+	// NEW: the receipt shown after a successful transfer: old balance --> new balance for BOTH accounts.
+	// (This also fixes an old bug: the previous code printed the receiver's balance under the label "sender" and vice versa.)
+	// IMPORTANT: names and account numbers are passed in as plain text captured BEFORE the transfer.
+	// Why: Transactions::Transfer ends with UpdateClient(), which moves the data out of the Client objects, so after the call
+	// their names are empty (balances are numbers, so they survive). Capture first, print later.
+	void _PrintReceipt(const std::string& nameFrom, const std::string& accFrom, double fromOld, double fromNew,
+	                   const std::string& nameTo,   const std::string& accTo,   double toOld,   double toNew, double amount) {
+		term::Blank();
+		term::Success("TRANSFER COMPLETE");                                                                   // green tick banner
+		term::Blank();
+		term::Print(std::string(term::col::Muted) + "  " + term::Pad("FROM", 6)                              // sender row
+		            + term::col::Base + term::Pad(term::Fit(nameFrom, 16), 18)
+		            + term::col::Cyan + term::Pad(accFrom, 8)
+		            + term::col::Muted + term::PadLeft(term::Money(fromOld), 14)                             // OLD balance (grey)
+		            + term::col::Cyan + " " + term::g::Rule + term::g::Play + " "                             // the "-->" arrow
+		            + term::col::Amber + term::PadLeft(term::Money(fromNew), 14));                           // NEW balance (amber = money left)
+		term::Print(std::string(term::col::Muted) + "  " + term::Pad("TO", 6)                                // receiver row
+		            + term::col::Base + term::Pad(term::Fit(nameTo, 16), 18)
+		            + term::col::Cyan + term::Pad(accTo, 8)
+		            + term::col::Muted + term::PadLeft(term::Money(toOld), 14)
+		            + term::col::Cyan + " " + term::g::Rule + term::g::Play + " "
+		            + term::col::Green + term::PadLeft(term::Money(toNew), 14));                              // NEW balance (green = money arrived)
+		term::Blank();
+		term::Print(std::string(term::col::Muted) + "  AMOUNT  " + term::col::White + term::col::Bold + term::Money(amount)); // amount moved
+	}
+
+	// NEW: replaces _PrintBalance / _PrintWithdrawAmount / _PrintAmountAndBalance (three helpers that printed with raw cout)
 	void _PrintAmountAndBalance(const Client& client, double amount) {
-		_PrintWithdrawAmount(amount);
-		_PrintBalance(client);
-
+		term::Field("AMOUNT", term::Money(amount), term::col::White);
+		term::Field("BALANCE", term::Money(client.getBalance()), term::col::Amber);
 	}
 
 	bool _PerformConfirmation(const char* Message = nullptr) {
 
 
-		bool isConfirm = Validator::GetConfirmation('\n' + std::string((((Message != nullptr) ? Message : "Are you sure you want to perform this transaction?"))));
-		return isConfirm;
+		return term::Confirm((Message != nullptr) ? Message : "Are you sure you want to perform this transaction?"); // NEW: single-key Y/N in the new style (replaces Validator::GetConfirmation)
 	}
 
 	void _PrintTransferStatus(const User& CurrentUser, Client& ExistingClientFrom, Client& ExistingClientTo, double amount) {
@@ -53,6 +68,8 @@ private:
 		std::string AccNumTo = ExistingClientTo.getAccountNumber();
 		double FromOldBalance = ExistingClientFrom.getBalance();
 		double ToOldBalance = ExistingClientTo.getBalance();
+		std::string NameFrom = ExistingClientFrom.GetFullName(); // NEW: capture names BEFORE Transfer() (it empties the Client objects, see _PrintReceipt)
+		std::string NameTo = ExistingClientTo.GetFullName();
 
 		
 
@@ -61,7 +78,7 @@ private:
 
 		case ClientRepository::OperationStates::AccountNumberNotFound:
 		{
-			_Message("\nAccount Number is not found.\n");
+			term::Error("Account number was not found.");
 			break;
 		}
 		case ClientRepository::OperationStates::Successful:
@@ -69,14 +86,12 @@ private:
 			 Logger::LogTransfer(CurrentUser.GetUsername(), Logger::Category::Transfer, Logger::Level::INFO, AccNumFrom, AccNumTo, FromOldBalance, ToOldBalance,ExistingClientFrom.getBalance(),ExistingClientTo.getBalance(), amount);
 			 Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::Transfer, Logger::Level::INFO, "", AccNumTo);
 
-			_Message("\nAmount Transferred Sucessfully.\n");
-			_PrintSenderBalance(ExistingClientTo);
-			_PrintReceiverBalance(ExistingClientFrom);
+			_PrintReceipt(NameFrom, AccNumFrom, FromOldBalance, ExistingClientFrom.getBalance(), NameTo, AccNumTo, ToOldBalance, ExistingClientTo.getBalance(), amount); // NEW: replaces 3 old lines
 			break;
 		}
 		case ClientRepository::OperationStates::InsufficentBalance:
 		{
-			_Message("\nCannot Withdraw From User : " + AccNumFrom +", Insufficent Balance !\n");
+			term::Error("Cannot withdraw from account " + AccNumFrom + ": insufficient balance.");
 			_PrintAmountAndBalance(ExistingClientFrom, amount);
 			break;
 		}
@@ -99,7 +114,7 @@ private:
 
 		if (From.isEmpty())
 		{
-				_Message("\nAccount number is not found.\n");
+				term::Error("Sender account number was not found.");
 				return;
 	    }
 
@@ -107,49 +122,51 @@ private:
 
 		if (To.isEmpty())
 		{
-			_Message("\nAccount number is not found.\n");
+			term::Error("Receiver account number was not found.");
 			return;
 		}
 
 		if ( !(From.isEmpty() && To.isEmpty()) )
 		{
-			_Message("Transfer From : ");
-			ClientRepository::PrintClient(From);
+			term::Blank();
+			_PrintParty("FROM", From);                      // NEW: one tidy line per account instead of two big "Client Card" blocks
+			_PrintParty("TO", To);
+			term::Blank();
 
-			_Message("Transfer To : ");
-			ClientRepository::PrintClient(To);
-
-			_Message("Please enter Transfer amount : ");
+			term::Prompt("AMOUNT");                         // NEW: styled prompt, the number is still read by Validator
 			double amount = Validator::returnNumber();
 			
-			(_PerformConfirmation()) ? _PrintTransferStatus(CurrentUser, From, To, amount) : _Message("\nOperations is Cancelled.\n");
+			term::Blank();
+			(_PerformConfirmation()) ? _PrintTransferStatus(CurrentUser, From, To, amount) : term::Warn("Operation cancelled.");
 
 		}
 		
 	}
 
-	void _PerformTransfer(const User& CurrentUser) {
+	bool _PerformTransfer(const User& CurrentUser) {   // NEW: returns false when the user has no access
 
 
 		_ClearScreen();
 
 		if ( Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::Transactions ))
 		{
-			PrintHeader(CurrentUser);
+			_Header(CurrentUser, "TRANSFER");    // NEW: replaces the PrintHeader override at the bottom of this file
 
-			_Message("Please enter account number to transfer from : ");
+			term::Prompt("FROM ACCOUNT");                  // NEW: styled prompts
 			std::string AccNumFrom = Validator::ReadString();
 
-			_Message("Please enter account number to transfer to : ");
+			term::Prompt("TO ACCOUNT");
 			std::string AccNumTo = Validator::ReadString();
 
 			_Transfer(CurrentUser, AccNumFrom, AccNumTo);
-
+			return true;
 		}
 		else
 		{
-			Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Withdraw");
+			Logger::LogClient(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Transfer"); // FIXED: this said "Withdraw" (copy-paste), so the log blamed the wrong operation
+			_Header(CurrentUser, "TRANSFER");
 			NoAccessMsg();
+			return false;
 		}
 
 
@@ -160,35 +177,25 @@ private:
 
 		bool IsContinueOperation = true;
 
-		do
+		while (IsContinueOperation)
 		{
+			if (!_PerformTransfer(CurrentUser))
+			{
+				_GetBackToMenu("Press any key to go back to the Transactions menu");
+				return;
+			}
 
-			_PerformTransfer(CurrentUser);
-			
-			IsContinueOperation = Validator::GetConfirmation('\n' + std::string(((Message != nullptr) ? Message : "Do you want to continue this operation?")));
-
-
-		} while (IsContinueOperation);
+			term::Blank();
+			IsContinueOperation = term::Confirm((Message != nullptr) ? Message : "Make another transfer?");
+		}
 
 	}
-	void PrintHeader(const User& CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-		std::cout << "\t\t\t\t\t______________________________________";
-
-		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Transfer Screen"));
-
-		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-		ShowUserAndDate(CurrentUser);
-	}
-
 public:
 
 	TransferScreen(Service& Ref) : Screen(Ref), m_ServicesRef(Ref.AccessClientServices()) {};
 
 	void Start(const User& CurrentUser) override {
 		PerformMenu(CurrentUser);
-		_GetBackToMenu("Press Enter to go back to Transactions Menu");
 	}
 
 

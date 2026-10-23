@@ -18,56 +18,36 @@ private :
 
 		while (attempts < MAX_ATTEMPTS) 
 		{
-			
+			term::Prompt("USERNAME");                                // NEW: prints "  USERNAME > " (centered, colored) and stays on the same line
+			std::string Username = Validator::ReadString();          // unchanged: reads the whole line the user types
 
-
-			_Message("Please enter your username : ");
-			std::string Username = Validator::ReadString();
-			
-			_Message("Please enter a your password : ");
-			std::string Password = Validator::ReadString();
-
+			std::string Password = term::ReadPassword("PASSWORD");   // NEW: same prompt style, but every typed character shows as * (the old code echoed the real password)
 			
 			attempts++;
 
-			User * user = m_Auth.Login(Username, Password);
+			User * user = m_Auth.Login(Username, Password);          // unchanged: the real login check lives in Authenticator, the UI never touches it
 
 			if (user == nullptr)
 			{
-				std::cout << "\nInvalid username/password ! " << (MAX_ATTEMPTS - attempts) << " Attempt(s) remaining" << "\n";
+				term::Error("Invalid username or password. " + std::to_string(MAX_ATTEMPTS - attempts) + " attempt(s) left."); // NEW: red cross + message (std::to_string turns the number into text)
+				term::Blank();                                       // NEW: empty line between attempts
 			} 
 			else 
 			{
 				return user;
 			}
 
-		
-
 		}
 
-		
-		_Message("\n\nToo Many failed attempts, Exiting...");
+		term::Error("Too many failed attempts. Exiting...");         // NEW: colored version of the old _Message(...)
 		return nullptr;
 	}
 
-	void PrintHeader(const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-		std::cout << "\t\t\t\t\t______________________________________";
-
-		std::cout << "\n\n\t\t\t\t\t\t     " << (((ScreenName != nullptr) ? ScreenName : "Login Screen"));
-
-		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-	}
-
-	User* PerformLogin(const char* Message = nullptr)  {
-		_ClearScreen();
-		PrintHeader(Message);
+	User* PerformLogin()  {
+		_ClearScreen();                                              // unchanged call, but it now paints the screen black instead of running system("cls")
+		term::Header("SIGN IN");                           // NEW: replaces the whole old PrintHeader override (9 lines of tabs and underscores). No user name yet, so only title + status.
 
 		return _Login();
-        
-		
-
 	}
 
 public :
@@ -77,10 +57,13 @@ public :
 
 		User *user = PerformLogin();
 
-		if ( user == nullptr ) exit(0);
+		if ( user == nullptr ) 
+		{
+			term::WaitKey("Press any key to exit");                 // NEW: without this the window closes instantly and you never see the error above
+			exit(0);
+		}
 
 		return *user;
 	}
 
 };
-

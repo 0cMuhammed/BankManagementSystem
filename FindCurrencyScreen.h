@@ -10,28 +10,17 @@ private:
 
 	CurrencyRepository& m_RepositoryReference;
 
-	void PrintHeader(const User& CurrentUser, const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-		std::cout << "\t\t\t\t\t______________________________________";
-
-		std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Find Currency Screen"));
-
-		if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-		std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-		ShowUserAndDate(CurrentUser);
-	}
-
 	void PerformMenu(const User& CurrentUser, const char* Message = nullptr) override {
 
 		bool isContinue = true;
 
-		do
+		while (isContinue)
 		{
-			_PerformFind(CurrentUser);
+			if (!_PerformFind(CurrentUser)) return;     // NEW: Esc on the "by code / by country" menu leaves the screen
 
-			isContinue = Validator::GetConfirmation('\n' + std::string(((Message != nullptr) ? Message : "Do you want to continue this operation?")));
-
-		} while (isContinue);
+			term::Blank();
+			isContinue = term::Confirm((Message != nullptr) ? Message : "Find another currency?");
+		}
 	}
 
     CurrencyRepository::OperationStates _FindByCode(const std::string Query, Currency& Result) {
@@ -42,49 +31,51 @@ private:
 		return m_RepositoryReference.FindByCountry(Query, Result);
 	}
 
-    void _PerformFind(const User & CurrentUser, const char* NotFoundMessage = nullptr) {
+    bool _PerformFind(const User & CurrentUser, const char* NotFoundMessage = nullptr) {
 
 			_ClearScreen();
-			PrintHeader(CurrentUser);
+			_Header(CurrentUser, "FIND CURRENCY");
 			Currency currency("", 0, "", 0, Currency::ObjectMode::EmptyMode);
 
-			_Message("Find By: [1] Code or [2] Country ? ");
-			short Answer = static_cast<short>(Validator::returnValidatedNumber(1, 2));
-			
-			const bool ByCode = Answer == 1;
+			// NEW: the old "[1] Code or [2] Country ?" question + number reading is now a 2-row menu.
+			static const std::vector<term::MenuItem> options = {
+				{ "BY CODE",    "for example USD" },
+				{ "BY COUNTRY", "for example Malaysia" }
+			};
+			const int choice = term::Menu(options, 0);
+			if (choice < 0) return false;                            // Esc
 
-			_Message(ByCode ? "Please enter the currency code : " : "Please enter the country name : ");
+			const bool ByCode = (choice == 0);
+
+			term::Blank();
+			term::Prompt(ByCode ? "CURRENCY CODE" : "COUNTRY NAME");
 			std::string Query = Validator::ReadString();
 
-		 
-
-			CurrencyRepository::OperationStates State = (Answer == 1) ? _FindByCode(Query,currency) : _FindByCountry(Query,currency);
+			CurrencyRepository::OperationStates State = ByCode ? _FindByCode(Query,currency) : _FindByCountry(Query,currency);
 
 			switch (State)
 			{
 			case CurrencyRepository::OperationStates::Successful:
 			{
-				_Message("Currency Found :-)\n");
 				_PrintCurrency(currency);
+				term::Success("Currency found.");
 				Logger::LogCurrency(CurrentUser.GetUsername(), Logger::Category::FindCurrency, Logger::Level::INFO, Query, 0, 0, ByCode ? "Code" : "Country");
 				break;
 			}
 			case CurrencyRepository::OperationStates::NotFound:
 			{
-				_Message(std::string((NotFoundMessage != nullptr) ? NotFoundMessage : "Currency was not found :-(\n"));
+				term::Error((NotFoundMessage != nullptr) ? NotFoundMessage : "Currency was not found.");
 				Logger::LogCurrency(CurrentUser.GetUsername(), Logger::Category::FindCurrency, Logger::Level::WARN, Query, 0, 0, ByCode ? "Code" : "Country");
 				break;
 			}
 			default:
 			{
-				_Message("Something went wrong, please try again.\n");
+				term::Error("Something went wrong, please try again.");
 				break;
 			}
 			}
+			return true;
 		}
-
-
-	
 
 public:
 
@@ -92,8 +83,6 @@ public:
 
 	void Start(const User& CurrentUser) override {
 		PerformMenu(CurrentUser);
-		_GetBackToMenu("Press Enter to go back to Currency Exchange Menu");
 	}
 
 };
-

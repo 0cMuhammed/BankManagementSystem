@@ -1,12 +1,10 @@
 #pragma once
 #include <iostream>
 #include<vector>
-#include<iomanip>
 
 #include "Validator.h"
 #include "UserRepository.h"
 #include "Screen.h"
-
 
 class AddUserScreen : public Screen
 {
@@ -14,41 +12,23 @@ private :
 
     UserRepository & m_RepositoryReference;
 
-
-    void _Message(const std::string & Message) override {
-        std::cout << '\n' + Message + " : ";
-    }
-
-    void PrintHeader(const User &CurrentUser,const char* ScreenName = nullptr, const char* SubTitle = nullptr) override {
-
-
-        std::cout << "\t\t\t\t\t______________________________________";
-
-        std::cout << "\n\n\t\t\t\t\t  \t  " << (((ScreenName != nullptr) ? ScreenName : "Add New User Screen"));
-
-        if (SubTitle != nullptr) { std::cout << "\n\t\t\t\t\t  " << SubTitle; }
-
-        std::cout << "\n\t\t\t\t\t______________________________________\n\n";
-        ShowUserAndDate(CurrentUser);
-    }
-
     void PerformMenu(const User & CurrentUser,const char* Message = nullptr) override {
 
         bool IsContinueOperation = true;
 
-        do {
-            _PerformAdding(CurrentUser);
-            IsContinueOperation = Validator::GetConfirmation('\n' + std::string ( (((Message != nullptr) ? Message : "Do you want to continue this operation?"))));
+        while (IsContinueOperation)
+        {
+            if (!_PerformAdding(CurrentUser))
+            {
+                _GetBackToMenu("Press any key to go back to the Manage Users menu");
+                return;
+            }
 
-           } while (IsContinueOperation);
+            term::Blank();
+            IsContinueOperation = term::Confirm((Message != nullptr) ? Message : "Add another user?");
+        }
 
     }
-
-
-
-
-
-
 
     void _Add(const User& CurrentUser, User& New) {
 
@@ -58,21 +38,21 @@ private :
         case UserState::Successful:
         {
             Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::AddUser, Logger::Level::INFO, "", New.GetUsername());
-            UserRepository::PrintUser(New);
-            std::cout << "\nAccount is saved successfuly!\n";
+            _PrintUserCard(New);                               // NEW: replaces UserRepository::PrintUser
+            term::Success("User saved successfully.");
 
             break;
 
         }
         case UserState::UserAlreadyExists:
         {
-            std::cout << "\nUser Already Exists.\n";
+            term::Error("User already exists.");
             break;
 
         }
         case UserState::Failed: // for some reason....
         {
-            std::cout << "\nOperation Failed, Try again Later...\n";
+            term::Error("Operation failed, try again later.");
             break;
 
         }
@@ -84,27 +64,25 @@ private :
         }
         }
     }
-    void _PerformAdding(const User& CurrentUser) {
+    bool _PerformAdding(const User& CurrentUser) {
 
         _ClearScreen();
-        PrintHeader(CurrentUser);
+        _Header(CurrentUser, "ADD USER");
 
-      
-
-        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::AddUser)) 
+        if (Authorizer::HasAccess(CurrentUser, Authorizer::Permissions::AddUser))
         {
             User New = m_RepositoryReference.ReadUser(static_cast<int32_t>(Authorizer::ReadPermissions(CurrentUser)));
             _Add(CurrentUser, New);
+            return true;
         }
         else
         {
             Logger::LogUser(CurrentUser.GetUsername(), Logger::Category::NoAccsess, Logger::Level::WARN, "Add User");
             NoAccessMsg();
+            return false;
         }
 
     }
-
-
 
 public:
 
@@ -112,7 +90,5 @@ public:
 
     void Start(const User & CurrentUser) override {
         PerformMenu(CurrentUser);
-        _GetBackToMenu("Press Enter to go back to Manage Users Menu");
     }
 };
-
